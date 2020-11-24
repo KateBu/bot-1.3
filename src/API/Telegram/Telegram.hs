@@ -20,13 +20,15 @@ import API.Telegram.Structs
 import API.Telegram.Parsers
 import Logic.PureStructs
 
+import qualified API.Telegram.Cleaners as Cleaners 
+
 
 new :: Config -> IO (Handle IO) 
 new config =  pure $ Handle 
     {
         hConfig = pure config 
         , hLogger = Logger.createLogger (priority config)
-        , hGetUpdates = getU config 
+        , hGetUpdates = makeMessages config  
         , hSendMessage = sendM config
         , hSendMessage_ = sendM_ config
         , hSetOffset = setOffset config 
@@ -45,20 +47,24 @@ withHandle config func params =
     bracket (new config) close (flip func params)
 
 
-getU :: Config -> Logger.Logger -> IO (Maybe Updates)
-getU (TConfig _ off _ tok _ _) logger = do 
+getU :: Config -> IO (Either Err TelegramUpdates)
+getU (TConfig _ off _ tok _ _) = do 
     http <- parseRequest $ "https://api.telegram.org/bot" <> tok <> "/getUpdates?offset=" <> show off
     updRequest <- httpLBS http
     let respBody = getResponseBody updRequest 
-    updates <- decodeUpd logger respBody 
-    return $ (TUpdates <$> updates) 
+    decodeUpd respBody 
+    
+makeMessages :: Config -> IO (Either Err [Message])
+makeMessages config = do 
+    updates <- getU config 
+    Cleaners.updatesToPureMessageList updates 
 
     
 
---sendM :: Config -> Message -> IO Config
+sendM :: Config -> Message -> IO (Maybe Config)
 sendM = undefined
 
---sendM_ :: Config -> Message -> IO ()
+sendM_ :: Config -> Message -> IO (Maybe ())
 sendM_ = undefined
 
 setOffset :: (Monad m) => Config -> Integer -> m Config 
@@ -66,18 +72,15 @@ setOffset (TConfig msg _ rep tok us prior) newOffset =
     pure $ (TConfig msg newOffset rep tok us prior)
 
 
-decodeUpd :: Logger.Logger -> LC.ByteString -> IO (Maybe TelegramUpdates)
-decodeUpd logger js = case (decode js :: Maybe TelegramUpdates) of 
-    Just val -> do 
-            Logger.botLog logger (Logger.LogMessage Logger.Debug "Updates recieved") 
-            return $ Just val
+decodeUpd :: LC.ByteString -> IO (Either Err TelegramUpdates)
+decodeUpd js = case (decode js :: Maybe TelegramUpdates) of 
+    Just val -> 
+            return $ Right val
     Nothing -> case (eitherDecode js :: Either String TelegramUpdatesError) of 
-        Right val -> do
-            Logger.botLog logger (Logger.LogMessage Logger.Error (makeErrorMsg val)) 
-            return Nothing 
-        Left msg -> do 
-            Logger.botLog logger (Logger.LogMessage Logger.Error (T.pack msg)) 
-            return Nothing
+        Right val -> return $ Left ("\n\terror code: " <> (T.pack . show . error_code) val 
+            <> "\n\terror describtion: " <> description val)
+        Left msg -> return $ Left (T.pack msg)
+            
     
 
 
