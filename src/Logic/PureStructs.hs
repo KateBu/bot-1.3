@@ -8,7 +8,7 @@ import qualified Data.Text as T
 
 
 
-data Updates = TUpdates TelegramUpdates | VKUpdates 
+--data Updates = TUpdates TelegramUpdates | VKUpdates 
 
 type UpdateID = Integer 
 type MbCaption = Maybe T.Text
@@ -19,10 +19,33 @@ data Message = EmptyMessage UpdateID
     | CommonMessage UpdateID Integer CMessage MbCaption
     | CallbackQuery UpdateID Integer T.Text
 
+getMsgType :: Message -> T.Text
+getMsgType (EmptyMessage _) = "EmptyMessage"
+getMsgType (UserCommand _ _) = "UserCommand"
+getMsgType (CommonMessage _ _ _ _) = "CommonMessage"
+getMsgType (CallbackQuery _ _ _) = "CallbackQuery"
+
+
 getUid :: Message -> UpdateID
 getUid (EmptyMessage uid) = uid 
 getUid (UserCommand uid _) = uid 
 getUid (CommonMessage uid _ _ _) = uid 
+
+getContentType :: Message -> T.Text
+getContentType (CommonMessage _ _ (Txt _) _) = "Text"
+getContentType (CommonMessage _ _ (Animation _) _) = "Animation"
+getContentType (CommonMessage _ _ (Audio _) _) = "Audio"
+getContentType (CommonMessage _ _ (Document _) _) = "Document"
+getContentType (CommonMessage _ _ (Photo _) _) = "Photo"
+getContentType (CommonMessage _ _ (Video _) _) = "Video"
+getContentType (CommonMessage _ _ (Voice _) _) = "Voice"
+getContentType (CommonMessage _ _ (Contact _) _) = "Contact"
+getContentType (CommonMessage _ _ (Poll _) _) = "Poll"
+getContentType (CommonMessage _ _ (Venue _) _) = "Venue"
+getContentType (CommonMessage _ _ (Location _) _) = "Location"
+getContentType (CommonMessage _ _ (Sticker _) _) = "Sticker"
+getContentType (CommonMessage _ _ (Buttons _) _) = "Buttons"
+getContentType _ = "No content"
 
 data Command = Command 
     {
@@ -70,3 +93,4 @@ data ProcessMessageResult = ProcessMessageResult
         , getCaption :: Maybe T.Text
     }
     | Empty 
+
