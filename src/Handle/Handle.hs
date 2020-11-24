@@ -7,15 +7,17 @@ import Logger.Logger
 import API.Telegram.Structs
 import Logic.PureStructs
 
+type Err = T.Text
+
 data Handle m = Handle 
     {
-        hConfig :: m Config 
+        hConfig :: m Config
         , hLogger :: m Logger
-        , hGetUpdates :: Logger -> m (Maybe Updates) 
-        , hSendMessage :: Message -> m Config 
-        , hSendMessage_ :: Message -> m ()
-        , hSetOffset :: Integer -> m Config 
-        , hEditUsers :: Config -> User -> m Config
+        , hGetUpdates :: m (Either Err [Message]) 
+        , hSendMessage :: Message -> m (Maybe Config) 
+        , hSendMessage_ :: Message -> m (Maybe ())
+        , hSetOffset :: Integer -> m Config
+        , hEditUsers :: Config -> User -> m (Maybe Config)
     }
 
 

@@ -8,7 +8,9 @@ import Config.Config
 import qualified API.Telegram.Telegram as Telegram
 import Handle.Handle
 import Logger.Logger 
+import qualified Logger.LoggerMsgs as LoggerMsgs 
 import API.Telegram.Cleaners
+
 
 
 configPath :: String 
@@ -26,12 +28,13 @@ main = do
 runBot :: Config -> IO ()
 runBot config@(TConfig _ _ _ _ _ _) = do 
     logger <- Telegram.withHandleNoParams config hLogger
-    updates <- Telegram.withHandle config hGetUpdates logger 
+    updates <- Telegram.withHandleNoParams config hGetUpdates 
     case updates of 
-        Nothing -> botLog logger (LogMessage Info "exit program, couldn't get updates")
-        Just upd -> do
-            maybeMessageList <- updatesToPureMessageList logger upd 
-            pure ()
+        Left err -> botLog logger (LogMessage Error (LoggerMsgs.getLogMsg "getUpdFld" <> err))
+        Right upd -> do
+            botLog logger (LogMessage Debug (LoggerMsgs.getLogMsg "getUpdScs"))
+            --maybeMessageList <- updatesToPureMessageList logger upd 
+            --pure ()
 runBot _ = putStrLn "Only Telegram bot API defined"
 
 
