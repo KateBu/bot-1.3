@@ -4,6 +4,7 @@ import qualified Data.Text as T
 
 import Logic.PureStructs
 import Logger.Logger  
+import qualified Logger.LoggerMsgs as LoggerMsgs
 import Config.Config
 import qualified Data.Map as Map 
 
@@ -64,6 +65,17 @@ setRepetitionQuery :: T.Text -> Users -> Users
 setRepetitionQuery query = undefined 
 
 
+makeLogMessage :: Maybe Message -> Priority -> String -> LogMessage
+makeLogMessage Nothing _ _= LogMessage Error (LoggerMsgs.getLogMsg "nothing" )
+makeLogMessage (Just msg) prior key = LogMessage prior (LoggerMsgs.getLogMsg key <> msgInfo msg)
+
+msgInfo :: Message -> T.Text 
+msgInfo msg = "\n\tUpdate ID: "
+    <> (T.pack . show .getUid) msg
+    <> "\n\tMessage Type: "
+    <> getMsgType msg 
+    <> "\n\tContent Type: "
+    <> getContentType msg 
 
 
 
