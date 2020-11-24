@@ -1,8 +1,13 @@
 module API.Telegram.Cleaners where
 
+import qualified Data.Text as T 
+
 import API.Telegram.Structs
 import Logic.PureStructs
 import Logger.Logger
+import qualified Logger.LoggerMsgs as LoggerMsgs
+
+type Err = T.Text  
 
 
 
@@ -34,32 +39,26 @@ updResultToComMessage mInfo = case sticker mInfo of
                                                 _-> Other
 
 
-updResultToMessage :: Logger -> TelUpdateResult -> IO (Maybe Message) 
-updResultToMessage _ (TelUpdateResult uid _ (Just callback)) = 
-    pure $ Just $ CallbackQuery uid ((cb_chid . cb_chat . cb_msg) callback) (cb_data callback)
+updResultToMessage :: TelUpdateResult -> IO Message
+updResultToMessage (TelUpdateResult uid _ (Just callback)) = 
+    pure $ CallbackQuery uid ((cb_chid . cb_chat . cb_msg) callback) (cb_data callback)
 
-updResultToMessage _ (TelUpdateResult uid Nothing _) = 
-    pure $ Just $ EmptyMessage uid 
+updResultToMessage (TelUpdateResult uid Nothing _) = 
+    pure $ EmptyMessage uid 
 
-updResultToMessage logger (TelUpdateResult uid (Just mInfo) _) = 
+updResultToMessage (TelUpdateResult uid (Just mInfo) _) = 
     let msg = updResultToComMessage mInfo 
     in case msg of 
-        Other -> do 
-            botLog logger (LogMessage Error "Unknown Message Type recieved")
-            return Nothing 
         Txt text -> case text of 
-            "/help" -> pure $ Just (UserCommand uid $ Command ((chat_id . chat) mInfo) text)
-            "/repeat" -> pure $ Just (UserCommand uid $ Command ((chat_id . chat) mInfo) text)
-            _ -> pure $ Just $ CommonMessage uid ((chat_id . chat) mInfo) (Txt text) (caption mInfo)
-        _ -> pure $ Just $ CommonMessage uid ((chat_id . chat) mInfo) msg (caption mInfo)
+            "/help" -> pure (UserCommand uid $ Command ((chat_id . chat) mInfo) text)
+            "/repeat" -> pure (UserCommand uid $ Command ((chat_id . chat) mInfo) text)
+            _ -> pure $ CommonMessage uid ((chat_id . chat) mInfo) (Txt text) (caption mInfo)
+        _ -> pure $ CommonMessage uid ((chat_id . chat) mInfo) msg (caption mInfo)
 
 
-updatesToPureMessageList :: Logger -> Updates -> IO [Maybe Message]
-updatesToPureMessageList logger updates = case updates of 
-    TUpdates tup -> do 
-        msgs <- mapM (updResultToMessage logger) (result tup)
-        botLog logger (LogMessage Debug "Telegram Updates successfully converted to [Message]")
-        return msgs 
-    VKUpdates -> do 
-        botLog logger (LogMessage Error "VK API is not implemented, cannot convert VK Updates to [Message]")
-        return [] 
+updatesToPureMessageList :: Either Err TelegramUpdates -> IO (Either Err [Message])
+updatesToPureMessageList (Left err) = return $ Left err  
+updatesToPureMessageList (Right tup) = do
+    msgs <- mapM updResultToMessage (result tup)
+    return $ Right msgs 
+    
