@@ -4,6 +4,8 @@ import qualified Data.Text as T
 import GHC.Generics
 
 
+
+
 data TelegramUpdatesError = TelegramUpdatesError 
     {
         error_code:: Integer
