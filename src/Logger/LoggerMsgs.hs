@@ -1,34 +1,73 @@
 module Logger.LoggerMsgs where
 
 import qualified Data.Text as T 
-import qualified Data.Map as Map 
-import Data.Maybe 
+import Logger.Logger 
 
-logMsgs :: Map.Map String T.Text 
-logMsgs = Map.fromList [
-    ("nothing", "processMessage: nothing to process")
-    , ("emptyMsgScs", "Empty message processed successfully: ")
-    , ("emptyMsgFld", "Empty message process failed: ")
-    , ("comMsgScs", "Common message processed successfully: ")
-    , ("comMsgFld", "Common message process failed: ")
-    , ("hlpMsgScs", "Help message processed successfully: ")
-    , ("hlpMsgFld", "Help message process failed: ")
-    , ("rptMsgScs", "Repeat message processed successfully: ")
-    , ("rptMsgFld", "Repeat message process failed: ")
-    , ("getUpdScs", "GetUpdates fuction processed successfully! ")
-    , ("getUpdFld", "GetUpdates function failed: ")
-    , ("prsMsgScs", "parseMessage function processed successfully: ")
-    , ("prsMsgFld", "parseMessage function failed: ")
-    , ("sndMsgScs", "sendMessage function processed successfully: ")
-    , ("sndMsgFld", "sendMessage function failed: ")
-    , ("prsConfScs", "Config parsed successfully: ")
-    , ("prsConfFld", "Config parse failed: ")
-    , ("tUpdConvert", "Telegram Updates successfully converted to [Message]")
-    , ("vkUpdConvert", "VK Updates successfully converted to [Message]")
-    ]
+fatalConfig :: T.Text
+fatalConfig = "FATAL ERROR: couldn't find or read the config file," 
+            <> " check the path to the file and the information inside it"
 
-getLogMsg :: String -> T.Text
-getLogMsg key = case Map.lookup key logMsgs of 
-    Nothing -> "getLogMsg: Key not found"
-    Just value -> value 
+emptyList :: LogMessage
+emptyList = LogMessage Debug "Empty list: nothing to process"
+
+emptyMsgScs :: LogMessage
+emptyMsgScs = LogMessage Debug "Empty message processed successfully!"
+
+emptyMsgFld :: LogMessage
+emptyMsgFld = LogMessage Error "Empty message process failed: "
+
+cmdMsgFld :: LogMessage
+cmdMsgFld = LogMessage Error "Command message process failed: "
+
+comMsgScs :: LogMessage
+comMsgScs = LogMessage Debug "Common message processed successfully!"
+
+comMsgFld :: LogMessage
+comMsgFld = LogMessage Error "Common message process failed: unknown command"
+
+hlpMsgScs :: LogMessage
+hlpMsgScs = LogMessage Debug "Help message processed successfully!"
+
+hlpMsgFld :: LogMessage
+hlpMsgFld = LogMessage Error "Help message process failed: "
+
+rptMsgScs :: LogMessage
+rptMsgScs = LogMessage Debug "Repeat message processed successfully!"
+
+rptMsgFld :: LogMessage
+rptMsgFld = LogMessage Error "Repeat message process failed: "
+
+getUpdScs :: LogMessage
+getUpdScs = LogMessage Debug "GetUpdates fuction processed successfully!"
+
+getUpdFld :: LogMessage
+getUpdFld = LogMessage Error "GetUpdates function failed: "
+
+prsMsgScs :: LogMessage
+prsMsgScs = LogMessage Debug "parseMessage function processed successfully!"
+
+prsMsgFld :: LogMessage
+prsMsgFld = LogMessage Error "parseMessage function failed: "
+
+sndMsgScs :: LogMessage
+sndMsgScs = LogMessage Debug "sendMessage function processed successfully!"
+
+sndMsgFld :: LogMessage
+sndMsgFld = LogMessage Error "sendMessage function failed: "
+
+prsConfScs :: LogMessage
+prsConfScs = LogMessage Debug "Config parsed successfully!"
+
+prsConfFld :: LogMessage
+prsConfFld = LogMessage Error "Config parse failed: "
+
+noUpd :: LogMessage
+noUpd = LogMessage Debug "No updates to recieve"
+
+chidNotFound :: LogMessage
+chidNotFound = LogMessage Error "Chat ID not found"
+
+nextLoop :: LogMessage
+nextLoop = LogMessage Debug "Go to the next loop"
+
 
