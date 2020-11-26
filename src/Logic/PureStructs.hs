@@ -7,9 +7,6 @@ import Logger.Logger
 import qualified Data.Text as T 
 
 
-
---data Updates = TUpdates TelegramUpdates | VKUpdates 
-
 type UpdateID = Integer 
 type MbCaption = Maybe T.Text
 
@@ -18,34 +15,6 @@ data Message = EmptyMessage UpdateID
     | UserCommand UpdateID Command
     | CommonMessage UpdateID Integer CMessage MbCaption
     | CallbackQuery UpdateID Integer T.Text
-
-getMsgType :: Message -> T.Text
-getMsgType (EmptyMessage _) = "EmptyMessage"
-getMsgType (UserCommand _ _) = "UserCommand"
-getMsgType (CommonMessage _ _ _ _) = "CommonMessage"
-getMsgType (CallbackQuery _ _ _) = "CallbackQuery"
-
-
-getUid :: Message -> UpdateID
-getUid (EmptyMessage uid) = uid 
-getUid (UserCommand uid _) = uid 
-getUid (CommonMessage uid _ _ _) = uid 
-
-getContentType :: Message -> T.Text
-getContentType (CommonMessage _ _ (Txt _) _) = "Text"
-getContentType (CommonMessage _ _ (Animation _) _) = "Animation"
-getContentType (CommonMessage _ _ (Audio _) _) = "Audio"
-getContentType (CommonMessage _ _ (Document _) _) = "Document"
-getContentType (CommonMessage _ _ (Photo _) _) = "Photo"
-getContentType (CommonMessage _ _ (Video _) _) = "Video"
-getContentType (CommonMessage _ _ (Voice _) _) = "Voice"
-getContentType (CommonMessage _ _ (Contact _) _) = "Contact"
-getContentType (CommonMessage _ _ (Poll _) _) = "Poll"
-getContentType (CommonMessage _ _ (Venue _) _) = "Venue"
-getContentType (CommonMessage _ _ (Location _) _) = "Location"
-getContentType (CommonMessage _ _ (Sticker _) _) = "Sticker"
-getContentType (CommonMessage _ _ (Buttons _) _) = "Buttons"
-getContentType _ = "No content"
 
 data Command = Command 
     {
@@ -68,6 +37,52 @@ data CMessage = Txt  T.Text
     | Buttons [[Button]]
     | Other 
 
+
+data ProcessMessageResult = ProcessMessageResult 
+    {
+        updID :: UpdateID
+        , msgType :: T.Text
+        , newConfig :: Config
+        , mbChatID :: Maybe Integer 
+        , mbMessage :: Maybe CMessage
+        , mbCaption :: MbCaption
+    }
+
+
+
+
+getMsgType :: Message -> T.Text
+getMsgType (EmptyMessage _) = "EmptyMessage"
+getMsgType (UserCommand _ _) = "UserCommand"
+getMsgType (CommonMessage _ _ _ _) = "CommonMessage"
+getMsgType (CallbackQuery _ _ _) = "CallbackQuery"
+
+
+getUid :: Message -> UpdateID
+getUid (EmptyMessage uid) = uid 
+getUid (UserCommand uid _) = uid 
+getUid (CommonMessage uid _ _ _) = uid 
+
+getContentType :: Message -> T.Text
+getContentType (CommonMessage _ _ cMsg _) = getMessageType cMsg 
+
+
+getMessageType :: CMessage -> T.Text
+getMessageType (Txt _) = "Message"
+getMessageType (Animation _)  = "Animation"
+getMessageType (Audio _) = "Audio"
+getMessageType (Document _) = "Document"
+getMessageType (Photo _) = "Photo"
+getMessageType (Video _) = "Video"
+getMessageType (Voice _) = "Voice"
+getMessageType (Contact _)  = "Contact"
+getMessageType (Poll _)  = "Poll"
+getMessageType (Venue _)  = "Venue"
+getMessageType (Location _)  = "Location"
+getMessageType (Sticker _) = "Sticker"
+getMessageType (Buttons _) = "Message"
+
+
 buttons :: [[Button]]
 buttons = [[Button "1" "/setRepetition1"]
     , [Button "2" "/setRepetition2"]
@@ -82,15 +97,4 @@ newRepeatText :: Int -> T.Text
 newRepeatText rep = "Установлено количество обновлений: " <> (T.pack . show) rep
 
 
-data ProcessMessageResult = ProcessMessageResult
-    {
-        getUpdateId :: UpdateID
-        , getLogMsg :: LogMessage
-        , getUsers :: Users
-        , getChatId :: Maybe Integer
-        , getRepetition :: Maybe Int 
-        , geMessage :: Maybe CMessage
-        , getCaption :: Maybe T.Text
-    }
-    | Empty 
 
