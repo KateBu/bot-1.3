@@ -10,6 +10,7 @@ import Handle.Handle
 import Logger.Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs 
 import API.Telegram.Cleaners
+import Logic.Logic 
 
 
 
@@ -21,23 +22,47 @@ main = do
     config <- parseConfig configPath 
     case config of 
         Just config -> runBot config 
-        _ -> putStrLn $ "FATAL ERROR: couldn't find or read the config file," 
-            <> " check the path to the file and the information inside it"
+        _ -> TIO.putStrLn LoggerMsgs.fatalConfig 
 
 
 runBot :: Config -> IO ()
-runBot config@(TConfig _ _ _ _ _ _) = do 
-    logger <- Telegram.withHandleNoParams config hLogger
-    updates <- Telegram.withHandleNoParams config hGetUpdates 
+runBot config = do 
+    handle <- makeHandle config 
+    logger <- hLogger handle 
+    updates <- hGetUpdates handle 
     case updates of 
-        Left err -> botLog logger (LogMessage Error (LoggerMsgs.getLogMsg "getUpdFld" <> err))
-        Right upd -> do
-            botLog logger (LogMessage Debug (LoggerMsgs.getLogMsg "getUpdScs"))
-            --maybeMessageList <- updatesToPureMessageList logger upd 
-            --pure ()
-runBot _ = putStrLn "Only Telegram bot API defined"
+        Left err -> botLog logger err
+        Right upd -> case upd of 
+            [] -> do
+                botLog logger LoggerMsgs.noUpd
+                nextLoop logger config
+            _ -> do
+                botLog logger LoggerMsgs.getUpdScs
+                processedMessages <- processMessages config upd (hSendMessage_ handle)
+                case processedMessages of 
+                    Left err -> do 
+                        botLog logger err
+                        nextLoop logger config
+                    Right newConfig -> do 
+                        botLog logger LoggerMsgs.sndMsgScs
+                        nextLoop logger newConfig
+
+                
 
 
+
+
+
+makeHandle :: Config -> IO (Handle IO)
+makeHandle config@(TConfig _ _ _ _ _ _) = Telegram.new config 
+makeHandle config = undefined
+
+
+nextLoop :: Logger -> Config -> IO ()
+nextLoop logger config = do 
+    botLog logger LoggerMsgs.nextLoop
+    threadDelay 3000000 
+    runBot config 
 
 
 
