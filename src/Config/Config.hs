@@ -44,3 +44,28 @@ parseConfig path = do
                     <*> Just Map.empty 
                     <*> (read <$> priority)                    
             _ -> pure Nothing 
+
+
+
+setUserRepeat :: Config -> Integer -> Int -> Config
+setUserRepeat config chid newRep = case Map.lookup chid (users config) of 
+    Nothing -> addUser chid newRep config
+    Just _ -> (addUser chid newRep . deleteUser chid) config 
+
+findUserRepeat :: Config -> Integer -> Int 
+findUserRepeat config chid = case Map.lookup chid (users config) of 
+    Nothing -> repetition config 
+    Just val -> val 
+
+
+deleteUser :: Integer -> Config -> Config 
+deleteUser chid (TConfig hm o rep tok uss prior) = 
+    TConfig hm o rep tok (Map.delete chid uss) prior
+
+addUser :: Integer -> Int -> Config -> Config 
+addUser chid newRep (TConfig hm o rep tok uss prior) = 
+    TConfig hm o rep tok (Map.insert chid newRep uss) prior
+
+configSetOffset :: Config -> Integer -> Config
+configSetOffset (TConfig hm _ rep tok us prior) newOffset = 
+    TConfig hm newOffset rep tok us prior 
