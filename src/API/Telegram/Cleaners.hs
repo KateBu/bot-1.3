@@ -5,7 +5,7 @@ import qualified Data.Text as T
 import API.Telegram.Structs
 import Logic.PureStructs
 import Logger.Logger
-import qualified Logger.LoggerMsgs as LoggerMsgs
+import Logger.LoggerMsgs
 
 type Err = T.Text  
 
@@ -56,8 +56,8 @@ updResultToMessage (TelUpdateResult uid (Just mInfo) _) =
         _ -> pure $ CommonMessage uid ((chat_id . chat) mInfo) msg (caption mInfo)
 
 
-updatesToPureMessageList :: Either Err TelegramUpdates -> IO (Either Err [Message])
-updatesToPureMessageList (Left err) = return $ Left err  
+updatesToPureMessageList :: Either LogMessage TelegramUpdates -> IO (Either LogMessage [Message])
+updatesToPureMessageList (Left err) = return $ Left err
 updatesToPureMessageList (Right tup) = do
     msgs <- mapM updResultToMessage (result tup)
     return $ Right msgs 
