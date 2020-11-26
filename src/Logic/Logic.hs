@@ -2,92 +2,92 @@ module Logic.Logic where
 
 import qualified Data.Text as T
 
+import Handle.Handle 
 import Logic.PureStructs
 import Logger.Logger  
-import qualified Logger.LoggerMsgs as LoggerMsgs
+import Logger.LoggerMsgs
 import Config.Config
 import qualified Data.Map as Map 
 
-processMessage :: (Monad m) => Config -> Maybe Message -> m ProcessMessageResult
-processMessage _ Nothing  = return Empty
-processMessage config (Just (EmptyMessage uid)) = pure $ 
-    ProcessMessageResult 
-        uid 
-        (LogMessage Debug "Empty message processed") 
-        (users config) 
-        Nothing
-        Nothing
-        Nothing 
-        Nothing
-processMessage config (Just (CommonMessage uid chid msg cap)) = let 
-        maybeUser = Map.lookup chid (users config) 
-    in case maybeUser of 
-        Nothing -> pure $
-            ProcessMessageResult
-                uid 
-                (LogMessage Debug "Common Message Processed") 
-                (Map.insert chid (repetition config) (users config))
-                (Just chid)
-                (Just $ repetition config)
-                (Just msg) 
-                cap
-        Just val -> pure $ 
-            ProcessMessageResult
-                uid 
-                (LogMessage Debug "Common Message Processed") 
-                (users config)
-                (Just chid)
-                (Just val)
-                (Just msg) 
-                cap
-processMessage config (Just (UserCommand uid command)) = case text command of 
-    "/help" -> pure $ ProcessMessageResult 
-        uid 
-        (LogMessage Debug "Help Command Processed") 
-        (users config)
-        (Just $ chatID command)
-        (Just 1)
-        (Just (Txt (helpMessage config)))
-        Nothing 
-    "/repeat" -> pure $ ProcessMessageResult 
-        uid 
-        (LogMessage Debug "Repeat Command recieved, send buttons") 
-        (users config)
-        (Just $ chatID command)
-        (Just 1)
-        (Just (Buttons buttons))
-        Nothing 
-processMessage config (Just (CallbackQuery uid chid query)) = undefined
+processMessages :: (Monad m) => Config 
+    -> [Message] 
+    -> (Config -> Message -> m (Either LogMessage Config))  
+    -> m (Either LogMessage Config)
+processMessages config msgs function = do 
+    eiConfs <- mapM (processMessage_ config function) msgs 
+    case eiConfs of 
+        [] -> pure $ Left emptyList
+        _ -> case last eiConfs of 
+            Left err -> pure $ Left err
+            Right config -> pure $ Right config 
 
 
 
-setRepetitionQuery :: T.Text -> Users -> Users 
-setRepetitionQuery query = undefined 
+processMessage_ :: (Monad m) => Config 
+    -> (Config -> Message -> m (Either LogMessage Config)) 
+    -> Message     
+    -> m (Either LogMessage Config)
+processMessage_ config _ (EmptyMessage uid)  = 
+    pure $ Right (configSetOffset config (succ uid))
+
+processMessage_ config sendFunction (UserCommand uid command)  = case text command of 
+    "/help" -> sendFunction config 
+        (CommonMessage uid (chatID command) (Txt (helpMessage config)) Nothing)
+    "/repeat" -> sendFunction config 
+        (CommonMessage uid (chatID command) (Buttons buttons) Nothing)
+    _ -> pure $ Left cmdMsgFld
+
+processMessage_ config sendFunction (CallbackQuery uid chid txt)  = do 
+    let newConfig = setNewRepetition config chid txt 
+    sendFunction newConfig 
+        (CommonMessage uid chid (Txt (repeatText <> (T.pack . show) (getNewRepetition txt))) Nothing )
+
+processMessage_ config sendFunction (CommonMessage uid chid cMsg mCap)  = 
+    repeatMessage config (CommonMessage uid chid cMsg mCap)(findUserRepeat config chid) sendFunction 
 
 
-makeLogMessage :: Maybe Message -> Priority -> String -> LogMessage
-makeLogMessage Nothing _ _= LogMessage Error (LoggerMsgs.getLogMsg "nothing" )
-makeLogMessage (Just msg) prior key = LogMessage prior (LoggerMsgs.getLogMsg key <> msgInfo msg)
+repeatMessage :: (Monad m) => Config -> Message 
+    -> Int
+    -> (Config -> Message -> m (Either LogMessage Config))
+    -> m (Either LogMessage Config)
+repeatMessage config _ 0 _ = pure $ Right config 
+repeatMessage config msg n function = do 
+    eiConfig <- function config msg 
+    case eiConfig of 
+        Left err -> pure $ Left err 
+        Right newConfig -> repeatMessage newConfig msg (n-1) function 
 
-msgInfo :: Message -> T.Text 
-msgInfo msg = "\n\tUpdate ID: "
-    <> (T.pack . show .getUid) msg
+
+setNewRepetition :: Config -> Integer -> T.Text -> Config 
+setNewRepetition config chid queryText = 
+    setUserRepeat config chid (getNewRepetition queryText)
+
+
+
+
+getNewRepetition :: T.Text -> Int 
+getNewRepetition "/setRepetition1" = 1 
+getNewRepetition "/setRepetition2" = 2 
+getNewRepetition "/setRepetition3" = 3 
+getNewRepetition "/setRepetition4" = 4 
+getNewRepetition "/setRepetition5" = 5 
+
+
+
+getResultInfo :: ProcessMessageResult -> T.Text
+getResultInfo res = 
+    "\n\tUpdate ID: "
+    <> (T.pack . show . updID) res 
     <> "\n\tMessage Type: "
-    <> getMsgType msg 
-    <> "\n\tContent Type: "
-    <> getContentType msg 
+    <> msgType res 
+    <> maybeChid (mbChatID res)
+    <> maybeMsgInfo (mbMessage res)
 
+maybeChid :: Maybe Integer -> T.Text
+maybeChid Nothing = T.empty
+maybeChid (Just chid) = (T.pack . show) chid 
 
+maybeMsgInfo :: Maybe CMessage -> T.Text
+maybeMsgInfo Nothing = T.empty
+maybeMsgInfo (Just msg) = getMessageType msg
 
-
-
-
-{-
-getUpdateId :: UpdateID
-        , getLogMsg :: LogMessage
-        , getUsers :: Users
-        , getChatId :: Maybe Integer
-        , getRepetition :: Maybe Int 
-        , geMessage :: Maybe CMessage
-        , getCaption :: Maybe T.Text
--}
