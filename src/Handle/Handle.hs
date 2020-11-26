@@ -13,11 +13,8 @@ data Handle m = Handle
     {
         hConfig :: m Config
         , hLogger :: m Logger
-        , hGetUpdates :: m (Either Err [Message]) 
-        , hSendMessage :: Message -> m (Maybe Config) 
-        , hSendMessage_ :: Message -> m (Maybe ())
-        , hSetOffset :: Integer -> m Config
-        , hEditUsers :: Config -> User -> m (Maybe Config)
+        , hGetUpdates :: m (Either LogMessage [Message]) 
+        , hSendMessage_ :: Config -> Message -> m (Either LogMessage Config)
     }
 
 
