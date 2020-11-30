@@ -6,6 +6,7 @@ import Control.Concurrent
 
 import Config.Config 
 import qualified API.Telegram.Telegram as Telegram
+import qualified API.VK.VK as VK 
 import Handle.Handle
 import Logger.Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs 
@@ -28,6 +29,8 @@ main = do
 runBot :: Config -> IO ()
 runBot config = do 
     handle <- makeHandle config 
+    hConf <- hConfig handle 
+    showConfig config 
     logger <- hLogger handle 
     updates <- hGetUpdates handle 
     case updates of 
@@ -55,7 +58,7 @@ runBot config = do
 
 makeHandle :: Config -> IO (Handle IO)
 makeHandle config@(TConfig _ _ _ _ _ _) = Telegram.new config 
-makeHandle config = undefined
+makeHandle config@(VKConfig _ _ _ _ _ _ _ _ _) = VK.new config 
 
 
 nextLoop :: Logger -> Config -> IO ()
@@ -72,3 +75,13 @@ showConfig (TConfig help off rep tok us prior) = do
     TIO.putStrLn $ "Config file parsed: " 
         <> help <> "\n" <> T.pack (show off) <> "\n" <> T.pack (show rep) <> "\n"
         <> T.pack tok <> "\n" <> T.pack (show us) <> "\n" <> T.pack (show prior) 
+
+showConfig (VKConfig help rep tok us prior group k s ts) = do 
+    TIO.putStrLn $ "Config file parsed: " 
+        <> help <> "\n"  <> T.pack (show rep) <> "\n"
+        <> T.pack tok <> "\n" <> T.pack (show us) <> "\n" 
+        <> T.pack (show prior) <> "\n"
+        <> T.pack (show group) <> "\n"
+        <> T.pack (show k) <> "\n"
+        <> T.pack (show s )<> "\n"
+        <> T.pack (show ts)<> "\n"
