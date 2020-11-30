@@ -1,12 +1,19 @@
 module Config.Config where
 
 import qualified Data.Text as T 
+import qualified Data.Text.IO as TIO 
 import qualified Data.Map as Map 
 import qualified Data.Configurator as Configurator 
 import System.Directory 
 import Control.Monad 
+import Data.Aeson
+import Data.Maybe
+import Network.HTTP.Simple 
 
 import qualified Logger.Logger as Logger 
+import qualified Logger.LoggerMsgs as LoggerMsgs
+import API.VK.Structs
+import API.VK.Parsers
 
 type Users = Map.Map Integer Int 
 
@@ -19,7 +26,17 @@ data Config = TConfig {
         , priority :: Logger.Priority 
         }
 
-    | VKConfig
+    | VKConfig {
+        vkHelpMessage :: T.Text
+        , vkRepetition :: Int 
+        , vkToken :: String 
+        , vkUsers :: Users
+        , vkPriority :: Logger.Priority
+        , groupID :: Integer
+        , vkKey :: String
+        , vkServer :: String
+        , vkTs :: Int 
+        }
     deriving Show 
 
 
@@ -31,19 +48,63 @@ parseConfig path = do
         else do 
         conf <- Configurator.load [Configurator.Required path]
         botT <- Configurator.lookup conf (T.pack "bot.botType") :: IO (Maybe String)
+        rep <- Configurator.lookup conf (T.pack "bot.repetition") :: IO (Maybe Int)
+        msg <- Configurator.lookup conf (T.pack "bot.helpMessage") :: IO (Maybe T.Text)
+        priority <- Configurator.lookup conf (T.pack "bot.logPriority") :: IO (Maybe String)
         case botT of 
-            Just "Telegram" -> do 
-                rep <- Configurator.lookup conf (T.pack "bot.repetition") :: IO (Maybe Int)
-                tok <- Configurator.lookup conf (T.pack "bot.telegramToken") :: IO (Maybe String)
-                msg <- Configurator.lookup conf (T.pack "bot.helpMessage") :: IO (Maybe T.Text)
-                priority <- Configurator.lookup conf (T.pack "bot.logPriority") :: IO (Maybe String)
+            Just "Telegram" -> do         
+                tok <- Configurator.lookup conf (T.pack "bot.telegramToken") :: IO (Maybe String)        
                 pure $ TConfig <$> msg 
                     <*> Just 0 
                     <*> rep
                     <*> tok 
                     <*> Just Map.empty 
                     <*> (read <$> priority)                    
+            Just "VK" -> do 
+                tok <- Configurator.lookup conf (T.pack "bot.VKToken") :: IO (Maybe String)
+                group <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Integer)
+                vkSettings <- getVKSettings group tok
+                case vkSettings of 
+                    Left err -> do 
+                        TIO.putStrLn err                        
+                        pure Nothing 
+                    Right (key,serv,ts) -> 
+                        pure $ VKConfig <$> msg
+                            <*> rep 
+                            <*> tok 
+                            <*> Just Map.empty
+                            <*> (read <$> priority)
+                            <*> group
+                            <*> Just key
+                            <*> Just serv 
+                            <*> Just ts 
             _ -> pure Nothing 
+
+
+getVKSettings :: Maybe Integer -> Maybe String -> IO (Either T.Text (String, String, Int))
+getVKSettings group tok = do 
+    if (isNothing group || isNothing tok) 
+        then pure $ Left "VK Config parsing: Coulnd find group id or token"
+        else do 
+            http <- parseRequest $ "https://api.vk.com/method/groups.getLongPollServer?group_id="
+                <> (show . fromJust) group
+                <> "&access_token="
+                <> fromJust tok 
+                <> "&v=5.90"   
+            confSettings <- httpLBS http  
+            let respBody = getResponseBody confSettings 
+            case (eitherDecode respBody :: Either String VKResponse) of 
+                Right val -> case val of 
+                    VKResponse k s t -> pure $ Right (k,s,(read t))
+                    VKError ec em -> pure $ Left 
+                        ("error_code: " 
+                                <> (T.pack . show) ec 
+                                <> "error_message: "
+                                <> em )
+                    VKParseError -> pure $ Left "parse Error "
+                Left err -> pure $ Left (T.pack err) 
+
+
 
 
 
