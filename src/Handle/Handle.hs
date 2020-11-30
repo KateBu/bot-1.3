@@ -11,7 +11,7 @@ type Err = T.Text
 
 data Handle m = Handle 
     {
-        hConfig :: m Config
+        hConfig :: m (Either LogMessage Config)
         , hLogger :: m Logger
         , hGetUpdates :: m (Either LogMessage [Message]) 
         , hSendMessage_ :: Config -> Message -> m (Either LogMessage Config)

@@ -28,7 +28,7 @@ import qualified API.Telegram.Cleaners as Cleaners
 new :: Config -> IO (Handle IO) 
 new config =  pure $ Handle 
     {
-        hConfig = pure config 
+        hConfig = pure $ Right config 
         , hLogger = Logger.createLogger (priority config)
         , hGetUpdates = makeMessages config  
         , hSendMessage_ = sendM_
@@ -60,12 +60,14 @@ makeMessages config = do
 
 
 
-    
+    {-
 
 sendM :: Config -> [Message] -> IO (Either Logger.LogMessage Config)
 sendM config msgs= case msgs of 
     [] -> return $ Right config 
     _ -> undefined 
+-}
+
 
 sendM_ :: Config -> Message -> IO (Either Logger.LogMessage Config)
 sendM_ config msg = do 
@@ -83,11 +85,11 @@ sendM_ config msg = do
         err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
 
 
-
+{-
 setOffset :: (Monad m) => Config -> Integer -> m Config 
 setOffset (TConfig msg _ rep tok us prior) newOffset = 
     pure $ (TConfig msg newOffset rep tok us prior)
-
+-}
 
 decodeUpd :: LC.ByteString -> IO (Either Logger.LogMessage TelegramUpdates)
 decodeUpd js = case (decode js :: Maybe TelegramUpdates) of 
