@@ -7,6 +7,12 @@ fatalConfig :: T.Text
 fatalConfig = "FATAL ERROR: couldn't find or read the config file," 
             <> " check the path to the file and the information inside it"
 
+parseVKConfFld :: LogMessage
+parseVKConfFld = LogMessage Error "Parse VK Config Failed: "
+
+parseVKConfNoInfo :: LogMessage
+parseVKConfNoInfo = LogMessage Error "Parse VK Config Failed: no information"
+
 emptyList :: LogMessage
 emptyList = LogMessage Debug "Empty list: nothing to process"
 
