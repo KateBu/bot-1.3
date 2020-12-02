@@ -22,11 +22,13 @@ import API.VK.Structs
 import API.VK.Parsers
 
 
+
+
 new :: Config -> IO (Handle IO) 
 new config =  pure $ Handle 
     {
         hConfig = getConfig config  
-        , hLogger = Logger.createLogger (priority config)
+        , hLogger = Logger.createLogger (vkPriority config)
         , hGetUpdates = makeMessages config  
         , hSendMessage_ = sendM_
     }
@@ -36,7 +38,7 @@ getConfig config = pure $ Right config
 
 
 {-
-vkHelpMessage :: T.Text
+        vkHelpMessage :: T.Text
         , vkRepetition :: Int 
         , vkToken :: String 
         , vkUsers :: Users
@@ -48,24 +50,43 @@ vkHelpMessage :: T.Text
 -}
 
 getU :: Config -> IO (Either Logger.LogMessage VKUpdates) 
-getU config@(VKConfig _ _ tok _ _ group key serve ts) = undefined 
+getU config@(VKConfig _ _ tok _ _ group key server ts) = do 
+    http <- parseRequest $ server 
+        <> "?act=a_check&key=" 
+        <> key 
+        <> "&ts="
+        <> show ts 
+        <> "&wait=" 
+        <> timeOut        
+    updRequest <- httpLBS http 
+    let respBody = getResponseBody updRequest 
+    decodeUpd respBody 
 
--- {$server}?act=a_check&key={$key}&ts={$ts}&wait=25
 
-getU' :: Config -> IO Config 
-getU' config@(VKConfig _ _ tok _ _ group key server ts) = do 
-    let http = server <> "?act=a_check&key=" <> key <> "&ts="<> show ts <> "&wait=" <> "25"
-    putStrLn http 
-    pure  config
+
+decodeUpd :: LC.ByteString -> IO (Either Logger.LogMessage VKUpdates)
+decodeUpd json = case (eitherDecode json :: Either String VKUpdates) of 
+    Right (VKUpdateError err_code _) -> case err_code of 
+        1 -> pure $ Left LoggerMsgs.vkUpdatesFailed1 
+        2 -> pure $ Left LoggerMsgs.vkUpdatesFailed2
+        3 -> pure $ Left LoggerMsgs.vkUpdatesFailed3
+    Right upd -> pure $ Right upd 
+    Left err -> pure $ Left (Logger.LogMessage Logger.Error ("decode vk update failed: " <> (T.pack err)))
+
 
 makeMessages :: Config -> IO (Either Logger.LogMessage [Message])
-makeMessages config = undefined 
+makeMessages config = do 
+    vkUpd <- getU config 
+    case vkUpd of 
+        Left err -> pure $ Left err 
+        Right _ -> pure $ Left LoggerMsgs.vkUpdatesSuccess
 
 
 sendM_ = undefined 
 
 
-
+timeOut :: String 
+timeOut = "25"
 
 testConfig :: Config 
 testConfig = VKConfig 
