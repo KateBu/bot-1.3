@@ -47,7 +47,7 @@ withHandle config func params =
 
 
 getU :: Config -> IO (Either Logger.LogMessage TelegramUpdates)
-getU (TConfig _ off _ tok _ _) = do 
+getU (Config (Telegram tok off) _ _ _ _) = do 
     http <- parseRequest $ "https://api.telegram.org/bot" <> tok <> "/getUpdates?offset=" <> show off
     updRequest <- httpLBS http
     let respBody = getResponseBody updRequest 
