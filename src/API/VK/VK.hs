@@ -20,6 +20,7 @@ import qualified Logger.LoggerMsgs as LoggerMsgs
 import Logic.PureStructs 
 import API.VK.Structs
 import API.VK.Parsers
+import API.VK.Cleaners
 
 
 
@@ -28,7 +29,7 @@ new :: Config -> IO (Handle IO)
 new config =  pure $ Handle 
     {
         hConfig = getConfig config  
-        , hLogger = Logger.createLogger (vkPriority config)
+        , hLogger = Logger.createLogger (priority config)
         , hGetUpdates = makeMessages config  
         , hSendMessage_ = sendM_
     }
@@ -47,10 +48,10 @@ getConfig config = pure $ Right config
         , vkKey :: T.Text
         , vkServer :: T.Text
         , vkTs :: Int 
--}
+-}--Config bt hm rep uss prior        VKConfig _ _ tok _ _ group key server ts
 
 getU :: Config -> IO (Either Logger.LogMessage VKUpdates) 
-getU config@(VKConfig _ _ tok _ _ group key server ts) = do 
+getU (Config (VK tok group key server ts) _ _ _ _) = do 
     http <- parseRequest $ server 
         <> "?act=a_check&key=" 
         <> key 
@@ -77,9 +78,7 @@ decodeUpd json = case (eitherDecode json :: Either String VKUpdates) of
 makeMessages :: Config -> IO (Either Logger.LogMessage [Message])
 makeMessages config = do 
     vkUpd <- getU config 
-    case vkUpd of 
-        Left err -> pure $ Left err 
-        Right _ -> pure $ Left LoggerMsgs.vkUpdatesSuccess
+    updatesToPureMessageList vkUpd 
 
 
 sendM_ = undefined 
@@ -87,21 +86,6 @@ sendM_ = undefined
 
 timeOut :: String 
 timeOut = "25"
-
-testConfig :: Config 
-testConfig = VKConfig 
-        "" 
-        1 
-        ""
-        Map.empty
-        Logger.Info
-        00
-        ""
-        ""
-        1 
-
-
-
 
 
 
