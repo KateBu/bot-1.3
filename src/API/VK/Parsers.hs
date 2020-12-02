@@ -11,8 +11,8 @@ instance FromJSON VKUpdates where
         case (resp :: Maybe Int) of 
             Just val -> VKUpdateError val <$> 
                 obj .:? "ts"
-            Nothing -> VKUpdates <$> obj .: "ts"
-                <*> obj .: "updates"
+            Nothing -> VKUpdates <$> --obj .: "ts"
+                obj .: "updates"
 
 
 {-

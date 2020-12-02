@@ -7,10 +7,9 @@ import Logic.PureStructs
 import Logger.Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 
-updatesToPureMessageList :: Either LogMessage VKUpdates -> IO (Either LogMessage [Message])
-updatesToPureMessageList (Left logMsg) = pure $ Left logMsg 
-updatesToPureMessageList (Right upds) = do 
-    let uid = read $ ts upds :: UpdateID 
+updatesToPureMessageList :: (VKUpdates, UpdateID) -> IO (Either LogMessage [Message])
+updatesToPureMessageList (upds, uid) = do 
+    --let uid = read $ ts upds :: UpdateID 
     msgs <- mapM vkUpdatesToMessage (zip (updates upds) [uid ..])
     pure $ (sequence msgs) 
 

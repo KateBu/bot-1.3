@@ -5,8 +5,8 @@ import qualified Data.Text as T
 
 
 data VKUpdates = VKUpdates {
-        ts :: String
-        , updates :: [VKUpdInfo]
+    --    ts :: String
+        updates :: [VKUpdInfo]
     } 
     | VKUpdateError {
         failed :: Int
