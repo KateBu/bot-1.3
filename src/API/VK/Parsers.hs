@@ -15,15 +15,15 @@ instance FromJSON VKUpdates where
                 <*> obj .: "updates"
 
 
-
+{-
 
 instance FromJSON EventType where 
     parseJSON = withObject "EventType" $ \obj -> do 
         upType <- obj .: "type" 
         case (upType :: String) of 
             "message_new" -> pure MsgNew 
-            _ -> pure Other 
-
+            _ -> pure OtherEvent 
+-}
 instance FromJSON VKMessage where 
     parseJSON (Object obj) = 
         VKMessage <$> obj .: "id"
@@ -32,10 +32,13 @@ instance FromJSON VKMessage where
             <*> obj .:? "text"
 
 instance FromJSON VKUpdInfo where 
-    parseJSON (Object obj) = 
-        VKUpdInfo <$> obj .: "type"
-            <*> obj .:? "object"
-            <*> obj .:? "group_id"
+    parseJSON = withObject "VKUpdInfo" $ \obj -> do 
+        upType <- obj .: "type"
+        case (upType :: String) of 
+            "message_new" -> VKUpdInfo MsgNew <$>
+                obj .:? "object"
+                <*> obj .:? "group_id"
+            _ -> pure $ VKUpdInfo OtherEvent Nothing Nothing 
 
 
 
