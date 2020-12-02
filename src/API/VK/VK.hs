@@ -21,6 +21,7 @@ import Logic.PureStructs
 import API.VK.Structs
 import API.VK.Parsers
 import API.VK.Cleaners
+import API.VK.Wrapper
 
 
 
@@ -38,20 +39,8 @@ getConfig :: Config -> IO (Either Logger.LogMessage Config)
 getConfig config = pure $ Right config 
 
 
-{-
-        vkHelpMessage :: T.Text
-        , vkRepetition :: Int 
-        , vkToken :: String 
-        , vkUsers :: Users
-        , vkPriority :: Logger.Priority
-        , groupID :: Integer
-        , vkKey :: T.Text
-        , vkServer :: T.Text
-        , vkTs :: Int 
--}--Config bt hm rep uss prior        VKConfig _ _ tok _ _ group key server ts
-
 getU :: Config -> IO (Either Logger.LogMessage VKUpdates) 
-getU (Config (VK tok group key server ts) _ _ _ _) = do 
+getU (Config (VK _ _ key server ts) _ _ _ _) = do 
     http <- parseRequest $ server 
         <> "?act=a_check&key=" 
         <> key 
@@ -76,12 +65,28 @@ decodeUpd json = case (eitherDecode json :: Either String VKUpdates) of
 
 
 makeMessages :: Config -> IO (Either Logger.LogMessage [Message])
-makeMessages config = do 
+makeMessages config@(Config (VK _ _ _ _ ts) _ _ _ _) = do 
     vkUpd <- getU config 
-    updatesToPureMessageList vkUpd 
+    case vkUpd of 
+        Left err -> pure $ Left err 
+        Right val -> updatesToPureMessageList $ (val, ts) 
 
 
-sendM_ = undefined 
+sendM_ :: Config -> Message -> IO (Either Logger.LogMessage Config)
+sendM_ config message = do
+    manager  <- newManager tlsManagerSettings
+    let respObj = makeMessageObject message 
+    initialResponse <- parseRequest $ sendMessageHttpRequest config 
+
+    let resp = initialResponse {method = "POST"
+        , requestBody = RequestBodyLBS $ encode respObj
+        , requestHeaders = [("Content-Type", "application/json; charset=utf-8")]
+        }
+    response <- Network.HTTP.Client.httpLbs resp manager 
+
+    case statusCode (responseStatus response) of 
+        200 -> pure $ Right (configSetOffset config ((succ . getUid) message )) 
+        err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
 
 
 timeOut :: String 
@@ -92,39 +97,6 @@ timeOut = "25"
 
 
 
-
-
-
-
-
-{-getConfig (VKConfig hm rep tok uss prior group Nothing Nothing Nothing) = do 
-    http <- parseRequest $ "https://api.vk.com/method/groups.getLongPollServer?group_id=200669666&access_token="
-        <> tok 
-        <> "&v=5.50"    
-    confSettings <- httpLBS http  
-    let respBody = getResponseBody confSettings 
-    defineVKConfig 
-        (VKConfig hm rep tok uss prior group Nothing Nothing Nothing)
-        respBody 
--}
-
-
-{-
-
-defineVKConfig :: Config -> LC.ByteString -> IO (Either Logger.LogMessage Config)
-defineVKConfig (VKConfig hm rep tok uss prior group _ _ _) json = case (decode json :: Maybe VKResponse) of 
-    Just val -> case val of 
-        VKResponse k s t -> pure $ Right (VKConfig hm rep tok uss prior (Just k) (Just s) (Just t))
-        VKError ec em -> pure $ Left 
-            (Logger.makeLogMessage 
-                LoggerMsgs.parseVKConfFld 
-                ("error_code: " 
-                    <> (T.pack . show) ec 
-                    <> "error_message: "
-                    <> em ))
-        VKParseError -> pure $ Left LoggerMsgs.parseVKConfNoInfo 
-    Nothing -> pure $ Left LoggerMsgs.parseVKConfNoInfo 
--}
 
 
 
