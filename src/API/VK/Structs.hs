@@ -3,11 +3,14 @@ module API.VK.Structs where
 import GHC.Generics
 import qualified Data.Text as T 
 
-data VKUpdates = VKUpdates 
-    {
-        ts :: Integer
+data VKUpdates = VKUpdates {
+        ts :: String
         , updates :: [VKUpdInfo]
-    } deriving (Show, Generic)
+    } 
+    | VKUpdateError {
+        failed :: Int
+        , curTs :: Maybe String
+    } deriving (Show)
 
 data VKUpdInfo = VKUpdInfo
     {
