@@ -89,4 +89,12 @@ vkUpdatesFailed3 = LogMessage Warning "VKUpdate failed 3: Information was lost, 
 vkUpdatesSuccess :: LogMessage
 vkUpdatesSuccess = LogMessage Debug "VK updates revieved successfully"
 
+vkUpdatesParsingUnknownMsgType :: LogMessage
+vkUpdatesParsingUnknownMsgType = LogMessage Error 
+    "Cannot parse VK updates into Pure Message, unknonw VK updates event type"
 
+vkUpdatesParsingNoMsg :: LogMessage
+vkUpdatesParsingNoMsg = LogMessage Error "VK updates message not found"
+
+vkUpdatesParsingNoGroupID :: LogMessage
+vkUpdatesParsingNoGroupID = LogMessage Error "VK updates group ID not found"
