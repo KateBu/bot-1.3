@@ -17,28 +17,26 @@ import API.VK.Parsers
 
 type Users = Map.Map Integer Int 
 
-data Config = TConfig {
-        helpMessage :: T.Text 
-        , offset :: Integer
+data Config = Config 
+    {
+        botType :: BotType 
+        , helpMessage :: T.Text
         , repetition :: Int 
-        , token :: String 
         , users :: Users 
-        , priority :: Logger.Priority 
-        }
+        , priority :: Logger.Priority
+    } deriving Show 
 
-    | VKConfig {
-        vkHelpMessage :: T.Text
-        , vkRepetition :: Int 
-        , vkToken :: String 
-        , vkUsers :: Users
-        , vkPriority :: Logger.Priority
+data BotType = Telegram {
+        tToken :: String
+        , tOffset :: Integer 
+    }
+    | VK {
+        vkToken :: String
         , groupID :: Integer
-        , vkKey :: String
-        , vkServer :: String
-        , vkTs :: Int 
-        }
-    deriving Show 
-
+        , vkKey :: String 
+        , vkServer :: String 
+        , vkTs :: Integer 
+    } deriving Show 
 
 parseConfig :: String -> IO (Maybe Config)
 parseConfig path = do 
@@ -52,36 +50,32 @@ parseConfig path = do
         msg <- Configurator.lookup conf (T.pack "bot.helpMessage") :: IO (Maybe T.Text)
         priority <- Configurator.lookup conf (T.pack "bot.logPriority") :: IO (Maybe String)
         case botT of 
-            Just "Telegram" -> do         
-                tok <- Configurator.lookup conf (T.pack "bot.telegramToken") :: IO (Maybe String)        
-                pure $ TConfig <$> msg 
-                    <*> Just 0 
-                    <*> rep
-                    <*> tok 
+            Just "Telegram" -> do 
+                tok <- Configurator.lookup conf (T.pack "bot.telegramToken") :: IO (Maybe String)  
+                let tSet = Telegram <$> tok <*> Just 0
+                pure $ Config <$> tSet
+                    <*>  msg
+                    <*> rep 
                     <*> Just Map.empty 
-                    <*> (read <$> priority)                    
+                    <*> (read <$> priority)
             Just "VK" -> do 
                 tok <- Configurator.lookup conf (T.pack "bot.VKToken") :: IO (Maybe String)
                 group <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Integer)
                 vkSettings <- getVKSettings group tok
-                case vkSettings of 
+                case vkSettings of
                     Left err -> do 
                         TIO.putStrLn err                        
-                        pure Nothing 
-                    Right (key,serv,ts) -> 
-                        pure $ VKConfig <$> msg
+                        pure Nothing
+                    Right (key,serv,ts) -> do 
+                        let vkSet = VK <$> tok <*> group <*> Just key <*> Just serv <*> Just ts 
+                        pure $  Config <$> vkSet 
+                            <*> msg 
                             <*> rep 
-                            <*> tok 
                             <*> Just Map.empty
                             <*> (read <$> priority)
-                            <*> group
-                            <*> Just key
-                            <*> Just serv 
-                            <*> Just ts 
             _ -> pure Nothing 
 
-
-getVKSettings :: Maybe Integer -> Maybe String -> IO (Either T.Text (String, String, Int))
+getVKSettings :: Maybe Integer -> Maybe String -> IO (Either T.Text (String, String, Integer))
 getVKSettings group tok = do 
     if (isNothing group || isNothing tok) 
         then pure $ Left "VK Config parsing: Coulnd find group id or token"
@@ -120,13 +114,17 @@ findUserRepeat config chid = case Map.lookup chid (users config) of
 
 
 deleteUser :: Integer -> Config -> Config 
-deleteUser chid (TConfig hm o rep tok uss prior) = 
-    TConfig hm o rep tok (Map.delete chid uss) prior
+deleteUser chid (Config bt hm rep uss prior) = 
+    Config bt hm rep (Map.delete chid uss) prior
 
 addUser :: Integer -> Int -> Config -> Config 
-addUser chid newRep (TConfig hm o rep tok uss prior) = 
-    TConfig hm o rep tok (Map.insert chid newRep uss) prior
+addUser chid newRep (Config bt hm rep uss prior) = 
+    Config bt hm rep (Map.insert chid newRep uss) prior
 
 configSetOffset :: Config -> Integer -> Config
-configSetOffset (TConfig hm _ rep tok us prior) newOffset = 
-    TConfig hm newOffset rep tok us prior 
+configSetOffset (Config bt hm rep uss prior) newOffset = 
+    case bt of 
+        Telegram tok _  -> 
+            Config (Telegram tok newOffset) hm rep uss prior
+        VK tok group key serv _ -> 
+            Config (VK tok group key serv newOffset) hm rep uss prior
