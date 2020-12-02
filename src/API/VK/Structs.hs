@@ -3,6 +3,7 @@ module API.VK.Structs where
 import GHC.Generics
 import qualified Data.Text as T 
 
+
 data VKUpdates = VKUpdates {
         ts :: String
         , updates :: [VKUpdInfo]
@@ -19,16 +20,16 @@ data VKUpdInfo = VKUpdInfo
         , groupId :: Maybe Integer
     } deriving Show 
 
-data EventType = MsgNew | Other 
+data EventType = MsgNew | OtherEvent 
     deriving Show 
 
 data VKMessage = VKMessage 
     {
         id :: Integer
     --    , date :: Integer 
-        , peer_id :: Integer 
-        , from_id :: Integer 
-        , text :: Maybe T.Text
+        , peer_id :: Integer --reciever id 
+        , from_id :: Integer --sender id
+        , msgText :: Maybe T.Text
      {-   , random_id :: Maybe Integer
         , ref :: Maybe String 
         , ref_source :: Maybe String
