@@ -38,6 +38,10 @@ data BotType = Telegram {
         , vkTs :: Integer 
     } deriving Show 
 
+vkApiVersion :: String 
+vkApiVersion = "5.90"
+
+
 parseConfig :: String -> IO (Maybe Config)
 parseConfig path = do 
     file <- doesFileExist path
@@ -84,7 +88,8 @@ getVKSettings group tok = do
                 <> (show . fromJust) group
                 <> "&access_token="
                 <> fromJust tok 
-                <> "&v=5.90"   
+                <> "&v="   
+                <> vkApiVersion
             confSettings <- httpLBS http  
             let respBody = getResponseBody confSettings 
             case (eitherDecode respBody :: Either String VKResponse) of 
@@ -128,3 +133,4 @@ configSetOffset (Config bt hm rep uss prior) newOffset =
             Config (Telegram tok newOffset) hm rep uss prior
         VK tok group key serv _ -> 
             Config (VK tok group key serv newOffset) hm rep uss prior
+
