@@ -77,3 +77,16 @@ nextLoop :: LogMessage
 nextLoop = LogMessage Debug "Go to the next loop"
 
 
+vkUpdatesFailed1 :: LogMessage
+vkUpdatesFailed1 = LogMessage Warning "VKUpdate failed 1: Events was partly lost, use new ts value"
+
+vkUpdatesFailed2 :: LogMessage
+vkUpdatesFailed2 = LogMessage Warning "VKUpdate failed 2: Key value is not acceptable anymore, get new key value"
+
+vkUpdatesFailed3 :: LogMessage
+vkUpdatesFailed3 = LogMessage Warning "VKUpdate failed 3: Information was lost, get new key and ts values"
+
+vkUpdatesSuccess :: LogMessage
+vkUpdatesSuccess = LogMessage Debug "VK updates revieved successfully"
+
+
