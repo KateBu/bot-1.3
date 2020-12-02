@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0733ae44803565390d54ce4e75f6a878a0ad101426b2ac09ed685303c0370848
+-- hash: a34e64d76a5f11f4bd1d707fd1330c35a7b6cdc493e17a38199a1e915e283a3c
 
 name:           bot13
 version:        0.1.0.0
@@ -36,6 +36,7 @@ library
       API.VK.Parsers
       API.VK.Structs
       API.VK.VK
+      API.VK.Wrapper
       Config.Config
       Handle.Handle
       Lib
