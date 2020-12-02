@@ -30,7 +30,7 @@ runBot :: Config -> IO ()
 runBot config = do 
     handle <- makeHandle config 
     --hConf <- hConfig handle 
-    showConfig config 
+    --showConfig config 
     logger <- hLogger handle 
     updates <- hGetUpdates handle 
     case updates of 
