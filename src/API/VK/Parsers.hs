@@ -5,7 +5,16 @@ import API.VK.Structs
 import Data.Aeson 
 
 
-instance FromJSON VKUpdates 
+instance FromJSON VKUpdates where 
+    parseJSON = withObject "VKUpdates" $ \obj -> do
+        resp <- obj .:? "failed"
+        case (resp :: Maybe Int) of 
+            Just val -> VKUpdateError val <$> 
+                obj .:? "ts"
+            Nothing -> VKUpdates <$> obj .: "ts"
+                <*> obj .: "updates"
+
+
 
 
 instance FromJSON EventType where 
