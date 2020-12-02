@@ -29,7 +29,7 @@ createLogger priority = pure $ Logger
     }
 
 startText :: Priority -> T.Text
-startText Debug = "Debug information: "
+startText Debug = "Debug: "
 startText Info = "Info: "
 startText Warning = "Warning: "
 startText Error = "ERROR: "
