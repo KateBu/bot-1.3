@@ -67,9 +67,9 @@ makeMessageObject (CommonMessage _ chid msg cap) = object $
     <> getMaybeText "caption" cap 
 
 sendMessageHttpRequest :: Config -> Message -> String 
-sendMessageHttpRequest conf msg = case getContentType msg of 
+sendMessageHttpRequest (Config (Telegram tok _) _ _ _ _) msg = case getContentType msg of 
     "No content" -> undefined
     _ -> "https://api.telegram.org/bot" 
-        <> token conf 
+        <> tok 
         <> "/send" 
         <> T.unpack (getContentType msg)
