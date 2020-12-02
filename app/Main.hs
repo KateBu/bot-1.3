@@ -29,8 +29,8 @@ main = do
 runBot :: Config -> IO ()
 runBot config = do 
     handle <- makeHandle config 
-    hConf <- hConfig handle 
-    --showConfig config 
+    --hConf <- hConfig handle 
+    showConfig config 
     logger <- hLogger handle 
     updates <- hGetUpdates handle 
     case updates of 
@@ -57,8 +57,9 @@ runBot config = do
 
 
 makeHandle :: Config -> IO (Handle IO)
-makeHandle config@(TConfig _ _ _ _ _ _) = Telegram.new config 
-makeHandle config@(VKConfig _ _ _ _ _ _ _ _ _) = VK.new config 
+makeHandle config = case botType config of 
+    Telegram _ _ -> Telegram.new config 
+    VK _ _ _ _ _ -> VK.new config 
 
 
 nextLoop :: Logger -> Config -> IO ()
@@ -71,17 +72,24 @@ nextLoop logger config = do
 
 
 showConfig :: Config -> IO ()
-showConfig (TConfig help off rep tok us prior) = do 
+showConfig (Config bt hm rep uss prior) = do 
     TIO.putStrLn $ "Config file parsed: " 
-        <> help <> "\n" <> T.pack (show off) <> "\n" <> T.pack (show rep) <> "\n"
-        <> T.pack tok <> "\n" <> T.pack (show us) <> "\n" <> T.pack (show prior) 
+        <> showBotSettings bt <> "\n"
+        <> "help message: " <> hm <> "\n"
+        <> "repetition: " <> T.pack (show rep) <> "\n"
+        <> "users: " <> T.pack (show uss) <> "\n"
+        <> "priority: " <> T.pack (show prior)
 
-showConfig (VKConfig help rep tok us prior group k s ts) = do 
-    TIO.putStrLn $ "Config file parsed: " 
-        <> help <> "\n"  <> T.pack (show rep) <> "\n"
-        <> T.pack tok <> "\n" <> T.pack (show us) <> "\n" 
-        <> T.pack (show prior) <> "\n"
-        <> T.pack (show group) <> "\n"
-        <> T.pack (show k) <> "\n"
-        <> T.pack (show s )<> "\n"
-        <> T.pack (show ts)<> "\n"
+
+showBotSettings :: BotType -> T.Text
+showBotSettings (Telegram tok off) = 
+    "Bot type: Telegram \n" 
+    <> "token: " <> T.pack tok <> "\n"
+    <> "offset: " <> T.pack (show off)
+showBotSettings (VK tok group key serv ts) = 
+    "Bot type: VK \n"
+    <> "token: " <> T.pack tok <> "\n"
+    <> "group ID: " <> T.pack (show group) <> "\n"
+    <> "key: " <> T.pack key <> "\n"
+    <> "server: " <> T.pack serv <> "\n"
+    <> "ts: " <> T.pack (show ts) <> "\n"
