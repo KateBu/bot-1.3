@@ -96,5 +96,6 @@ repeatText = "Выберите количество повторов:"
 newRepeatText :: Int -> T.Text
 newRepeatText rep = "Установлено количество обновлений: " <> (T.pack . show) rep
 
-
+cMsgToText :: CMessage -> T.Text
+cMsgToText (Txt txt) = "Text message:" <> txt 
 
