@@ -53,7 +53,7 @@ instance FromJSON ClientInfo where
 
 instance FromJSON VKResult where 
     parseJSON = withObject "VKResult" $ \obj -> do 
-        isError <- obj .: "error"
+        isError <- obj .:? "error"
         case isError of 
             Just val -> pure $ SendMsgError val 
             Nothing -> SendMsgScs <$> obj .: "response"
