@@ -12,6 +12,7 @@ import Network.HTTP.Client
 import Network.HTTP.Client.TLS 
 import Network.HTTP.Types.Status (statusCode)
 import Data.Aeson
+import System.Random 
 
 import Handle.Handle 
 import Config.Config 
@@ -74,25 +75,38 @@ makeMessages config@(Config (VK _ _ _ _ ts) _ _ _ _) = do
 
 sendM_ :: Config -> Message -> IO (Either Logger.LogMessage Config)
 sendM_ config message = do
-    manager  <- newManager tlsManagerSettings
-    let respObj = makeMessageObject message 
-    initialResponse <- parseRequest $ sendMessageHttpRequest config 
+    random_id <- getRandonId 
 
-    let resp = initialResponse {method = "POST"
-        , requestBody = RequestBodyLBS $ encode respObj
+    manager  <- newManager tlsManagerSettings
+
+    --let respObj = makeRequestBody message random_id
+    initialResponse <- parseRequest $ sendMessageHttpRequest config <> makeRequestBody message random_id 
+
+    let resp = initialResponse { method = "POST"
+      --  , requestBody = RequestBodyLBS respObj
         , requestHeaders = [("Content-Type", "application/json; charset=utf-8")]
         }
-    response <- Network.HTTP.Client.httpLbs resp manager 
+    response <- Network.HTTP.Client.httpLbs resp manager     
 
     case statusCode (responseStatus response) of 
-        200 -> pure $ Right (configSetOffset config ((succ . getUid) message )) 
+        200 -> do 
+            let sndMsgResult = eitherDecode (getResponseBody response) :: Either String VKResult 
+            case sndMsgResult of 
+                Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
+                Right (SendMsgError err) -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (errMsg err))
+                Right (SendMsgScs newTs) -> pure $ Right (configSetOffset config newTs )
+
+            pure $ Right (configSetOffset config ((succ . getUid) message )) 
         err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
 
 
 timeOut :: String 
 timeOut = "25"
 
-
+getRandonId :: IO Integer
+getRandonId = do 
+    gen <- getStdGen 
+    pure $ ( (fst . random) gen :: Integer)
 
 
 
