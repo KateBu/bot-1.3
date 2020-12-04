@@ -30,7 +30,7 @@ new config =  pure $ Handle
     {
         hConfig = pure $ Right config 
         , hLogger = Logger.createLogger (priority config)
-        , hGetUpdates = makeMessages config  
+        , hGetUpdates = makeMessages  
         , hSendMessage_ = sendM_
     }
 
@@ -48,7 +48,7 @@ withHandle config func params =
 
 getU :: Config -> IO (Either Logger.LogMessage TelegramUpdates)
 getU (Config (Telegram tok off) _ _ _ _) = do 
-    http <- parseRequest $ "https://api.telegram.org/bot" <> tok <> "/getUpdates?offset=" <> show off
+    http <- parseRequest $ "https://api.telegram.org/bot" <> tok <> "/getUpdates?offset=" <> show off <> "&timeout=" <> timeOut
     updRequest <- httpLBS http
     let respBody = getResponseBody updRequest 
     decodeUpd respBody 
@@ -57,16 +57,6 @@ makeMessages :: Config -> IO (Either Logger.LogMessage [Message])
 makeMessages config = do 
     updates <- getU config 
     Cleaners.updatesToPureMessageList updates 
-
-
-
-    {-
-
-sendM :: Config -> [Message] -> IO (Either Logger.LogMessage Config)
-sendM config msgs= case msgs of 
-    [] -> return $ Right config 
-    _ -> undefined 
--}
 
 
 sendM_ :: Config -> Message -> IO (Either Logger.LogMessage Config)
@@ -84,12 +74,6 @@ sendM_ config msg = do
         200 -> pure $ Right (configSetOffset config ((succ . getUid) msg )) 
         err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
 
-
-{-
-setOffset :: (Monad m) => Config -> Integer -> m Config 
-setOffset (TConfig msg _ rep tok us prior) newOffset = 
-    pure $ (TConfig msg newOffset rep tok us prior)
--}
 
 decodeUpd :: LC.ByteString -> IO (Either Logger.LogMessage TelegramUpdates)
 decodeUpd js = case (decode js :: Maybe TelegramUpdates) of 
