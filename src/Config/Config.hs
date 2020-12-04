@@ -41,6 +41,9 @@ data BotType = Telegram {
 vkApiVersion :: String 
 vkApiVersion = "5.126"
 
+timeOut :: String 
+timeOut = "25"
+
 
 parseConfig :: String -> IO (Maybe Config)
 parseConfig path = do 
@@ -104,7 +107,23 @@ getVKSettings group tok = do
                 Left err -> pure $ Left (T.pack err) 
 
 
+getVkGroup :: Config -> Maybe Integer
+getVkGroup (Config (VK _ group _ _ _) _ _ _ _) = Just group 
+getVkGroup _ = Nothing 
 
+getVkTok :: Config -> Maybe String 
+getVkTok (Config (VK tok _ _ _ _) _ _ _ _) = Just tok 
+getVkTok _ = Nothing 
+
+getVkTs :: Config -> Maybe Integer 
+getVkTs (Config (VK _ _ _ _ ts) _ _ _ _) = Just ts 
+getVkTs _ = Nothing
+
+
+setVkSettings :: Config ->  Either T.Text (String, String, Integer) -> Either Logger.LogMessage Config 
+setVkSettings _ (Left txt) = Left (Logger.LogMessage Logger.Error txt)
+setVkSettings (Config (VK tok group _ _ _) hm rep uss prior) (Right (key, serv, ts)) = Right $ 
+    Config (VK tok group key serv ts ) hm rep uss prior 
 
 
 setUserRepeat :: Config -> Integer -> Int -> Config
