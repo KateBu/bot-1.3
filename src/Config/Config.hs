@@ -39,7 +39,7 @@ data BotType = Telegram {
     } deriving Show 
 
 vkApiVersion :: String 
-vkApiVersion = "5.90"
+vkApiVersion = "5.126"
 
 
 parseConfig :: String -> IO (Maybe Config)
