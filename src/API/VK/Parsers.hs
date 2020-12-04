@@ -40,8 +40,29 @@ instance FromJSON VKUpdInfo where
                 <*> obj .:? "group_id"
             _ -> pure $ VKUpdInfo OtherEvent Nothing Nothing 
 
+instance FromJSON VKObject where 
+    parseJSON (Object obj) = VKObject <$> obj .: "message"
+        <*> obj .: "client_info"
+
+instance FromJSON ClientInfo where 
+    parseJSON (Object obj) = ClientInfo <$> obj .: "button_actions" 
+        <*> obj .: "keyboard"
+        <*> obj .: "inline_keyboard"
 
 
+
+instance FromJSON VKResult where 
+    parseJSON = withObject "VKResult" $ \obj -> do 
+        isError <- obj .: "error"
+        case isError of 
+            Just val -> pure $ SendMsgError val 
+            Nothing -> SendMsgScs <$> obj .: "response"
+
+
+instance FromJSON VKResultError where 
+    parseJSON (Object obj) = VKResultError <$> 
+        obj .: "error_code"
+        <*> obj .: "error_msg"
 
 
 instance FromJSON VKResponse where 

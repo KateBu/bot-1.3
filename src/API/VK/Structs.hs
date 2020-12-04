@@ -16,9 +16,20 @@ data VKUpdates = VKUpdates {
 data VKUpdInfo = VKUpdInfo
     {
         updType :: EventType
-        , updObj :: Maybe VKMessage
+        , updObj :: Maybe VKObject
         , groupId :: Maybe Integer
     } deriving Show 
+
+data VKObject = VKObject {
+    vkMessage :: VKMessage
+    , clientInfo :: ClientInfo
+} deriving Show
+
+data ClientInfo = ClientInfo {
+    vkButtonActions :: [String]
+    , vkKeyboard :: Bool
+    , vkInlineKeyboard :: Bool
+}deriving Show
 
 data EventType = MsgNew | OtherEvent 
     deriving Show 
@@ -108,3 +119,20 @@ data VKResponse = VKResponse {
     
 
 
+data VKSend = VKSend {
+    respPeerId :: Integer
+    , respMessage :: Maybe T.Text
+    , respRandomId :: Integer 
+} deriving Show 
+
+data VKResult = SendMsgScs {
+        newTs :: Integer
+    } 
+    | SendMsgError {
+        resError :: VKResultError
+    } deriving Show 
+
+data VKResultError = VKResultError {
+    errCode :: Integer
+    , errMsg :: T.Text
+} deriving Show 

@@ -1,6 +1,7 @@
 module API.VK.Cleaners where
 
 import qualified Data.Text as T 
+import Data.Maybe
 
 import API.VK.Structs
 import Logic.PureStructs
@@ -20,8 +21,8 @@ vkUpdatesToMessage ((VKUpdInfo OtherEvent _ _), uid) = pure $ Left LoggerMsgs.vk
 vkUpdatesToMessage ((VKUpdInfo MsgNew msg _), uid) = case msg of 
     Nothing -> pure $ Left LoggerMsgs.vkUpdatesParsingNoMsg
     Just msg -> do 
-        let chid = from_id msg
-        let cMsg = updatesToComMessage msg 
+        let chid = (from_id . vkMessage) msg
+        let cMsg = (updatesToComMessage . vkMessage) msg 
         pure $ Right (CommonMessage uid chid cMsg Nothing) 
 
 
