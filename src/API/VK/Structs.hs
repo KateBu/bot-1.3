@@ -10,7 +10,7 @@ data VKUpdates = VKUpdates {
     } 
     | VKUpdateError {
         failed :: Int
-        , curTs :: Maybe String
+        , curTs :: Maybe Integer 
     } deriving (Show)
 
 data VKUpdInfo = VKUpdInfo
