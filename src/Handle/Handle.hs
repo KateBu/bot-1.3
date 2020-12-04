@@ -13,7 +13,7 @@ data Handle m = Handle
     {
         hConfig :: m (Either LogMessage Config)
         , hLogger :: m Logger
-        , hGetUpdates :: m (Either LogMessage [Message]) 
+        , hGetUpdates :: Config -> m (Either LogMessage [Message]) 
         , hSendMessage_ :: Config -> Message -> m (Either LogMessage Config)
     }
 
