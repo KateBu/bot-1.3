@@ -13,6 +13,8 @@ import Network.HTTP.Client.TLS
 import Network.HTTP.Types.Status (statusCode)
 import Data.Aeson
 import System.Random 
+import Data.Maybe 
+import Control.Concurrent
 
 import Handle.Handle 
 import Config.Config 
@@ -32,16 +34,23 @@ new config =  pure $ Handle
     {
         hConfig = getConfig config  
         , hLogger = Logger.createLogger (priority config)
-        , hGetUpdates = makeMessages config  
+        , hGetUpdates = makeMessages  
         , hSendMessage_ = sendM_
     }
 
 getConfig :: Config -> IO (Either Logger.LogMessage Config)
 getConfig config = pure $ Right config 
+    
 
+    {-do 
+    let group = getVkGroup config 
+    let tok = getVkTok config 
+    confSettings <- getVKSettings group tok 
+    pure (setVkSettings config confSettings) 
+-}
 
 getU :: Config -> IO (Either Logger.LogMessage VKUpdates) 
-getU (Config (VK _ _ key server ts) _ _ _ _) = do 
+getU config@(Config (VK _ _ key server ts) _ _ _ _) = do 
     http <- parseRequest $ server 
         <> "?act=a_check&key=" 
         <> key 
@@ -51,14 +60,20 @@ getU (Config (VK _ _ key server ts) _ _ _ _) = do
         <> timeOut        
     updRequest <- httpLBS http 
     let respBody = getResponseBody updRequest 
-    decodeUpd respBody 
+    decoded <- decodeUpd respBody
+    case decoded of 
+        Right (VKUpdateError _ mbNewTs) -> 
+            getU (configSetOffset config (fromJust mbNewTs))
+        Right val -> do 
+            pure $ Right val 
+        Left err -> pure $ Left err 
 
 
 
 decodeUpd :: LC.ByteString -> IO (Either Logger.LogMessage VKUpdates)
 decodeUpd json = case (eitherDecode json :: Either String VKUpdates) of 
-    Right (VKUpdateError err_code _) -> case err_code of 
-        1 -> pure $ Left LoggerMsgs.vkUpdatesFailed1 
+    Right (VKUpdateError err_code mbNewTs) -> case err_code of 
+        1 -> pure $ Left LoggerMsgs.vkUpdatesFailed1  --Right (VKUpdateError err_code mbNewTs)                    --Left LoggerMsgs.vkUpdatesFailed1 
         2 -> pure $ Left LoggerMsgs.vkUpdatesFailed2
         3 -> pure $ Left LoggerMsgs.vkUpdatesFailed3
     Right upd -> pure $ Right upd 
@@ -76,36 +91,32 @@ makeMessages config@(Config (VK _ _ _ _ ts) _ _ _ _) = do
 sendM_ :: Config -> Message -> IO (Either Logger.LogMessage Config)
 sendM_ config message = do
     random_id <- getRandonId 
-
     manager  <- newManager tlsManagerSettings
 
-    --let respObj = makeRequestBody message random_id
-    initialResponse <- parseRequest $ sendMessageHttpRequest config <> makeRequestBody message random_id 
+    initialResponse <- parseRequest $ sendMessageHttpRequest config <> makeRequestBody message random_id     
 
     let resp = initialResponse { method = "POST"
-      --  , requestBody = RequestBodyLBS respObj
         , requestHeaders = [("Content-Type", "application/json; charset=utf-8")]
         }
+
     response <- Network.HTTP.Client.httpLbs resp manager     
 
     case statusCode (responseStatus response) of 
         200 -> do 
+            print (getResponseBody response)
             let sndMsgResult = eitherDecode (getResponseBody response) :: Either String VKResult 
             case sndMsgResult of 
-                Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
+                Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (T.pack err))
                 Right (SendMsgError err) -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (errMsg err))
-                Right (SendMsgScs newTs) -> pure $ Right (configSetOffset config newTs )
+                Right (SendMsgScs _) -> pure $ Right (configSetOffset config ((succ . getUid) message ))
 
-            pure $ Right (configSetOffset config ((succ . getUid) message )) 
         err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
 
 
-timeOut :: String 
-timeOut = "25"
 
 getRandonId :: IO Integer
 getRandonId = do 
-    gen <- getStdGen 
+    gen <- newStdGen 
     pure $ ( (fst . random) gen :: Integer)
 
 
