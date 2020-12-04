@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a34e64d76a5f11f4bd1d707fd1330c35a7b6cdc493e17a38199a1e915e283a3c
+-- hash: 5ad1b74bb6f870955a4f6edad59e2b9e283ec6b87b4b94f95fb42ea17e158b58
 
 name:           bot13
 version:        0.1.0.0
@@ -61,6 +61,7 @@ library
     , http-client-tls
     , http-conduit
     , http-types
+    , random
     , text
   default-language: Haskell2010
 
@@ -84,6 +85,7 @@ executable bot13-exe
     , http-client-tls
     , http-conduit
     , http-types
+    , random
     , text
   default-language: Haskell2010
 
@@ -108,5 +110,6 @@ test-suite bot13-test
     , http-client-tls
     , http-conduit
     , http-types
+    , random
     , text
   default-language: Haskell2010
