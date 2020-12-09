@@ -1,14 +1,12 @@
 module API.Telegram.Structs where
 
 import qualified Data.Text as T 
-import GHC.Generics
-
-
+import GHC.Generics ( Generic )
 
 
 data TelegramUpdatesError = TelegramUpdatesError 
     {
-        error_code:: Integer
+        error_code:: Int
         , description :: T.Text
     } deriving (Generic, Show)
 
@@ -20,7 +18,7 @@ data TelegramUpdates = TelegramUpdates
 
 data TelUpdateResult = TelUpdateResult 
     {
-        update_id :: Integer
+        update_id :: Int
         , messageInfo ::Maybe  MessageInfo
         , callback_query :: Maybe Callback 
     } deriving Show 
@@ -38,13 +36,12 @@ data CBMsg = CBMsg
 
 data CBChat = CBChat
     {
-        cb_chid :: Integer 
+        cb_chid :: Int 
     } deriving Show 
-
 
 data MessageInfo = MessageInfo 
     {
-        message_id :: Integer 
+        message_id :: Int
         , chat :: TelChat
         , txt :: Maybe T.Text
         , animation :: Maybe TelAmination
@@ -64,13 +61,13 @@ data MessageInfo = MessageInfo
 
 data TelChat = TelChat
     {
-        chat_id :: Integer
+        chat_id :: Int
         ,chat_type :: T.Text 
     } deriving Show 
 
 data TelForward = TelForward 
     {
-        f_id :: Maybe Integer 
+        f_id :: Maybe Int
         , f_is_bot :: Maybe Bool
         , f_first_name :: Maybe T.Text
         , f_last_name :: Maybe T.Text
@@ -87,7 +84,7 @@ data TelSticker = TelSticker
 data TelAudio = TelAudio 
     {
         audio_id :: T.Text
-        , audio_duration :: Maybe Integer
+        , audio_duration :: Maybe Int
         , audio_performer :: Maybe T.Text
         , audio_title :: Maybe T.Text
     } deriving Show
@@ -138,17 +135,17 @@ data TelPoll = TelPoll
         , is_anonymous :: Maybe Bool
         , poll_type :: Maybe T.Text
         , allows_multiple_answers :: Maybe Bool
-        , correct_option_id :: Maybe Integer 
+        , correct_option_id :: Maybe Int
         , explanation :: Maybe T.Text
-        , open_period :: Maybe Integer 
-        , close_date :: Maybe Integer
+        , open_period :: Maybe Int 
+        , close_date :: Maybe Int
         , is_closed :: Maybe Bool 
     } deriving Show 
 
 data PollOptions = PollOptions 
     {
         poll_option :: T.Text
-        , voter_count :: Integer 
+        , voter_count :: Int
     } deriving Show 
 
 data TelVenue = TelVenue
@@ -158,7 +155,6 @@ data TelVenue = TelVenue
         , v_title :: T.Text
         , v_address :: T.Text
     } deriving Show 
-
 
 data Button = Button T.Text T.Text
     deriving Show 
