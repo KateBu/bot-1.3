@@ -1,21 +1,14 @@
 module Handle.Handle where
 
-import qualified Data.Text as T
+import qualified Config.Config as Config 
+import qualified Logger.Logger as Logger 
+import qualified Logic.PureStructs as PureStructs 
 
-import Config.Config 
-import Logger.Logger 
-import API.Telegram.Structs
-import Logic.PureStructs
-
-type Err = T.Text
 
 data Handle m = Handle 
     {
-        hConfig :: m (Either LogMessage Config)
-        , hLogger :: m Logger
-        , hGetUpdates :: Config -> m (Either LogMessage [Message]) 
-        , hSendMessage_ :: Config -> Message -> m (Either LogMessage Config)
+        hConfig :: m (Either Logger.LogMessage Config.Config)
+        , hLogger :: m Logger.Logger
+        , hGetUpdates :: Config.Config -> m (Either Logger.LogMessage [PureStructs.Message]) 
+        , hSendMessage_ :: Config.Config -> PureStructs.Message -> m (Either Logger.LogMessage Config.Config)
     }
-
-
-type User = (Integer, Int)
