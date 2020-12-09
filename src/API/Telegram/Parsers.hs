@@ -1,35 +1,42 @@
 module API.Telegram.Parsers where
 
-import Data.Aeson 
+import Data.Aeson
+    ( FromJSON(parseJSON),
+      Value(Object),
+      ToJSON(toJSON),
+      (.:),
+      (.:?),
+      object,
+      KeyValue((.=)) ) 
 
-import API.Telegram.Structs
+import qualified API.Telegram.Structs as TStructs 
 
-instance FromJSON TelegramUpdates
+instance FromJSON TStructs.TelegramUpdates
 
-instance FromJSON TelegramUpdatesError
+instance FromJSON TStructs.TelegramUpdatesError
 
-instance FromJSON TelUpdateResult where 
+instance FromJSON TStructs.TelUpdateResult where 
     parseJSON (Object v) = 
-        TelUpdateResult <$> v .: "update_id"
+        TStructs.TelUpdateResult <$> v .: "update_id"
         <*> v .:? "message"
         <*> v .:? "callback_query"
 
-instance FromJSON Callback where 
+instance FromJSON TStructs.Callback where 
     parseJSON (Object v) = 
-        Callback <$> v .: "message"
+        TStructs.Callback <$> v .: "message"
         <*> v .: "data"
 
-instance FromJSON CBChat where 
+instance FromJSON TStructs.CBChat where 
     parseJSON (Object v) = 
-        CBChat <$> v .: "id"
+        TStructs.CBChat <$> v .: "id"
 
-instance FromJSON CBMsg where 
+instance FromJSON TStructs.CBMsg where 
     parseJSON (Object v) = 
-        CBMsg <$> v .: "chat"
+        TStructs.CBMsg <$> v .: "chat"
 
-instance FromJSON MessageInfo where 
+instance FromJSON TStructs.MessageInfo where 
     parseJSON (Object v) = 
-        MessageInfo <$> v .: "message_id"
+        TStructs.MessageInfo <$> v .: "message_id"
         <*> v .: "chat"
         <*> v .:? "text"
         <*> v .:? "animation"
@@ -46,48 +53,48 @@ instance FromJSON MessageInfo where
         <*> v .:? "caption" 
         <*> v .:? "sticker"
 
-instance FromJSON TelChat where 
+instance FromJSON TStructs.TelChat where 
     parseJSON (Object v) = 
-        TelChat <$> v .: "id"
+        TStructs.TelChat <$> v .: "id"
             <*> v .: "type"
 
-instance FromJSON TelAmination where 
+instance FromJSON TStructs.TelAmination where 
     parseJSON (Object v) =
-        TelAmination <$> v .: "file_id"
+        TStructs.TelAmination <$> v .: "file_id"
 
-instance FromJSON TelAudio where 
+instance FromJSON TStructs.TelAudio where 
     parseJSON (Object v) = 
-        TelAudio <$> v .: "file_id"
+        TStructs.TelAudio <$> v .: "file_id"
         <*> v .:? "duration"
         <*> v .:? "performer"
         <*> v .:? "title"
 
-instance FromJSON TelDocument where 
+instance FromJSON TStructs.TelDocument where 
     parseJSON (Object v) = 
-        TelDocument <$> v .: "file_id"
+        TStructs.TelDocument <$> v .: "file_id"
 
-instance FromJSON TelPhoto where 
+instance FromJSON TStructs.TelPhoto where 
     parseJSON (Object v) = 
-        TelPhoto <$> v .: "file_id"
+        TStructs.TelPhoto <$> v .: "file_id"
 
-instance FromJSON TelVideo where 
+instance FromJSON TStructs.TelVideo where 
     parseJSON (Object v) = 
-        TelVideo <$> v .: "file_id"
+        TStructs.TelVideo <$> v .: "file_id"
 
-instance FromJSON TelVoice where 
+instance FromJSON TStructs.TelVoice where 
     parseJSON (Object v) = 
-        TelVoice <$> v .: "file_id"
+        TStructs.TelVoice <$> v .: "file_id"
 
-instance FromJSON TelContact where
+instance FromJSON TStructs.TelContact where
     parseJSON (Object v) = 
-        TelContact <$> v.: "phone_number"
+        TStructs.TelContact <$> v.: "phone_number"
             <*> v .: "first_name"
             <*> v .:? "last_name"
             <*> v .:? "vcard"
 
-instance FromJSON TelPoll where 
+instance FromJSON TStructs.TelPoll where 
     parseJSON (Object v) = 
-        TelPoll <$> v .: "question"
+        TStructs.TelPoll <$> v .: "question"
         <*> v .: "options"
         <*> v .:? "is_anonymous"
         <*> v .:? "type"
@@ -98,27 +105,27 @@ instance FromJSON TelPoll where
         <*> v .:? "close_date"
         <*> v .:? "is_closed"
 
-instance FromJSON PollOptions where 
+instance FromJSON TStructs.PollOptions where 
     parseJSON (Object v) = 
-        PollOptions <$> v .: "text"
+        TStructs.PollOptions <$> v .: "text"
         <*> v .: "voter_count"
 
-instance FromJSON TelVenue where 
+instance FromJSON TStructs.TelVenue where 
     parseJSON (Object v) = 
-        TelVenue <$> v .: "latitude"
+        TStructs.TelVenue <$> v .: "latitude"
         <*> v .: "longitude"
         <*> v .: "title"
         <*> v .: "address"
 
-instance FromJSON TelLocation
+instance FromJSON TStructs.TelLocation
 
-instance FromJSON TelSticker where 
+instance FromJSON TStructs.TelSticker where 
     parseJSON (Object v) = 
-        TelSticker <$> v .: "file_id"
+        TStructs.TelSticker <$> v .: "file_id"
         <*> v .: "is_animated"
 
-instance ToJSON Button where 
-    toJSON (Button btn cbd) = object ["text" .= btn, "callback_data" .= cbd] 
+instance ToJSON TStructs.Button where 
+    toJSON (TStructs.Button btn cbd) = object ["text" .= btn, "callback_data" .= cbd] 
 
-instance ToJSON InlineKeyBoard where 
-    toJSON (InlineKeyBoard btns) = object ["inline_keyboard" .= btns]
+instance ToJSON TStructs.InlineKeyBoard where 
+    toJSON (TStructs.InlineKeyBoard btns) = object ["inline_keyboard" .= btns]
