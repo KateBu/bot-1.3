@@ -1,64 +1,63 @@
 module API.Telegram.Cleaners where
 
-import qualified Data.Text as T 
+import qualified API.Telegram.Structs as TStructs 
+import qualified Logic.PureStructs as PureStructs 
+import qualified Logger.Logger as Logger 
 
-import API.Telegram.Structs
-import Logic.PureStructs
-import Logger.Logger
-import Logger.LoggerMsgs
+updResultToComMessage ::  TStructs.MessageInfo -> PureStructs.CMessage 
+updResultToComMessage mInfo = case TStructs.sticker mInfo of 
+    Just val -> PureStructs.Sticker  val 
+    _ -> case TStructs.txt mInfo of 
+        Just val -> PureStructs.Txt  val 
+        _-> case TStructs.animation mInfo of 
+            Just val -> PureStructs.Animation  val 
+            _-> case TStructs.audio mInfo of 
+                Just val -> PureStructs.Audio  val 
+                _-> case TStructs.document mInfo of 
+                    Just val -> PureStructs.Document  val 
+                    _-> case TStructs.photo mInfo of 
+                        Just val -> PureStructs.Photo  val 
+                        _-> case TStructs.video mInfo of 
+                            Just val -> PureStructs.Video  val
+                            _-> case TStructs.voice mInfo of 
+                                Just val -> PureStructs.Voice  val 
+                                _-> case TStructs.contact mInfo of 
+                                    Just val -> PureStructs.Contact  val 
+                                    _-> case TStructs.poll mInfo of 
+                                        Just val -> PureStructs.Poll  val 
+                                        _-> case TStructs.venue mInfo of 
+                                            Just val -> PureStructs.Venue  val 
+                                            _-> case TStructs.location mInfo of 
+                                                Just val -> PureStructs.Location  val 
+                                                _-> PureStructs.Other
 
-type Err = T.Text  
-
-
-
-updResultToComMessage ::  MessageInfo -> CMessage 
-updResultToComMessage mInfo = case sticker mInfo of 
-    Just val -> Sticker  val 
-    _ -> case txt mInfo of 
-        Just val -> Txt  val 
-        _-> case animation mInfo of 
-            Just val -> Animation  val 
-            _-> case audio mInfo of 
-                Just val -> Audio  val 
-                _-> case document mInfo of 
-                    Just val -> Document  val 
-                    _-> case photo mInfo of 
-                        Just val -> Photo  val 
-                        _-> case video mInfo of 
-                            Just val -> Video  val
-                            _-> case voice mInfo of 
-                                Just val -> Voice  val 
-                                _-> case contact mInfo of 
-                                    Just val -> Contact  val 
-                                    _-> case poll mInfo of 
-                                        Just val -> Poll  val 
-                                        _-> case venue mInfo of 
-                                            Just val -> Venue  val 
-                                            _-> case location mInfo of 
-                                                Just val -> Location  val 
-                                                _-> Other
-
-
-updResultToMessage :: TelUpdateResult -> IO Message
-updResultToMessage (TelUpdateResult uid _ (Just callback)) = 
-    pure $ CallbackQuery uid ((cb_chid . cb_chat . cb_msg) callback) (cb_data callback)
-
-updResultToMessage (TelUpdateResult uid Nothing _) = 
-    pure $ EmptyMessage uid 
-
-updResultToMessage (TelUpdateResult uid (Just mInfo) _) = 
+updResultToMessage :: TStructs.TelUpdateResult -> IO PureStructs.Message
+updResultToMessage (TStructs.TelUpdateResult uid _ (Just callback)) = 
+    pure $ PureStructs.CallbackQuery 
+        uid 
+        ((TStructs.cb_chid . TStructs.cb_chat . TStructs.cb_msg) callback) 
+        (TStructs.cb_data callback)
+updResultToMessage (TStructs.TelUpdateResult uid Nothing _) = 
+    pure $ PureStructs.EmptyMessage uid 
+updResultToMessage (TStructs.TelUpdateResult uid (Just mInfo) _) = 
     let msg = updResultToComMessage mInfo 
     in case msg of 
-        Txt text -> case text of 
-            "/help" -> pure (UserCommand uid $ Command ((chat_id . chat) mInfo) text)
-            "/repeat" -> pure (UserCommand uid $ Command ((chat_id . chat) mInfo) text)
-            _ -> pure $ CommonMessage uid ((chat_id . chat) mInfo) (Txt text) (caption mInfo)
-        _ -> pure $ CommonMessage uid ((chat_id . chat) mInfo) msg (caption mInfo)
+        PureStructs.Txt text -> case text of 
+            "/help" -> pure (PureStructs.UserCommand uid $ 
+                PureStructs.Command ((TStructs.chat_id . TStructs.chat) mInfo) text)
+            "/repeat" -> pure (PureStructs.UserCommand uid $ 
+                PureStructs.Command ((TStructs.chat_id . TStructs.chat) mInfo) text)
+            _ -> pure $ 
+                PureStructs.CommonMessage uid 
+                    ((TStructs.chat_id . TStructs.chat) mInfo) 
+                    (PureStructs.Txt text) 
+                    (TStructs.caption mInfo)
+        _ -> pure $ PureStructs.CommonMessage uid ((TStructs.chat_id . TStructs.chat) mInfo) msg (TStructs.caption mInfo)
 
-
-updatesToPureMessageList :: Either LogMessage TelegramUpdates -> IO (Either LogMessage [Message])
+updatesToPureMessageList :: Either Logger.LogMessage TStructs.TelegramUpdates 
+    -> IO (Either Logger.LogMessage [PureStructs.Message])
 updatesToPureMessageList (Left err) = return $ Left err
 updatesToPureMessageList (Right tup) = do
-    msgs <- mapM updResultToMessage (result tup)
+    msgs <- mapM updResultToMessage (TStructs.result tup)
     return $ Right msgs 
     
