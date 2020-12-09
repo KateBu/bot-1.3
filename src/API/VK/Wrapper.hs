@@ -23,7 +23,7 @@ sendMessageHttpRequest (Config (VK tok _ _ _ _) _ _ _ _) =
     <> tok 
 
 
-makeRequestBody :: Message -> Integer -> String
+makeRequestBody :: Message -> Int -> String
 makeRequestBody (CommonMessage _ chid msg _) randomId = mconcat
     ["&v=", vkApiVersion
     , "&user_id=", show chid
