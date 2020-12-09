@@ -2,54 +2,47 @@ module Logic.Logic where
 
 import qualified Data.Text as T
 
-import Handle.Handle 
-import Logic.PureStructs
-import Logger.Logger  
-import Logger.LoggerMsgs
-import Config.Config
-import qualified Data.Map as Map 
+import qualified Logic.PureStructs as PureStructs 
+import qualified Logger.Logger as Logger 
+import qualified Logger.LoggerMsgs as LoggerMsgs
+import qualified Config.Config as Config 
 
-processMessages :: (Monad m) => Config 
-    -> [Message] 
-    -> (Config -> Message -> m (Either LogMessage Config))  
-    -> m (Either LogMessage Config)
+
+processMessages :: (Monad m) => Config.Config 
+    -> [PureStructs.Message] 
+    -> (Config.Config -> PureStructs.Message -> m (Either Logger.LogMessage Config.Config))  
+    -> m (Either Logger.LogMessage Config.Config)
 processMessages config msgs function = do 
     eiConfs <- mapM (processMessage_ config function) msgs 
     case eiConfs of 
-        [] -> pure $ Left emptyList
+        [] -> pure $ Left LoggerMsgs.emptyList
         _ -> case last eiConfs of 
             Left err -> pure $ Left err
             Right config -> pure $ Right config 
 
-
-
-processMessage_ :: (Monad m) => Config 
-    -> (Config -> Message -> m (Either LogMessage Config)) 
-    -> Message     
-    -> m (Either LogMessage Config)
-processMessage_ config _ (EmptyMessage uid)  = 
-    pure $ Right (configSetOffset config (succ uid))
-
-processMessage_ config sendFunction (UserCommand uid command)  = case text command of 
+processMessage_ :: (Monad m) => Config.Config 
+    -> (Config.Config -> PureStructs.Message -> m (Either Logger.LogMessage Config.Config)) 
+    -> PureStructs.Message     
+    -> m (Either Logger.LogMessage Config.Config)
+processMessage_ config _ (PureStructs.EmptyMessage uid)  = 
+    pure $ Right (Config.configSetOffset config (succ uid))
+processMessage_ config sendFunction (PureStructs.UserCommand uid command)  = case PureStructs.text command of 
     "/help" -> sendFunction config 
-        (CommonMessage uid (chatID command) (Txt (helpMessage config)) Nothing)
+        (PureStructs.CommonMessage uid (PureStructs.chatID command) (PureStructs.Txt (Config.helpMessage config)) Nothing)
     "/repeat" -> sendFunction config 
-        (CommonMessage uid (chatID command) (Buttons buttons) Nothing)
-    _ -> pure $ Left cmdMsgFld
-
-processMessage_ config sendFunction (CallbackQuery uid chid txt)  = do 
+        (PureStructs.CommonMessage uid (PureStructs.chatID command) (PureStructs.Buttons PureStructs.buttons) Nothing)
+    _ -> pure $ Left LoggerMsgs.cmdMsgFld
+processMessage_ config sendFunction (PureStructs.CallbackQuery uid chid txt)  = do 
     let newConfig = setNewRepetition config chid txt 
     sendFunction newConfig 
-        (CommonMessage uid chid (Txt (repeatText <> (T.pack . show) (getNewRepetition txt))) Nothing )
+        (PureStructs.CommonMessage uid chid (PureStructs.Txt (PureStructs.newRepeatText (getNewRepetition txt))) Nothing )
+processMessage_ config sendFunction (PureStructs.CommonMessage uid chid cMsg mCap)  = 
+    repeatMessage config (PureStructs.CommonMessage uid chid cMsg mCap)(Config.findUserRepeat config chid) sendFunction 
 
-processMessage_ config sendFunction (CommonMessage uid chid cMsg mCap)  = 
-    repeatMessage config (CommonMessage uid chid cMsg mCap)(findUserRepeat config chid) sendFunction 
-
-
-repeatMessage :: (Monad m) => Config -> Message 
+repeatMessage :: (Monad m) => Config.Config -> PureStructs.Message 
     -> Int
-    -> (Config -> Message -> m (Either LogMessage Config))
-    -> m (Either LogMessage Config)
+    -> (Config.Config -> PureStructs.Message -> m (Either Logger.LogMessage Config.Config))
+    -> m (Either Logger.LogMessage Config.Config)
 repeatMessage config _ 0 _ = pure $ Right config 
 repeatMessage config msg n function = do 
     eiConfig <- function config msg 
@@ -57,13 +50,9 @@ repeatMessage config msg n function = do
         Left err -> pure $ Left err 
         Right newConfig -> repeatMessage newConfig msg (n-1) function 
 
-
-setNewRepetition :: Config -> Integer -> T.Text -> Config 
+setNewRepetition :: Config.Config -> Int -> T.Text -> Config.Config 
 setNewRepetition config chid queryText = 
-    setUserRepeat config chid (getNewRepetition queryText)
-
-
-
+    Config.setUserRepeat config chid (getNewRepetition queryText)
 
 getNewRepetition :: T.Text -> Int 
 getNewRepetition "/setRepetition1" = 1 
@@ -72,22 +61,20 @@ getNewRepetition "/setRepetition3" = 3
 getNewRepetition "/setRepetition4" = 4 
 getNewRepetition "/setRepetition5" = 5 
 
-
-
-getResultInfo :: ProcessMessageResult -> T.Text
+getResultInfo :: PureStructs.ProcessMessageResult -> T.Text
 getResultInfo res = 
     "\n\tUpdate ID: "
-    <> (T.pack . show . updID) res 
+    <> (T.pack . show . PureStructs.updID) res 
     <> "\n\tMessage Type: "
-    <> msgType res 
-    <> maybeChid (mbChatID res)
-    <> maybeMsgInfo (mbMessage res)
+    <> PureStructs.msgType res 
+    <> maybeChid (PureStructs.mbChatID res)
+    <> maybeMsgInfo (PureStructs.mbMessage res)
 
-maybeChid :: Maybe Integer -> T.Text
+maybeChid :: Maybe Int -> T.Text
 maybeChid Nothing = T.empty
 maybeChid (Just chid) = (T.pack . show) chid 
 
-maybeMsgInfo :: Maybe CMessage -> T.Text
+maybeMsgInfo :: Maybe PureStructs.CMessage -> T.Text
 maybeMsgInfo Nothing = T.empty
-maybeMsgInfo (Just msg) = getMessageType msg
+maybeMsgInfo (Just msg) = PureStructs.getMessageType msg
 
