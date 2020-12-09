@@ -10,4 +10,4 @@ logPriority: use "Debug", "Info", "Warning" or "Error" (quotes are required).
 
 *Note:
 The only thing the VK bot can do is to send back your text message several times. 
-So if you want to see the something else, please use the Telegram bot.
+So if you want to see something else, please use the Telegram bot.
