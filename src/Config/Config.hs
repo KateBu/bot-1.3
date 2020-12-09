@@ -4,18 +4,18 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO 
 import qualified Data.Map as Map 
 import qualified Data.Configurator as Configurator 
-import System.Directory 
-import Control.Monad 
-import Data.Aeson
-import Data.Maybe
-import Network.HTTP.Simple 
+import System.Directory ( doesFileExist ) 
+import Control.Monad () 
+import Data.Aeson ( eitherDecode )
+import Data.Maybe ( fromJust, isNothing )
+import Network.HTTP.Simple
+    ( parseRequest, getResponseBody, httpLBS ) 
 
 import qualified Logger.Logger as Logger 
-import qualified Logger.LoggerMsgs as LoggerMsgs
-import API.VK.Structs
-import API.VK.Parsers
+import qualified API.VK.Structs as VKStructs 
+import API.VK.Parsers ()
 
-type Users = Map.Map Integer Int 
+type Users = Map.Map Int Int 
 
 data Config = Config 
     {
@@ -28,14 +28,14 @@ data Config = Config
 
 data BotType = Telegram {
         tToken :: String
-        , tOffset :: Integer 
+        , tOffset :: Int
     }
     | VK {
         vkToken :: String
-        , groupID :: Integer
+        , groupID :: Int
         , vkKey :: String 
         , vkServer :: String 
-        , vkTs :: Integer 
+        , vkTs :: Int
     } deriving Show 
 
 vkApiVersion :: String 
@@ -43,7 +43,6 @@ vkApiVersion = "5.126"
 
 timeOut :: String 
 timeOut = "25"
-
 
 parseConfig :: String -> IO (Maybe Config)
 parseConfig path = do 
@@ -67,7 +66,7 @@ parseConfig path = do
                     <*> (read <$> priority)
             Just "VK" -> do 
                 tok <- Configurator.lookup conf (T.pack "bot.VKToken") :: IO (Maybe String)
-                group <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Integer)
+                group <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Int)
                 vkSettings <- getVKSettings group tok
                 case vkSettings of
                     Left err -> do 
@@ -82,7 +81,7 @@ parseConfig path = do
                             <*> (read <$> priority)
             _ -> pure Nothing 
 
-getVKSettings :: Maybe Integer -> Maybe String -> IO (Either T.Text (String, String, Integer))
+getVKSettings :: Maybe Int -> Maybe String -> IO (Either T.Text (String, String, Int))
 getVKSettings group tok = do 
     if (isNothing group || isNothing tok) 
         then pure $ Left "VK Config parsing: Coulnd find group id or token"
@@ -95,19 +94,18 @@ getVKSettings group tok = do
                 <> vkApiVersion
             confSettings <- httpLBS http  
             let respBody = getResponseBody confSettings 
-            case (eitherDecode respBody :: Either String VKResponse) of 
+            case (eitherDecode respBody :: Either String VKStructs.VKResponse) of 
                 Right val -> case val of 
-                    VKResponse k s t -> pure $ Right (k,s,(read t))
-                    VKError ec em -> pure $ Left 
+                    VKStructs.VKResponse k s t -> pure $ Right (k,s,(read t))
+                    VKStructs.VKError ec em -> pure $ Left 
                         ("error_code: " 
                                 <> (T.pack . show) ec 
                                 <> "error_message: "
                                 <> em )
-                    VKParseError -> pure $ Left "parse Error "
+                    VKStructs.VKParseError -> pure $ Left "parse Error "
                 Left err -> pure $ Left (T.pack err) 
 
-
-getVkGroup :: Config -> Maybe Integer
+getVkGroup :: Config -> Maybe Int
 getVkGroup (Config (VK _ group _ _ _) _ _ _ _) = Just group 
 getVkGroup _ = Nothing 
 
@@ -115,37 +113,34 @@ getVkTok :: Config -> Maybe String
 getVkTok (Config (VK tok _ _ _ _) _ _ _ _) = Just tok 
 getVkTok _ = Nothing 
 
-getVkTs :: Config -> Maybe Integer 
+getVkTs :: Config -> Maybe Int
 getVkTs (Config (VK _ _ _ _ ts) _ _ _ _) = Just ts 
 getVkTs _ = Nothing
 
-
-setVkSettings :: Config ->  Either T.Text (String, String, Integer) -> Either Logger.LogMessage Config 
+setVkSettings :: Config ->  Either T.Text (String, String, Int) -> Either Logger.LogMessage Config 
 setVkSettings _ (Left txt) = Left (Logger.LogMessage Logger.Error txt)
 setVkSettings (Config (VK tok group _ _ _) hm rep uss prior) (Right (key, serv, ts)) = Right $ 
     Config (VK tok group key serv ts ) hm rep uss prior 
 
-
-setUserRepeat :: Config -> Integer -> Int -> Config
+setUserRepeat :: Config -> Int -> Int -> Config
 setUserRepeat config chid newRep = case Map.lookup chid (users config) of 
     Nothing -> addUser chid newRep config
     Just _ -> (addUser chid newRep . deleteUser chid) config 
 
-findUserRepeat :: Config -> Integer -> Int 
+findUserRepeat :: Config -> Int-> Int 
 findUserRepeat config chid = case Map.lookup chid (users config) of 
     Nothing -> repetition config 
     Just val -> val 
 
-
-deleteUser :: Integer -> Config -> Config 
+deleteUser :: Int -> Config -> Config 
 deleteUser chid (Config bt hm rep uss prior) = 
     Config bt hm rep (Map.delete chid uss) prior
 
-addUser :: Integer -> Int -> Config -> Config 
+addUser :: Int-> Int -> Config -> Config 
 addUser chid newRep (Config bt hm rep uss prior) = 
     Config bt hm rep (Map.insert chid newRep uss) prior
 
-configSetOffset :: Config -> Integer -> Config
+configSetOffset :: Config -> Int -> Config
 configSetOffset (Config bt hm rep uss prior) newOffset = 
     case bt of 
         Telegram tok _  -> 
