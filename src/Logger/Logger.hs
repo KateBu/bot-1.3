@@ -34,6 +34,5 @@ startText Info = "Info: "
 startText Warning = "Warning: "
 startText Error = "ERROR: "
 
-
 makeLogMessage :: LogMessage -> T.Text -> LogMessage 
 makeLogMessage (LogMessage prior msg) info = LogMessage prior (startText prior <> msg <> info)
