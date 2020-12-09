@@ -10,14 +10,14 @@ data VKUpdates = VKUpdates {
     } 
     | VKUpdateError {
         failed :: Int
-        , curTs :: Maybe Integer 
+        , curTs :: Maybe Int
     } deriving (Show)
 
 data VKUpdInfo = VKUpdInfo
     {
         updType :: EventType
         , updObj :: Maybe VKObject
-        , groupId :: Maybe Integer
+        , groupId :: Maybe Int
     } deriving Show 
 
 data VKObject = VKObject {
@@ -38,15 +38,15 @@ data VKMessage = VKMessage
     {
         id :: Integer
     --    , date :: Integer 
-        , peer_id :: Integer --reciever id 
-        , from_id :: Integer --sender id
+        , peer_id :: Int --reciever id 
+        , from_id :: Int --sender id
         , msgText :: Maybe T.Text
-     {-   , random_id :: Maybe Integer
-        , ref :: Maybe String 
-        , ref_source :: Maybe String
+     --   , random_id :: Maybe Integer
+     --   , ref :: Maybe String 
+     --   , ref_source :: Maybe String
         , attachments :: Maybe [Attachment]
-        , important :: Maybe Bool
-        , geo :: Maybe Geo
+     --   , important :: Maybe Bool
+     {-   , geo :: Maybe Geo
         , payload :: Maybe String 
         , keyboard :: Maybe Keyboard 
         , fwd_messages :: Maybe [VKMessage]
@@ -63,34 +63,31 @@ data VKMessage = VKMessage
 
 data Attachment = Attachment 
     {
-        aType :: AType 
+        aType :: String 
         , aObject :: AObject
-    } deriving Show 
-
-data AType = APhoto | AVideo | AAudio 
-    | ADoc | ALink | AMarket | AMarketAlbum
-    | AWall | AWallReply | ASticker | AGift 
+    } | UnknownAttachment
     deriving Show 
 
 data AObject = 
     VKPhoto 
         {
-            phId :: Integer 
-            , albumId :: Integer 
-            , ownerId :: Integer 
-            , userId :: Integer 
+            phId :: Int
+           -- , albumId :: Integer 
+            , ownerId :: Int 
+           -- , userId :: Integer 
             , phText :: T.Text
-            , phDate :: Integer 
-            , phSizes :: [PhSizes]
-            , phWidth :: Integer 
-            , phHeight :: Integer 
+            , accessID :: T.Text
+            --, phDate :: Integer 
+           -- , phSizes :: [PhSizes]
+           -- , phWidth :: Integer 
+           -- , phHeight :: Integer 
         } deriving Show 
 
 data PhSizes = PhSizes
     {
         url :: String 
-        , sWidth :: Integer 
-        , sHeight :: Integer 
+        , sWidth :: Int 
+        , sHeight :: Int 
         , sType :: String 
     } deriving Show 
 
@@ -105,7 +102,6 @@ data Keyboard = Keyboard
 data Action = Action 
     deriving Show 
 
-
 data VKResponse = VKResponse {
         key :: String
         , server :: String
@@ -116,23 +112,21 @@ data VKResponse = VKResponse {
         , error_msg :: T.Text
     } 
     | VKParseError deriving Show
-    
-
 
 data VKSend = VKSend {
-    respPeerId :: Integer
+    respPeerId :: Int
     , respMessage :: Maybe T.Text
-    , respRandomId :: Integer 
+    , respRandomId :: Int 
 } deriving Show 
 
 data VKResult = SendMsgScs {
-        newTs :: Integer
+        newTs :: Int
     } 
     | SendMsgError {
         resError :: VKResultError
     } deriving Show 
 
 data VKResultError = VKResultError {
-    errCode :: Integer
+    errCode :: Int
     , errMsg :: T.Text
 } deriving Show 
