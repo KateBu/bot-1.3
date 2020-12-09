@@ -1,127 +1,102 @@
 module API.VK.VK where
 
-
 import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
-import Control.Exception
-
 import qualified Data.ByteString.Lazy as LC 
-import qualified Data.Map.Lazy as Map
-import Network.HTTP.Simple 
+import Network.HTTP.Simple
+    ( parseRequest, getResponseBody, httpLBS ) 
 import Network.HTTP.Client
-import Network.HTTP.Client.TLS 
+    ( Request(method, requestHeaders),
+      Response(responseStatus),
+      httpLbs,
+      newManager )
+import Network.HTTP.Client.TLS ( tlsManagerSettings ) 
 import Network.HTTP.Types.Status (statusCode)
-import Data.Aeson
-import System.Random 
-import Data.Maybe 
-import Control.Concurrent
+import Data.Aeson ( eitherDecode )
+import System.Random ( Random(random), newStdGen ) 
+import Data.Maybe ( fromJust ) 
 
-import Handle.Handle 
-import Config.Config 
+import qualified Handle.Handle as Handle 
+import qualified Config.Config as Config 
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs
-import Logic.PureStructs 
-import API.VK.Structs
-import API.VK.Parsers
-import API.VK.Cleaners
-import API.VK.Wrapper
+import qualified Logic.PureStructs as PureStructs 
+import qualified API.VK.Structs as VKStructs 
+import API.VK.Parsers ()
+import qualified API.VK.Cleaners as VKCleaners 
+import qualified API.VK.Wrapper as VKWrappers 
 
 
-
-
-new :: Config -> IO (Handle IO) 
-new config =  pure $ Handle 
+new :: Config.Config -> IO (Handle.Handle IO) 
+new config =  pure $ Handle.Handle 
     {
-        hConfig = getConfig config  
-        , hLogger = Logger.createLogger (priority config)
-        , hGetUpdates = makeMessages  
-        , hSendMessage_ = sendM_
+        Handle.hConfig = getConfig config  
+        , Handle.hLogger = Logger.createLogger (Config.priority config)
+        , Handle.hGetUpdates = makeMessages  
+        , Handle.hSendMessage_ = sendM_
     }
 
-getConfig :: Config -> IO (Either Logger.LogMessage Config)
+getConfig :: Config.Config -> IO (Either Logger.LogMessage Config.Config)
 getConfig config = pure $ Right config 
-    
 
-    {-do 
-    let group = getVkGroup config 
-    let tok = getVkTok config 
-    confSettings <- getVKSettings group tok 
-    pure (setVkSettings config confSettings) 
--}
-
-getU :: Config -> IO (Either Logger.LogMessage VKUpdates) 
-getU config@(Config (VK _ _ key server ts) _ _ _ _) = do 
+getU :: Config.Config -> IO (Either Logger.LogMessage VKStructs.VKUpdates) 
+getU config@(Config.Config (Config.VK _ _ key server ts) _ _ _ _) = do 
     http <- parseRequest $ server 
         <> "?act=a_check&key=" 
         <> key 
         <> "&ts="
         <> show ts 
         <> "&wait=" 
-        <> timeOut        
+        <> Config.timeOut        
     updRequest <- httpLBS http 
     let respBody = getResponseBody updRequest 
     decoded <- decodeUpd respBody
     case decoded of 
-        Right (VKUpdateError _ mbNewTs) -> 
-            getU (configSetOffset config (fromJust mbNewTs))
+        Right (VKStructs.VKUpdateError _ mbNewTs) -> 
+            getU (Config.configSetOffset config (fromJust mbNewTs))
         Right val -> do 
             pure $ Right val 
         Left err -> pure $ Left err 
 
-
-
-decodeUpd :: LC.ByteString -> IO (Either Logger.LogMessage VKUpdates)
-decodeUpd json = case (eitherDecode json :: Either String VKUpdates) of 
-    Right (VKUpdateError err_code mbNewTs) -> case err_code of 
-        1 -> pure $ Left LoggerMsgs.vkUpdatesFailed1  --Right (VKUpdateError err_code mbNewTs)                    --Left LoggerMsgs.vkUpdatesFailed1 
+decodeUpd :: LC.ByteString -> IO (Either Logger.LogMessage VKStructs.VKUpdates)
+decodeUpd json = case (eitherDecode json :: Either String VKStructs.VKUpdates) of 
+    Right (VKStructs.VKUpdateError err_code mbNewTs) -> case err_code of 
+        1 -> pure $ Left LoggerMsgs.vkUpdatesFailed1  
         2 -> pure $ Left LoggerMsgs.vkUpdatesFailed2
         3 -> pure $ Left LoggerMsgs.vkUpdatesFailed3
     Right upd -> pure $ Right upd 
     Left err -> pure $ Left (Logger.LogMessage Logger.Error ("decode vk update failed: " <> (T.pack err)))
 
-
-makeMessages :: Config -> IO (Either Logger.LogMessage [Message])
-makeMessages config@(Config (VK _ _ _ _ ts) _ _ _ _) = do 
+makeMessages :: Config.Config -> IO (Either Logger.LogMessage [PureStructs.Message])
+makeMessages config@(Config.Config (Config.VK _ _ _ _ ts) _ _ _ _) = do 
     vkUpd <- getU config 
     case vkUpd of 
         Left err -> pure $ Left err 
-        Right val -> updatesToPureMessageList $ (val, ts) 
+        Right val -> VKCleaners.updatesToPureMessageList $ (val, ts) 
 
-
-sendM_ :: Config -> Message -> IO (Either Logger.LogMessage Config)
+sendM_ :: Config.Config -> PureStructs.Message -> IO (Either Logger.LogMessage Config.Config)
 sendM_ config message = do
     random_id <- getRandonId 
     manager  <- newManager tlsManagerSettings
-
-    initialResponse <- parseRequest $ sendMessageHttpRequest config <> makeRequestBody message random_id     
-
+    initialResponse <- parseRequest $ VKWrappers.sendMessageHttpRequest config 
+        <> VKWrappers.makeRequestBody message random_id     
     let resp = initialResponse { method = "POST"
         , requestHeaders = [("Content-Type", "application/json; charset=utf-8")]
         }
-
-    response <- Network.HTTP.Client.httpLbs resp manager     
-
+    response <- Network.HTTP.Client.httpLbs resp manager   
     case statusCode (responseStatus response) of 
         200 -> do 
             print (getResponseBody response)
-            let sndMsgResult = eitherDecode (getResponseBody response) :: Either String VKResult 
+            let sndMsgResult = eitherDecode (getResponseBody response) :: Either String VKStructs.VKResult 
             case sndMsgResult of 
                 Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (T.pack err))
-                Right (SendMsgError err) -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (errMsg err))
-                Right (SendMsgScs _) -> pure $ Right (configSetOffset config ((succ . getUid) message ))
-
+                Right (VKStructs.SendMsgError err) -> pure $ 
+                    Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (VKStructs.errMsg err))
+                Right (VKStructs.SendMsgScs _) -> pure $ 
+                    Right (Config.configSetOffset config ((succ . PureStructs.getUid) message ))
         err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
 
-
-
-getRandonId :: IO Integer
+getRandonId :: IO Int
 getRandonId = do 
     gen <- newStdGen 
-    pure $ ( (fst . random) gen :: Integer)
-
-
-
-
-
-
+    pure $ ( (fst . random) gen :: Int)
 
