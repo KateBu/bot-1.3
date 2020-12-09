@@ -2,18 +2,15 @@ module Main where
 
 import qualified Data.Text as T 
 import qualified Data.Text.IO as TIO 
-import Control.Concurrent
 
-import Config.Config 
+import qualified Config.Config as Config 
 import qualified API.Telegram.Telegram as Telegram
 import qualified API.VK.VK as VK 
-import Handle.Handle
-import Logger.Logger 
+import qualified Handle.Handle as Handle 
+import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs 
-import API.Telegram.Cleaners
-import Logic.Logic 
-import Logic.PureStructs
-
+import qualified Logic.Logic as Logic 
+import qualified Logic.PureStructs as PureStructs 
 
 
 configPath :: String 
@@ -21,65 +18,54 @@ configPath = "config.config"
 
 main :: IO ()
 main = do
-    config <- parseConfig configPath 
+    config <- Config.parseConfig configPath 
     case config of 
         Just config -> runBot config 
         _ -> TIO.putStrLn LoggerMsgs.fatalConfig 
 
-
-runBot :: Config -> IO ()
+runBot :: Config.Config -> IO ()
 runBot config = do 
     handle <- makeHandle config 
-    logger <- hLogger handle 
-    hConf <- hConfig handle 
+    logger <- Handle.hLogger handle 
+    hConf <- Handle.hConfig handle 
     case hConf of 
-        Left err -> botLog logger err 
+        Left err -> Logger.botLog logger err 
         Right conf -> do   
-            updates <- hGetUpdates handle conf
+            updates <- Handle.hGetUpdates handle conf
             case updates of 
-                Left err -> botLog logger err
+                Left err -> Logger.botLog logger err
                 Right upd -> case upd of 
                     [] -> do
-                        botLog logger LoggerMsgs.noUpd
+                        Logger.botLog logger LoggerMsgs.noUpd
                         nextLoop logger config
                     _ -> do
-                        botLog logger LoggerMsgs.getUpdScs
-                        processedMessages <- processMessages config upd (hSendMessage_ handle)
+                        Logger.botLog logger LoggerMsgs.getUpdScs
+                        processedMessages <- Logic.processMessages config upd (Handle.hSendMessage_ handle)
                         case processedMessages of 
                             Left err -> do 
-                                botLog logger err
+                                Logger.botLog logger err
                                 nextLoop logger config
                             Right newConfig -> do 
-                                botLog logger LoggerMsgs.sndMsgScs
-                                nextLoop logger newConfig
+                                Logger.botLog logger LoggerMsgs.sndMsgScs
+                                nextLoop logger newConfig         
 
-                
+makeHandle :: Config.Config -> IO (Handle.Handle IO)
+makeHandle config = case Config.botType config of 
+    Config.Telegram _ _ -> Telegram.new config 
+    Config.VK _ _ _ _ _ -> VK.new config 
 
-
-
-
-
-makeHandle :: Config -> IO (Handle IO)
-makeHandle config = case botType config of 
-    Telegram _ _ -> Telegram.new config 
-    VK _ _ _ _ _ -> VK.new config 
-
-
-nextLoop :: Logger -> Config -> IO ()
+nextLoop :: Logger.Logger -> Config.Config -> IO ()
 nextLoop logger config = do 
-    botLog logger LoggerMsgs.nextLoop
-    --threadDelay 3000000 
+    Logger.botLog logger LoggerMsgs.nextLoop
     runBot config 
 
-
-showTS :: Config -> IO ()
-showTS (Config (VK _ _ _ _ ts) _ _ _ _) = 
+showTS :: Config.Config -> IO ()
+showTS (Config.Config (Config.VK _ _ _ _ ts) _ _ _ _) = 
     TIO.putStrLn ("\n------------\nNew ts: " <> (T.pack . show) ts <> "\n-------------\n")
 showTS _ = putStrLn "\nIt's not a VK bot\n"
 
-
-showConfig :: Config -> IO ()
-showConfig (Config bt hm rep uss prior) = do 
+showConfig :: Config.Config -> IO ()
+showConfig (Config.Config bt hm rep uss prior) = do 
     TIO.putStrLn $ "Config file parsed: " 
         <> showBotSettings bt <> "\n"
         <> "help message: " <> hm <> "\n"
@@ -87,13 +73,12 @@ showConfig (Config bt hm rep uss prior) = do
         <> "users: " <> T.pack (show uss) <> "\n"
         <> "priority: " <> T.pack (show prior)
 
-
-showBotSettings :: BotType -> T.Text
-showBotSettings (Telegram tok off) = 
+showBotSettings :: Config.BotType -> T.Text
+showBotSettings (Config.Telegram tok off) = 
     "Bot type: Telegram \n" 
     <> "token: " <> T.pack tok <> "\n"
     <> "offset: " <> T.pack (show off)
-showBotSettings (VK tok group key serv ts) = 
+showBotSettings (Config.VK tok group key serv ts) = 
     "Bot type: VK \n"
     <> "token: " <> T.pack tok <> "\n"
     <> "group ID: " <> T.pack (show group) <> "\n"
@@ -101,6 +86,7 @@ showBotSettings (VK tok group key serv ts) =
     <> "server: " <> T.pack serv <> "\n"
     <> "ts: " <> T.pack (show ts) <> "\n"
 
-showMessage :: Message -> IO () 
-showMessage (CommonMessage uid chid cMsg mbCap) = 
-    TIO.putStrLn ( (T.pack $ "\nMessage: \nUpdateID: " <> show uid <> "\nchat id:" <> show chid <> "\n") <> cMsgToText cMsg)
+showMessage :: PureStructs.Message -> IO () 
+showMessage (PureStructs.CommonMessage uid chid cMsg _) = 
+    TIO.putStrLn ( (T.pack $ "\nMessage: \nUpdateID: " <> show uid <> "\nchat id:" <> show chid <> "\n") 
+        <> PureStructs.cMsgToText cMsg)
