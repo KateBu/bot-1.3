@@ -17,7 +17,7 @@ import Logic.PureStructs
 
 
 configPath :: String 
-configPath = "local.config"
+configPath = "config.config"
 
 main :: IO ()
 main = do
