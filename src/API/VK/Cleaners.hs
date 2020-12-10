@@ -1,35 +1,34 @@
 module API.VK.Cleaners where
 
-import qualified Data.Text as T 
-import Data.Maybe
-
-import API.VK.Structs
-import Logic.PureStructs
-import Logger.Logger
+import qualified API.VK.Structs as VKStructs 
+import qualified Logic.PureStructs as PureStructs
+import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 
-updatesToPureMessageList :: (VKUpdates, UpdateID) -> IO (Either LogMessage [Message])
+updatesToPureMessageList :: (VKStructs.VKUpdates, PureStructs.UpdateID) -> IO (Either Logger.LogMessage [PureStructs.Message])
 updatesToPureMessageList (upds, uid) = do 
-    --let uid = read $ ts upds :: UpdateID 
-    msgs <- mapM vkUpdatesToMessage (zip (updates upds) [uid ..])
+    msgs <- mapM vkUpdatesToMessage (zip (VKStructs.updates upds) [uid ..])
     pure $ (sequence msgs) 
 
-
-
-vkUpdatesToMessage :: (VKUpdInfo, UpdateID) -> IO (Either LogMessage Message) 
-vkUpdatesToMessage ((VKUpdInfo OtherEvent _ _), uid) = pure $ Left LoggerMsgs.vkUpdatesParsingUnknownMsgType
-vkUpdatesToMessage ((VKUpdInfo MsgNew msg _), uid) = case msg of 
+vkUpdatesToMessage :: (VKStructs.VKUpdInfo, PureStructs.UpdateID) -> IO (Either Logger.LogMessage PureStructs.Message) 
+vkUpdatesToMessage ((VKStructs.VKUpdInfo VKStructs.OtherEvent _ _), _) = pure $ Left LoggerMsgs.vkUpdatesParsingUnknownMsgType
+vkUpdatesToMessage ((VKStructs.VKUpdInfo VKStructs.MsgNew msg _), uid) = case msg of 
     Nothing -> pure $ Left LoggerMsgs.vkUpdatesParsingNoMsg
-    Just msg -> do 
-        let chid = (from_id . vkMessage) msg
-        let cMsg = (updatesToComMessage . vkMessage) msg 
-        pure $ Right (CommonMessage uid chid cMsg Nothing) 
+    Just val -> do 
+        let chid = (VKStructs.from_id . VKStructs.vkMessage) val
+        let cMsg = (updatesToComMessage . VKStructs.vkMessage) val 
+        pure $ Right (PureStructs.CommonMessage uid chid cMsg Nothing) 
 
-
-updatesToComMessage :: VKMessage -> CMessage 
-updatesToComMessage msg = case msgText msg of 
-    Just val -> Txt val 
-    Nothing -> Other  
+updatesToComMessage :: VKStructs.VKMessage -> PureStructs.ComMessage 
+updatesToComMessage msg = case VKStructs.msgText msg of 
+    Just val -> PureStructs.defaultComMsg {
+            PureStructs.commonMsgType = "Message"
+            , PureStructs.mbText = Just val
+        }
+    Nothing -> PureStructs.defaultComMsg 
+        {
+            PureStructs.commonMsgType = "Other"
+        }  
 
 
     
