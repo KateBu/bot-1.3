@@ -1,17 +1,30 @@
 module API.VK.Structs where
 
-import GHC.Generics
 import qualified Data.Text as T 
+import Data.Aeson
+    ( (.:), (.:?), withObject, FromJSON(parseJSON), Value(Object) ) 
+import Data.Aeson.Types ( parseFail )
 
+
+parseFailMessage :: String
+parseFailMessage = "VK bot got unexpected imput data type while parsing JSON"
 
 data VKUpdates = VKUpdates {
-    --    ts :: String
         updates :: [VKUpdInfo]
     } 
     | VKUpdateError {
         failed :: Int
         , curTs :: Maybe Int
     } deriving (Show)
+
+instance FromJSON VKUpdates where 
+    parseJSON = withObject "VKUpdates" $ \obj -> do
+        resp <- obj .:? "failed"
+        case (resp :: Maybe Int) of 
+            Just val -> VKUpdateError val <$> 
+                obj .:? "ts"
+            Nothing -> VKUpdates <$> 
+                obj .: "updates" 
 
 data VKUpdInfo = VKUpdInfo
     {
@@ -20,16 +33,36 @@ data VKUpdInfo = VKUpdInfo
         , groupId :: Maybe Int
     } deriving Show 
 
+instance FromJSON VKUpdInfo where 
+    parseJSON = withObject "VKUpdInfo" $ \obj -> do 
+        upType <- obj .: "type"
+        case (upType :: String) of 
+            "message_new" -> VKUpdInfo MsgNew <$>
+                obj .:? "object"
+                <*> obj .:? "group_id"
+            _ -> pure $ VKUpdInfo OtherEvent Nothing Nothing 
+
 data VKObject = VKObject {
     vkMessage :: VKMessage
     , clientInfo :: ClientInfo
 } deriving Show
+
+instance FromJSON VKObject where 
+    parseJSON (Object obj) = VKObject <$> obj .: "message"
+        <*> obj .: "client_info"
+    parseJSON _ = parseFail parseFailMessage
 
 data ClientInfo = ClientInfo {
     vkButtonActions :: [String]
     , vkKeyboard :: Bool
     , vkInlineKeyboard :: Bool
 }deriving Show
+
+instance FromJSON ClientInfo where 
+    parseJSON (Object obj) = ClientInfo <$> obj .: "button_actions" 
+        <*> obj .: "keyboard"
+        <*> obj .: "inline_keyboard"
+    parseJSON _ = parseFail parseFailMessage
 
 data EventType = MsgNew | OtherEvent 
     deriving Show 
@@ -61,12 +94,34 @@ data VKMessage = VKMessage
         , pinned_at :: Maybe Bool -} 
     } deriving Show 
 
+instance FromJSON VKMessage where 
+    parseJSON (Object obj) = 
+        VKMessage <$> obj .: "id"
+            <*> obj .: "peer_id"
+            <*> obj .: "from_id"
+            <*> obj .:? "text"
+            <*> obj .:? "attachments"
+    parseJSON _ = parseFail parseFailMessage
+
 data Attachment = Attachment 
     {
         aType :: String 
         , aObject :: AObject
     } | UnknownAttachment
     deriving Show 
+
+instance FromJSON Attachment where 
+    parseJSON = withObject "Attachment" $ \obj -> do 
+        attachType <- obj .: "type"
+        case (attachType :: String) of 
+            "photo" -> do
+                photo <- obj .: "photo" 
+                Attachment attachType <$> 
+                    (VKPhoto <$> photo .: "id"
+                    <*> photo .: "owner_id"
+                    <*> photo .: "text"
+                    <*> photo .: "access_key")
+            _ -> pure UnknownAttachment 
 
 data AObject = 
     VKPhoto 
@@ -83,6 +138,7 @@ data AObject =
            -- , phHeight :: Integer 
         } deriving Show 
 
+{-
 data PhSizes = PhSizes
     {
         url :: String 
@@ -90,6 +146,7 @@ data PhSizes = PhSizes
         , sHeight :: Int 
         , sType :: String 
     } deriving Show 
+-}
 
 data Geo = Geo 
     {
@@ -113,6 +170,23 @@ data VKResponse = VKResponse {
     } 
     | VKParseError deriving Show
 
+instance FromJSON VKResponse where 
+    parseJSON = withObject "VKResponse" $ \obj -> do
+        resp <- obj .:? "response"
+        case resp of 
+            Just val ->             
+                VKResponse <$> val .: "key"
+                <*> val .: "server"
+                <*> val .: "ts"
+            Nothing -> do 
+                err <- obj .:? "error"
+                case err of 
+                    Just val -> 
+                        VKError <$> val .: "error_code"
+                        <*> val .: "error_msg"
+                    Nothing -> 
+                        pure VKParseError 
+
 data VKSend = VKSend {
     respPeerId :: Int
     , respMessage :: Maybe T.Text
@@ -126,7 +200,20 @@ data VKResult = SendMsgScs {
         resError :: VKResultError
     } deriving Show 
 
+instance FromJSON VKResult where 
+    parseJSON = withObject "VKResult" $ \obj -> do 
+        isError <- obj .:? "error"
+        case isError of 
+            Just val -> pure $ SendMsgError val 
+            Nothing -> SendMsgScs <$> obj .: "response"
+
 data VKResultError = VKResultError {
     errCode :: Int
     , errMsg :: T.Text
 } deriving Show 
+
+instance FromJSON VKResultError where 
+    parseJSON (Object obj) = VKResultError <$> 
+        obj .: "error_code"
+        <*> obj .: "error_msg"
+    parseJSON _ = parseFail parseFailMessage
