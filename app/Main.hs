@@ -20,7 +20,7 @@ main :: IO ()
 main = do
     config <- Config.parseConfig configPath 
     case config of 
-        Just config -> runBot config 
+        Just existedConfig -> runBot existedConfig
         _ -> TIO.putStrLn LoggerMsgs.fatalConfig 
 
 runBot :: Config.Config -> IO ()
@@ -90,3 +90,5 @@ showMessage :: PureStructs.Message -> IO ()
 showMessage (PureStructs.CommonMessage uid chid cMsg _) = 
     TIO.putStrLn ( (T.pack $ "\nMessage: \nUpdateID: " <> show uid <> "\nchat id:" <> show chid <> "\n") 
         <> PureStructs.cMsgToText cMsg)
+showMessage _ = pure () 
+ 
