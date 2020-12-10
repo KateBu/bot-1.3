@@ -1,19 +1,13 @@
 module Logic.PureStructs where
 
-import qualified API.Telegram.Structs as TStructs 
-import qualified Config.Config as Config 
-import Logger.Logger ()
-
 import qualified Data.Text as T 
+import Data.Aeson ( object, KeyValue((.=)), ToJSON(toJSON) ) 
+
+import Logger.Logger ()
 
 
 type UpdateID = Int
 type MbCaption = Maybe T.Text
-
-data Message = EmptyMessage UpdateID
-    | UserCommand UpdateID Command
-    | CommonMessage UpdateID Int CMessage MbCaption
-    | CallbackQuery UpdateID Int T.Text
 
 data Command = Command 
     {
@@ -21,66 +15,97 @@ data Command = Command
         , text :: T.Text
     }
 
-data CMessage = Txt  T.Text 
-    | Animation  TStructs.TelAmination 
-    | Audio  TStructs.TelAudio 
-    | Document  TStructs.TelDocument 
-    | Photo  [TStructs.TelPhoto] 
-    | Video  TStructs.TelVideo 
-    | Voice  TStructs.TelVoice 
-    | Contact  TStructs.TelContact 
-    | Poll  TStructs.TelPoll 
-    | Venue  TStructs.TelVenue 
-    | Location  TStructs.TelLocation 
-    | Sticker  TStructs.TelSticker 
-    | Buttons [[TStructs.Button]]
-    | Other 
+data Message = EmptyMessage UpdateID
+    | UserCommand UpdateID Command
+    | CommonMessage 
+        {
+            comMsgUid :: UpdateID
+            , comMsgChid :: Int 
+            , comMsg :: ComMessage
+            , mbCaption :: MbCaption
+        }
+    | CallbackQuery UpdateID Int T.Text
 
-data ProcessMessageResult = ProcessMessageResult 
+data ComMessage = ComMessage
     {
-        updID :: UpdateID
-        , msgType :: T.Text
-        , newConfig :: Config.Config
-        , mbChatID :: Maybe Int
-        , mbMessage :: Maybe CMessage
-        , mbCaption :: MbCaption
-    }
+        commonMsgType :: T.Text 
+        , mbText :: Maybe T.Text
+        , mbAnimationFileId :: Maybe T.Text
+        , mbAudio :: Maybe PureAudio
+        , mbDocFileId :: Maybe T.Text
+        , mbPhotoFileIds :: Maybe [T.Text]
+        , mbVideoFileId :: Maybe T.Text
+        , mbVoiceFileId :: Maybe T.Text
+        , mbContact :: Maybe PureContact
+        , mbPoll :: Maybe PurePoll 
+        , mbVenue :: Maybe PureVenue 
+        , mbLocation :: Maybe PureLocation 
+        , mbSticker :: Maybe PureSticker 
+        , buttons :: Bool
+    }deriving Show 
 
-getMsgType :: Message -> T.Text
-getMsgType (EmptyMessage _) = "EmptyMessage"
-getMsgType (UserCommand _ _) = "UserCommand"
-getMsgType (CommonMessage _ _ _ _) = "CommonMessage"
-getMsgType (CallbackQuery _ _ _) = "CallbackQuery"
+data PureAudio = PureAudio
+    {
+        audioFileId :: T.Text
+        , mbAudioDuration :: Maybe Int 
+        , mbAudioPerformer :: Maybe T.Text 
+        , mbAudioTitle :: Maybe T.Text 
+    }deriving Show 
 
-getUid :: Message -> UpdateID
-getUid (EmptyMessage uid) = uid 
-getUid (UserCommand uid _) = uid 
-getUid (CommonMessage uid _ _ _) = uid 
+data PureContact = PureContact 
+    {
+        contactPhoneNumber :: T.Text
+        , contactFirstName :: T.Text
+        , mbContactLastName :: Maybe T.Text
+        , mbContactVCard :: Maybe T.Text
+    }deriving Show 
 
-getContentType :: Message -> T.Text
-getContentType (CommonMessage _ _ cMsg _) = getMessageType cMsg 
+data PurePoll = PurePoll
+    {
+        pollQuestion :: T.Text
+        , pollOptions :: [(T.Text, Int)]
+        , mbPollAnonymous :: Maybe Bool
+        , mbPollType :: Maybe T.Text
+        , mbPollAllowsMultiAnswers :: Maybe Bool
+        , mbPollCorrectId :: Maybe Int
+        , mbPollExplanation :: Maybe T.Text
+        , mbPollOpenPeriod :: Maybe Int 
+        , mbPollCloseDate :: Maybe Int 
+        , mbPollIsClosed :: Maybe Bool
+    } deriving Show 
 
-getMessageType :: CMessage -> T.Text
-getMessageType (Txt _) = "Message"
-getMessageType (Animation _)  = "Animation"
-getMessageType (Audio _) = "Audio"
-getMessageType (Document _) = "Document"
-getMessageType (Photo _) = "Photo"
-getMessageType (Video _) = "Video"
-getMessageType (Voice _) = "Voice"
-getMessageType (Contact _)  = "Contact"
-getMessageType (Poll _)  = "Poll"
-getMessageType (Venue _)  = "Venue"
-getMessageType (Location _)  = "Location"
-getMessageType (Sticker _) = "Sticker"
-getMessageType (Buttons _) = "Message"
+data PureVenue = PureVenue 
+    {
+        venueLat :: Double
+        , venueLong :: Double 
+        , venueTitle :: T.Text
+        , venueAddress :: T.Text
+    }deriving Show 
 
-buttons :: [[TStructs.Button]]
-buttons = [[TStructs.Button "1" "/setRepetition1"]
-    , [TStructs.Button "2" "/setRepetition2"]
-    , [TStructs.Button "3" "/setRepetition3"]
-    , [TStructs.Button "4" "/setRepetition4"]
-    , [TStructs.Button "5" "/setRepetition5"]]
+data PureLocation = PureLocation 
+    {
+        locationLat :: Double 
+        , locationLong :: Double 
+    }deriving Show 
+
+data PureSticker = PureSticker 
+    {
+        stickerFileId :: T.Text
+        , stickerIsAnimated :: Bool 
+    }deriving Show 
+
+data PureButtons = PureButtons T.Text T.Text 
+    deriving Show 
+
+instance ToJSON PureButtons where 
+    toJSON (PureButtons btn cbd) = object ["text" .= btn, "callback_data" .= cbd]  
+
+buttons' :: [[PureButtons]]
+buttons' = [[PureButtons "1" "/setRepetition1"]
+    , [PureButtons "2" "/setRepetition2"]
+    , [PureButtons "3" "/setRepetition3"]
+    , [PureButtons "4" "/setRepetition4"]
+    , [PureButtons "5" "/setRepetition5"]]
 
 repeatText :: T.Text
 repeatText = "Выберите количество повторов: "
@@ -88,6 +113,41 @@ repeatText = "Выберите количество повторов: "
 newRepeatText :: Int -> T.Text
 newRepeatText rep = "Установлено количество обновлений: " <> (T.pack . show) rep
 
-cMsgToText :: CMessage -> T.Text
-cMsgToText (Txt txt) = "Text message: " <> txt 
+getMsgUid :: Message -> UpdateID
+getMsgUid (UserCommand uid _) = uid 
+getMsgUid (CommonMessage uid _ _ _) = uid 
+getMsgUid (EmptyMessage uid) = uid 
+getMsgUid (CallbackQuery uid _ _) = uid 
 
+getContentType :: Message -> T.Text
+getContentType (CommonMessage _ _ cMsg _) = commonMsgType cMsg 
+getContentType _ = ""
+
+defaultComMsg :: ComMessage 
+defaultComMsg = ComMessage "" 
+    Nothing
+    Nothing
+    Nothing
+    Nothing
+    Nothing
+    Nothing
+    Nothing
+    Nothing
+    Nothing
+    Nothing
+    Nothing
+    Nothing
+    False
+
+cMsgToText :: ComMessage -> T.Text
+cMsgToText cMsg = getMaybeText (mbText cMsg)
+
+getMaybeText :: Maybe T.Text -> T.Text
+getMaybeText Nothing = ""
+getMaybeText (Just txt) = "Text message: " <> txt 
+
+getMsgType :: Message -> T.Text
+getMsgType (EmptyMessage _) = "EmptyMessage"
+getMsgType (UserCommand _ _) = "UserCommand"
+getMsgType (CommonMessage _ _ _ _) = "CommonMessage"
+getMsgType (CallbackQuery _ _ _) = "CallbackQuery"
