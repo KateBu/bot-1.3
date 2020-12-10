@@ -3,6 +3,7 @@ module Logger.LoggerMsgs where
 import qualified Data.Text as T 
 import qualified Logger.Logger as Logger 
 
+
 fatalConfig :: T.Text
 fatalConfig = "FATAL ERROR: couldn't find or read the config file," 
             <> " check the path to the file and the information inside it"
@@ -111,6 +112,10 @@ vkUpdatesFailed3 :: Logger.LogMessage
 vkUpdatesFailed3 = Logger.LogMessage Logger.Warning 
     "VKUpdate failed 3: Information was lost, get new key and ts values"
 
+vkUpdatesFailed4 :: Logger.LogMessage
+vkUpdatesFailed4 = Logger.LogMessage Logger.Error  
+    "VKUpdate failed: Unexpected error code"
+
 vkUpdatesSuccess :: Logger.LogMessage
 vkUpdatesSuccess = Logger.LogMessage Logger.Debug 
     "VK updates revieved successfully"
@@ -126,3 +131,7 @@ vkUpdatesParsingNoMsg = Logger.LogMessage Logger.Error
 vkUpdatesParsingNoGroupID :: Logger.LogMessage
 vkUpdatesParsingNoGroupID = Logger.LogMessage Logger.Error 
     "VK updates group ID not found"
+
+unreadableConfig :: Logger.LogMessage
+unreadableConfig = Logger.LogMessage Logger.Error      
+    "Got unreadeble config"
