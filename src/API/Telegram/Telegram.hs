@@ -20,7 +20,6 @@ import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Handle.Handle as Handle 
 import qualified API.Telegram.Structs as TStructs 
-import API.Telegram.Parsers () 
 import qualified Logic.PureStructs as PureStructs 
 import qualified API.Telegram.Wrapper as TWrapper 
 import qualified API.Telegram.Cleaners as Cleaners 
@@ -52,6 +51,7 @@ getU (Config.Config (Config.Telegram tok off) _ _ _ _) = do
     updRequest <- httpLBS http
     let respBody = getResponseBody updRequest 
     decodeUpd respBody 
+getU _ = pure $ Left LoggerMsgs.unreadableConfig 
     
 makeMessages :: Config.Config -> IO (Either Logger.LogMessage [PureStructs.Message])
 makeMessages config = do 
@@ -70,7 +70,7 @@ sendM_ config msg = do
         }
     response <- Network.HTTP.Client.httpLbs resp manager 
     case statusCode (responseStatus response) of 
-        200 -> pure $ Right (Config.configSetOffset config ((succ . PureStructs.getUid) msg )) 
+        200 -> pure $ Right (Config.configSetOffset config ((succ . PureStructs.getMsgUid) msg )) 
         err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
 
 decodeUpd :: LC.ByteString -> IO (Either Logger.LogMessage TStructs.TelegramUpdates)
@@ -84,4 +84,3 @@ decodeUpd js = case (decode js :: Maybe TStructs.TelegramUpdates) of
                 <> "\n\terror describtion: " <> TStructs.description val))
         Left msg -> return $ Left (Logger.makeLogMessage LoggerMsgs.getUpdFld (T.pack msg))
             
-    
