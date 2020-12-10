@@ -12,8 +12,9 @@ import Network.HTTP.Simple
     ( parseRequest, getResponseBody, httpLBS ) 
 
 import qualified Logger.Logger as Logger 
+import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified API.VK.Structs as VKStructs 
-import API.VK.Parsers ()
+
 
 type Users = Map.Map Int Int 
 
@@ -54,7 +55,7 @@ parseConfig path = do
         botT <- Configurator.lookup conf (T.pack "bot.botType") :: IO (Maybe String)
         rep <- Configurator.lookup conf (T.pack "bot.repetition") :: IO (Maybe Int)
         msg <- Configurator.lookup conf (T.pack "bot.helpMessage") :: IO (Maybe T.Text)
-        priority <- Configurator.lookup conf (T.pack "bot.logPriority") :: IO (Maybe String)
+        prior <- Configurator.lookup conf (T.pack "bot.logPriority") :: IO (Maybe String)
         case botT of 
             Just "Telegram" -> do 
                 tok <- Configurator.lookup conf (T.pack "bot.telegramToken") :: IO (Maybe String)  
@@ -63,7 +64,7 @@ parseConfig path = do
                     <*>  msg
                     <*> rep 
                     <*> Just Map.empty 
-                    <*> (read <$> priority)
+                    <*> (read <$> prior)
             Just "VK" -> do 
                 tok <- Configurator.lookup conf (T.pack "bot.VKToken") :: IO (Maybe String)
                 group <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Int)
@@ -78,7 +79,7 @@ parseConfig path = do
                             <*> msg 
                             <*> rep 
                             <*> Just Map.empty
-                            <*> (read <$> priority)
+                            <*> (read <$> prior)
             _ -> pure Nothing 
 
 getVKSettings :: Maybe Int -> Maybe String -> IO (Either T.Text (String, String, Int))
@@ -121,6 +122,7 @@ setVkSettings :: Config ->  Either T.Text (String, String, Int) -> Either Logger
 setVkSettings _ (Left txt) = Left (Logger.LogMessage Logger.Error txt)
 setVkSettings (Config (VK tok group _ _ _) hm rep uss prior) (Right (key, serv, ts)) = Right $ 
     Config (VK tok group key serv ts ) hm rep uss prior 
+setVkSettings _ _ = Left LoggerMsgs.unreadableConfig
 
 setUserRepeat :: Config -> Int -> Int -> Config
 setUserRepeat config chid newRep = case Map.lookup chid (users config) of 
@@ -147,4 +149,3 @@ configSetOffset (Config bt hm rep uss prior) newOffset =
             Config (Telegram tok newOffset) hm rep uss prior
         VK tok group key serv _ -> 
             Config (VK tok group key serv newOffset) hm rep uss prior
-
