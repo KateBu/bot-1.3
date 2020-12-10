@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e094215a9d81a725d0cc87f9d75b6f4b496fe2da63d6fcf41b421e29b4345315
+-- hash: 5f67e33ff0bc6d1e408908e83262a2073fa0887677ccf4467557ffdd12ba80c6
 
 name:           bot13
 version:        0.1.0.0
@@ -28,18 +28,15 @@ source-repository head
 library
   exposed-modules:
       API.Telegram.Cleaners
-      API.Telegram.Parsers
       API.Telegram.Structs
       API.Telegram.Telegram
       API.Telegram.Wrapper
       API.VK.Cleaners
-      API.VK.Parsers
       API.VK.Structs
       API.VK.VK
       API.VK.Wrapper
       Config.Config
       Handle.Handle
-      Lib
       Logger.Logger
       Logger.LoggerMsgs
       Logic.Logic
