@@ -1,55 +1,57 @@
 module API.Telegram.Wrapper where
 
-import Data.Aeson
-import Data.Aeson.Types
+import Data.Aeson ( Value, object, KeyValue((.=)) )
+import Data.Aeson.Types ( Pair )
 import qualified Data.Text as T 
 
-import Config.Config 
-import Logic.PureStructs
+import qualified Config.Config as Config 
+import qualified Logic.PureStructs as PureStructs 
 
-import API.Telegram.Structs
-import API.Telegram.Parsers
+messageToPairs :: PureStructs.ComMessage -> [Pair]
+messageToPairs cMsg = 
+    getMaybeText "text" (PureStructs.mbText cMsg) 
+    <> getMaybeText "animation" (PureStructs.mbAnimationFileId cMsg)
+    <> getMaybeText "audio" (PureStructs.audioFileId <$> PureStructs.mbAudio cMsg)
+    <> getMaybeVal "duration" (PureStructs.mbAudio cMsg >>= PureStructs.mbAudioDuration)
+    <> getMaybeText "performer" (PureStructs.mbAudio cMsg >>= PureStructs.mbAudioPerformer)
+    <> getMaybeText "title" (PureStructs.mbAudio cMsg >>= PureStructs.mbAudioTitle)
+    <> getMaybeText "document" (PureStructs.mbDocFileId cMsg)
+    <> getMaybeText "photo" (PureStructs.mbPhotoFileIds cMsg >>= Just . head)
+    <> getMaybeText "video" (PureStructs.mbVideoFileId cMsg)
+    <> getMaybeText "voice" (PureStructs.mbVoiceFileId cMsg)
+    <> getMaybeText "phone_number" (PureStructs.contactPhoneNumber <$> PureStructs.mbContact cMsg)
+    <> getMaybeText "first_name" (PureStructs.contactFirstName <$> PureStructs.mbContact cMsg)
+    <> getMaybeText "last_name" (PureStructs.mbContact cMsg >>= PureStructs.mbContactLastName)
+    <> getMaybeText "vcard" (PureStructs.mbContact cMsg >>= PureStructs.mbContactVCard)
+    <> getMaybeText "question" (PureStructs.pollQuestion <$> PureStructs.mbPoll cMsg)
+    <> pollOptionsToPair (PureStructs.pollOptions <$> PureStructs.mbPoll cMsg) 
+    <> getMaybeVal "is_anonimous" (PureStructs.mbPoll cMsg >>= PureStructs.mbPollAnonymous)
+    <> getMaybeText "type" (PureStructs.mbPoll cMsg >>= PureStructs.mbPollType)
+    <> getMaybeVal "allows_multiple_answers" (PureStructs.mbPoll cMsg >>= PureStructs.mbPollAllowsMultiAnswers)
+    <> getMaybeVal "correct_option_id" (PureStructs.mbPoll cMsg >>= PureStructs.mbPollCorrectId)
+    <> getMaybeText "explanation" (PureStructs.mbPoll cMsg >>= PureStructs.mbPollExplanation)
+    <> getMaybeVal "open_period" (PureStructs.mbPoll cMsg >>= PureStructs.mbPollOpenPeriod)
+    <> getMaybeVal "close_date" (PureStructs.mbPoll cMsg >>= PureStructs.mbPollCloseDate)
+    <> getMaybeVal "is_closed" (PureStructs.mbPoll cMsg >>= PureStructs.mbPollIsClosed)
+    <> getMaybeVal "latitude" (PureStructs.venueLat <$> PureStructs.mbVenue cMsg)
+    <> getMaybeVal "longitude" (PureStructs.venueLong <$> PureStructs.mbVenue cMsg)
+    <> getMaybeVal "title" (PureStructs.venueTitle <$> PureStructs.mbVenue cMsg)
+    <> getMaybeVal "address" (PureStructs.venueAddress <$> PureStructs.mbVenue cMsg)
+    <> getMaybeVal "latitude" (PureStructs.locationLat <$> PureStructs.mbLocation cMsg)
+    <> getMaybeVal "longitude" (PureStructs.locationLong <$> PureStructs.mbLocation cMsg)
+    <> getMaybeText "sticker" (PureStructs.stickerFileId <$> PureStructs.mbSticker cMsg) 
+    <> makeButtons (PureStructs.buttons cMsg)
 
+makeButtons :: Bool -> [Pair]
+makeButtons False = []
+makeButtons _ = ["reply_markup" .= makeKeyboard PureStructs.buttons'
+    , "one_time_keyboard" .= True]
 
+pollOptionsToPair :: Maybe [(T.Text, Int)] -> [Pair]
+pollOptionsToPair Nothing = [] 
+pollOptionsToPair (Just pollOptions) = ["options" .= map fst pollOptions]
 
-messageToPairs :: CMessage -> [Pair]
-messageToPairs (Txt text ) = ["text" .= text] 
-messageToPairs (Animation animation ) = ["animation" .= animation_file_id animation] 
-messageToPairs (Audio audio) = ["audio" .= audio_id audio]
-    <> getMaybeVal "duration" (audio_duration audio)
-    <> getMaybeText "performer" (audio_performer audio)
-    <> getMaybeText "title" (audio_title audio)
-messageToPairs (Document document) = ["document" .= doc_file_id document]
-messageToPairs (Photo photo ) = ["photo" .= (photo_file_id . head) photo]
-messageToPairs (Video video ) = ["video" .= video_file_id video]
-messageToPairs (Voice voice ) = ["voice" .= voice_file_id voice]
-messageToPairs (Contact contact) = ["phone_number" .= phone_number contact
-    , "first_name" .= first_name contact]
-    <> getMaybeText "last_name" (last_name contact)
-    <> getMaybeText "vcard" (vcard contact)
-messageToPairs (Poll poll) = ["question" .= question poll
-    , "options" .= (map poll_option (poll_options poll))]
-    <> getMaybeVal "is_anonymous" (is_anonymous poll)
-    <> getMaybeText "type" (poll_type poll) 
-    <> getMaybeVal "allows_multiple_answers" (allows_multiple_answers poll)
-    <> getMaybeVal "correct_option_id" (correct_option_id poll)
-    <> getMaybeText "explanation" (explanation poll)
-    <> getMaybeVal "open_period" (open_period poll)
-    <> getMaybeVal "close_date" (close_date poll)
-    <> getMaybeVal "is_closed" (is_closed poll)
-messageToPairs (Venue venue ) = ["latitude" .= v_latitude venue
-    , "longitude" .= v_longitude venue
-    , "title" .= v_title venue
-    , "address" .= v_address venue]
-messageToPairs (Location location) = ["latitude" .= latitude location
-    , "longitude" .= longitude location]
-messageToPairs (Sticker sticker) = ["sticker" .= s_file_id sticker]
-messageToPairs (Buttons btns) = ["text" .= repeatText
-    ,"reply_markup" .= makeKeyboard btns
-    ,"one_time_keyboard" .= True]
-
-
-makeKeyboard :: [[Button]] -> Value
+makeKeyboard :: [[PureStructs.PureButtons]] -> Value
 makeKeyboard btns = object ["inline_keyboard" .= btns]
 
 getMaybeText :: T.Text -> Maybe T.Text -> [Pair] 
@@ -60,16 +62,18 @@ getMaybeVal :: Show a => T.Text -> Maybe a -> [Pair]
 getMaybeVal prop (Just val) = [prop .= show val]
 getMaybeVal _ _ = [] 
 
-makeMessageObject :: Message -> Value
-makeMessageObject (CommonMessage _ chid msg cap) = object $ 
+makeMessageObject :: PureStructs.Message -> Value
+makeMessageObject (PureStructs.CommonMessage _ chid msg cap) = object $ 
     ["chat_id" .= chid]
     <> messageToPairs msg  
     <> getMaybeText "caption" cap 
+makeMessageObject _ = undefined 
 
-sendMessageHttpRequest :: Config -> Message -> String 
-sendMessageHttpRequest (Config (Telegram tok _) _ _ _ _) msg = case getContentType msg of 
+sendMessageHttpRequest :: Config.Config -> PureStructs.Message -> String 
+sendMessageHttpRequest (Config.Config (Config.Telegram tok _) _ _ _ _) msg = case PureStructs.getContentType msg of 
     "No content" -> undefined
     _ -> "https://api.telegram.org/bot" 
         <> tok 
         <> "/send" 
-        <> T.unpack (getContentType msg)
+        <> T.unpack (PureStructs.getContentType msg)
+sendMessageHttpRequest _ _ = undefined         
