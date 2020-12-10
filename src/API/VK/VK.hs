@@ -21,7 +21,6 @@ import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.PureStructs as PureStructs 
 import qualified API.VK.Structs as VKStructs 
-import API.VK.Parsers ()
 import qualified API.VK.Cleaners as VKCleaners 
 import qualified API.VK.Wrapper as VKWrappers 
 
@@ -56,13 +55,15 @@ getU config@(Config.Config (Config.VK _ _ key server ts) _ _ _ _) = do
         Right val -> do 
             pure $ Right val 
         Left err -> pure $ Left err 
+getU _ = pure $ Left LoggerMsgs.getUpdFld
 
 decodeUpd :: LC.ByteString -> IO (Either Logger.LogMessage VKStructs.VKUpdates)
 decodeUpd json = case (eitherDecode json :: Either String VKStructs.VKUpdates) of 
-    Right (VKStructs.VKUpdateError err_code mbNewTs) -> case err_code of 
+    Right (VKStructs.VKUpdateError err_code _) -> case err_code of 
         1 -> pure $ Left LoggerMsgs.vkUpdatesFailed1  
         2 -> pure $ Left LoggerMsgs.vkUpdatesFailed2
         3 -> pure $ Left LoggerMsgs.vkUpdatesFailed3
+        _ -> pure $ Left LoggerMsgs.vkUpdatesFailed4 
     Right upd -> pure $ Right upd 
     Left err -> pure $ Left (Logger.LogMessage Logger.Error ("decode vk update failed: " <> (T.pack err)))
 
@@ -72,6 +73,7 @@ makeMessages config@(Config.Config (Config.VK _ _ _ _ ts) _ _ _ _) = do
     case vkUpd of 
         Left err -> pure $ Left err 
         Right val -> VKCleaners.updatesToPureMessageList $ (val, ts) 
+makeMessages _ = pure $ Left LoggerMsgs.unreadableConfig
 
 sendM_ :: Config.Config -> PureStructs.Message -> IO (Either Logger.LogMessage Config.Config)
 sendM_ config message = do
@@ -92,11 +94,10 @@ sendM_ config message = do
                 Right (VKStructs.SendMsgError err) -> pure $ 
                     Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (VKStructs.errMsg err))
                 Right (VKStructs.SendMsgScs _) -> pure $ 
-                    Right (Config.configSetOffset config ((succ . PureStructs.getUid) message ))
+                    Right (Config.configSetOffset config ((succ . PureStructs.getMsgUid) message ))
         err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
 
 getRandonId :: IO Int
 getRandonId = do 
     gen <- newStdGen 
     pure $ ( (fst . random) gen :: Int)
-
