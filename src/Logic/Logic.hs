@@ -18,7 +18,7 @@ processMessages config msgs function = do
         [] -> pure $ Left LoggerMsgs.emptyList
         _ -> case last eiConfs of 
             Left err -> pure $ Left err
-            Right config -> pure $ Right config 
+            Right conf -> pure $ Right conf 
 
 processMessage_ :: (Monad m) => Config.Config 
     -> (Config.Config -> PureStructs.Message -> m (Either Logger.LogMessage Config.Config)) 
@@ -28,14 +28,14 @@ processMessage_ config _ (PureStructs.EmptyMessage uid)  =
     pure $ Right (Config.configSetOffset config (succ uid))
 processMessage_ config sendFunction (PureStructs.UserCommand uid command)  = case PureStructs.text command of 
     "/help" -> sendFunction config 
-        (PureStructs.CommonMessage uid (PureStructs.chatID command) (PureStructs.Txt (Config.helpMessage config)) Nothing)
+        (PureStructs.CommonMessage uid (PureStructs.chatID command) (makeHelpMessage config) Nothing)
     "/repeat" -> sendFunction config 
-        (PureStructs.CommonMessage uid (PureStructs.chatID command) (PureStructs.Buttons PureStructs.buttons) Nothing)
+        (PureStructs.CommonMessage uid (PureStructs.chatID command) makeRepeatMessage Nothing)
     _ -> pure $ Left LoggerMsgs.cmdMsgFld
 processMessage_ config sendFunction (PureStructs.CallbackQuery uid chid txt)  = do 
     let newConfig = setNewRepetition config chid txt 
     sendFunction newConfig 
-        (PureStructs.CommonMessage uid chid (PureStructs.Txt (PureStructs.newRepeatText (getNewRepetition txt))) Nothing )
+        (PureStructs.CommonMessage uid chid (makeCallbackResponse txt) Nothing )
 processMessage_ config sendFunction (PureStructs.CommonMessage uid chid cMsg mCap)  = 
     repeatMessage config (PureStructs.CommonMessage uid chid cMsg mCap)(Config.findUserRepeat config chid) sendFunction 
 
@@ -59,22 +59,31 @@ getNewRepetition "/setRepetition1" = 1
 getNewRepetition "/setRepetition2" = 2 
 getNewRepetition "/setRepetition3" = 3 
 getNewRepetition "/setRepetition4" = 4 
-getNewRepetition "/setRepetition5" = 5 
+getNewRepetition _ = 5 
 
-getResultInfo :: PureStructs.ProcessMessageResult -> T.Text
-getResultInfo res = 
-    "\n\tUpdate ID: "
-    <> (T.pack . show . PureStructs.updID) res 
-    <> "\n\tMessage Type: "
-    <> PureStructs.msgType res 
-    <> maybeChid (PureStructs.mbChatID res)
-    <> maybeMsgInfo (PureStructs.mbMessage res)
+makeHelpMessage :: Config.Config -> PureStructs.ComMessage
+makeHelpMessage config = PureStructs.defaultComMsg {
+        PureStructs.commonMsgType = "Message"
+        , PureStructs.mbText = Just (Config.helpMessage config)
+    }
+
+makeRepeatMessage :: PureStructs.ComMessage
+makeRepeatMessage = PureStructs.defaultComMsg {
+        PureStructs.commonMsgType = "Message"
+        , PureStructs.mbText = Just PureStructs.repeatText 
+        , PureStructs.buttons = True 
+    }
+
+makeCallbackResponse :: T.Text -> PureStructs.ComMessage 
+makeCallbackResponse txt = PureStructs.defaultComMsg {
+        PureStructs.commonMsgType = "Message"
+        , PureStructs.mbText = Just $ PureStructs.newRepeatText (getNewRepetition txt)
+    }
 
 maybeChid :: Maybe Int -> T.Text
 maybeChid Nothing = T.empty
 maybeChid (Just chid) = (T.pack . show) chid 
 
-maybeMsgInfo :: Maybe PureStructs.CMessage -> T.Text
+maybeMsgInfo :: Maybe PureStructs.ComMessage -> T.Text
 maybeMsgInfo Nothing = T.empty
-maybeMsgInfo (Just msg) = PureStructs.getMessageType msg
-
+maybeMsgInfo (Just msg) = PureStructs.commonMsgType msg 
