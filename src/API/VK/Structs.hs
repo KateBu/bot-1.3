@@ -2,8 +2,16 @@ module API.VK.Structs where
 
 import qualified Data.Text as T 
 import Data.Aeson
-    ( (.:), (.:?), withObject, FromJSON(parseJSON), Value(Object) ) 
+    ( (.:), 
+    (.:?), 
+    withObject, 
+    object,
+    FromJSON(parseJSON), 
+    Value(Object),
+    KeyValue((.=)),
+    ToJSON(toJSON) ) 
 import Data.Aeson.Types ( parseFail )
+import GHC.Generics ( Generic )
 
 
 parseFailMessage :: String
@@ -156,8 +164,8 @@ data Geo = Geo
 data Keyboard = Keyboard
     deriving Show
 
-data Action = Action 
-    deriving Show 
+--data Action = Action 
+ --   deriving Show 
 
 data VKResponse = VKResponse {
         key :: String
@@ -217,3 +225,42 @@ instance FromJSON VKResultError where
         obj .: "error_code"
         <*> obj .: "error_msg"
     parseJSON _ = parseFail parseFailMessage
+
+data VKKeyBoard = VKKeyBoard 
+    {
+        one_time :: Bool
+        , inline :: Bool
+        , buttons :: [[Action]] 
+    } deriving (Show, Generic) 
+
+instance ToJSON VKKeyBoard 
+
+data Action = Action VKButtons 
+    deriving (Show)
+
+instance ToJSON Action where 
+    toJSON (Action btns) = object ["action" .= btns]
+
+
+data VKButtons = VKButtons 
+    {
+        butType :: String
+        , payload :: VKPayload
+        , label :: String 
+    } deriving Show
+
+data VKPayload = VKPayload 
+    {
+        plType :: T.Text 
+        , plVal :: String 
+    } deriving Show 
+
+instance ToJSON VKPayload where 
+    toJSON (VKPayload t v) = object [ t .= v]
+
+instance ToJSON VKButtons where 
+    toJSON (VKButtons btnType pld btnLab) = object ["type" .= btnType
+        , "payload" .= pld
+        , "label" .= btnLab]
+
+
