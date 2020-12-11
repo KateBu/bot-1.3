@@ -241,7 +241,6 @@ data Action = Action VKButtons
 instance ToJSON Action where 
     toJSON (Action btns) = object ["action" .= btns]
 
-
 data VKButtons = VKButtons 
     {
         butType :: String
