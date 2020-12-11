@@ -135,3 +135,7 @@ vkUpdatesParsingNoGroupID = Logger.LogMessage Logger.Error
 unreadableConfig :: Logger.LogMessage
 unreadableConfig = Logger.LogMessage Logger.Error      
     "Got unreadeble config"
+
+vkUpdToMsgFld :: Logger.LogMessage
+vkUpdToMsgFld = Logger.LogMessage Logger.Error      
+    "VKUpdate to Message parsing failed"
