@@ -55,11 +55,12 @@ setNewRepetition config chid queryText =
     Config.setUserRepeat config chid (getNewRepetition queryText)
 
 getNewRepetition :: T.Text -> Int 
-getNewRepetition "/setRepetition1" = 1 
-getNewRepetition "/setRepetition2" = 2 
-getNewRepetition "/setRepetition3" = 3 
-getNewRepetition "/setRepetition4" = 4 
-getNewRepetition _ = 5 
+getNewRepetition txt 
+    | txt == PureStructs.rep1 = 1 
+    | txt == PureStructs.rep2 = 2 
+    | txt == PureStructs.rep3 = 2 
+    | txt == PureStructs.rep4 = 2 
+    | otherwise = 5 
 
 makeHelpMessage :: Config.Config -> PureStructs.ComMessage
 makeHelpMessage config = PureStructs.defaultComMsg {
