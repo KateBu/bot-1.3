@@ -17,7 +17,9 @@ makeRequestBody (PureStructs.CommonMessage _ chid msg _) randomId = mconcat
     ["&v=", Config.vkApiVersion
     , "&user_id=", show chid
     , "&random_id=", show randomId
-    , msgToBL msg]
+    , msgToBL msg
+    , makeInlineKeyboard (PureStructs.buttons msg)
+    ]
 makeRequestBody _ _ = undefined 
 
 msgToBL :: PureStructs.ComMessage -> String
@@ -26,3 +28,7 @@ msgToBL cMsg = getMaybeText (PureStructs.mbText cMsg)
 getMaybeText :: Maybe T.Text -> String
 getMaybeText Nothing = ""
 getMaybeText (Just txt) = T.unpack ("&message=" <> txt)
+
+makeInlineKeyboard :: Bool -> String
+makeInlineKeyboard False = ""
+makeInlineKeyboard _ = undefined 
