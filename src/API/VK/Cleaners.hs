@@ -16,8 +16,9 @@ vkUpdatesToMessage ((VKStructs.VKUpdInfo VKStructs.MsgNew msg _), uid) = case ms
     Nothing -> pure $ Left LoggerMsgs.vkUpdatesParsingNoMsg
     Just val -> do 
         let chid = (VKStructs.from_id . VKStructs.vkMessage) val
-        let cMsg = (updatesToComMessage . VKStructs.vkMessage) val 
-        pure $ Right (PureStructs.CommonMessage uid chid cMsg Nothing) 
+        pure $ updatesToMessage (VKStructs.vkMessage val) uid chid 
+--        let cMsg = (updatesToComMessage . VKStructs.vkMessage) val 
+--        pure $ Right (PureStructs.CommonMessage uid chid cMsg Nothing) 
 
 updatesToComMessage :: VKStructs.VKMessage -> PureStructs.ComMessage 
 updatesToComMessage msg = case VKStructs.msgText msg of 
@@ -30,5 +31,10 @@ updatesToComMessage msg = case VKStructs.msgText msg of
             PureStructs.commonMsgType = "Other"
         }  
 
-
-    
+updatesToMessage :: VKStructs.VKMessage -> PureStructs.UpdateID -> PureStructs.ChatID -> Either Logger.LogMessage PureStructs.Message
+updatesToMessage msg uid chid = case VKStructs.msgText msg of 
+    Just txt -> case txt of 
+        "/help" -> pure $ PureStructs.UserCommand uid (PureStructs.Command chid txt)
+        "/repeat" -> pure $ PureStructs.UserCommand uid (PureStructs.Command chid txt)
+        _ -> pure $ PureStructs.CommonMessage uid chid (updatesToComMessage msg) Nothing 
+    _ -> Left LoggerMsgs.vkUpdToMsgFld 
