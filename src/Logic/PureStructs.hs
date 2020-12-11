@@ -1,17 +1,17 @@
 module Logic.PureStructs where
 
 import qualified Data.Text as T 
-import Data.Aeson ( object, KeyValue((.=)), ToJSON(toJSON) ) 
 
 import Logger.Logger ()
 
 
 type UpdateID = Int
+type ChatID = Int 
 type MbCaption = Maybe T.Text
 
 data Command = Command 
     {
-         chatID :: Int
+         chatID :: ChatID
         , text :: T.Text
     }
 
@@ -20,11 +20,11 @@ data Message = EmptyMessage UpdateID
     | CommonMessage 
         {
             comMsgUid :: UpdateID
-            , comMsgChid :: Int 
+            , comMsgChid :: ChatID 
             , comMsg :: ComMessage
             , mbCaption :: MbCaption
         }
-    | CallbackQuery UpdateID Int T.Text
+    | CallbackQuery UpdateID ChatID T.Text
 
 data ComMessage = ComMessage
     {
@@ -97,15 +97,12 @@ data PureSticker = PureSticker
 data PureButtons = PureButtons T.Text T.Text 
     deriving Show 
 
-instance ToJSON PureButtons where 
-    toJSON (PureButtons btn cbd) = object ["text" .= btn, "callback_data" .= cbd]  
-
 buttons' :: [[PureButtons]]
-buttons' = [[PureButtons "1" "/setRepetition1"]
-    , [PureButtons "2" "/setRepetition2"]
-    , [PureButtons "3" "/setRepetition3"]
-    , [PureButtons "4" "/setRepetition4"]
-    , [PureButtons "5" "/setRepetition5"]]
+buttons' = [[PureButtons "1" rep1]
+    , [PureButtons "2" rep2]
+    , [PureButtons "3" rep3]
+    , [PureButtons "4" rep4]
+    , [PureButtons "5" rep5]]
 
 repeatText :: T.Text
 repeatText = "Выберите количество повторов: "
@@ -151,3 +148,18 @@ getMsgType (EmptyMessage _) = "EmptyMessage"
 getMsgType (UserCommand _ _) = "UserCommand"
 getMsgType (CommonMessage _ _ _ _) = "CommonMessage"
 getMsgType (CallbackQuery _ _ _) = "CallbackQuery"
+
+rep1:: T.Text
+rep1 = "/setRepetition1"
+
+rep2:: T.Text
+rep2 = "/setRepetition2"
+
+rep3:: T.Text
+rep3 = "/setRepetition3"
+
+rep4:: T.Text
+rep4 = "/setRepetition4"
+
+rep5:: T.Text
+rep5 = "/setRepetition5"
