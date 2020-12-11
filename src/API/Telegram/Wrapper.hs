@@ -1,11 +1,17 @@
 module API.Telegram.Wrapper where
 
-import Data.Aeson ( Value, object, KeyValue((.=)) )
+import Data.Aeson ( Value, object, KeyValue((.=)), ToJSON(toJSON) )
 import Data.Aeson.Types ( Pair )
 import qualified Data.Text as T 
 
 import qualified Config.Config as Config 
 import qualified Logic.PureStructs as PureStructs 
+
+
+newtype TButtons = TButtons PureStructs.PureButtons 
+
+instance ToJSON TButtons where 
+    toJSON (TButtons (PureStructs.PureButtons lbl txt)) = object ["text" .= lbl, "callback_data" .= txt] 
 
 messageToPairs :: PureStructs.ComMessage -> [Pair]
 messageToPairs cMsg = 
@@ -44,14 +50,14 @@ messageToPairs cMsg =
 
 makeButtons :: Bool -> [Pair]
 makeButtons False = []
-makeButtons _ = ["reply_markup" .= makeKeyboard PureStructs.buttons'
+makeButtons _ = ["reply_markup" .= makeKeyboard ((map (map TButtons)) PureStructs.buttons')
     , "one_time_keyboard" .= True]
 
 pollOptionsToPair :: Maybe [(T.Text, Int)] -> [Pair]
 pollOptionsToPair Nothing = [] 
 pollOptionsToPair (Just pollOptions) = ["options" .= map fst pollOptions]
 
-makeKeyboard :: [[PureStructs.PureButtons]] -> Value
+makeKeyboard :: [[TButtons]] -> Value
 makeKeyboard btns = object ["inline_keyboard" .= btns]
 
 getMaybeText :: T.Text -> Maybe T.Text -> [Pair] 
