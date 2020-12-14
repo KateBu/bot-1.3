@@ -1,6 +1,8 @@
 module Logic.PureStructs where
 
 import qualified Data.Text as T 
+import qualified Data.Text.Lazy as TL 
+import Data.Aeson ( Value ) 
 
 import Logger.Logger ()
 
@@ -8,6 +10,55 @@ import Logger.Logger ()
 type UpdateID = Int
 type ChatID = Int 
 type MbCaption = Maybe T.Text
+
+data MessageType = MTEmpty | MTUserCommand | MTCallbackQuery | MTCommon | NotImplemented 
+
+data PureMessage = PureMessage 
+    {
+        messageType :: MessageType
+        , updateID :: UpdateID 
+        , mbParams :: Maybe [Params] 
+    }
+
+data UCommand = Help | Repeat 
+
+data Params = ParamsText T.Text T.Text
+        | ParamsTextLazy T.Text TL.Text
+        | ParamsNum T.Text Int 
+        | ParamsBool T.Text Bool 
+        | ParamsJSON T.Text Value 
+     --   | ParamsFile T.Text T.Text BSL.ByteString 
+        deriving (Show, Eq)
+
+buttons' :: [[PureButtons]]
+buttons' = [[PureButtons "1" rep1]
+    , [PureButtons "2" rep2]
+    , [PureButtons "3" rep3]
+    , [PureButtons "4" rep4]
+    , [PureButtons "5" rep5]]
+
+repeatText :: T.Text
+repeatText = "Выберите количество повторов: "
+
+newRepeatText :: Int -> T.Text
+newRepeatText rep = "Установлено количество обновлений: " <> (T.pack . show) rep
+
+rep1:: T.Text
+rep1 = "/setRepetition1"
+
+rep2:: T.Text
+rep2 = "/setRepetition2"
+
+rep3:: T.Text
+rep3 = "/setRepetition3"
+
+rep4:: T.Text
+rep4 = "/setRepetition4"
+
+rep5:: T.Text
+rep5 = "/setRepetition5"
+
+-- the code below will be removed soon
 
 data Command = Command 
     {
@@ -97,19 +148,6 @@ data PureSticker = PureSticker
 data PureButtons = PureButtons T.Text T.Text 
     deriving Show 
 
-buttons' :: [[PureButtons]]
-buttons' = [[PureButtons "1" rep1]
-    , [PureButtons "2" rep2]
-    , [PureButtons "3" rep3]
-    , [PureButtons "4" rep4]
-    , [PureButtons "5" rep5]]
-
-repeatText :: T.Text
-repeatText = "Выберите количество повторов: "
-
-newRepeatText :: Int -> T.Text
-newRepeatText rep = "Установлено количество обновлений: " <> (T.pack . show) rep
-
 getMsgUid :: Message -> UpdateID
 getMsgUid (UserCommand uid _) = uid 
 getMsgUid (CommonMessage uid _ _ _) = uid 
@@ -149,17 +187,3 @@ getMsgType (UserCommand _ _) = "UserCommand"
 getMsgType (CommonMessage _ _ _ _) = "CommonMessage"
 getMsgType (CallbackQuery _ _ _) = "CallbackQuery"
 
-rep1:: T.Text
-rep1 = "/setRepetition1"
-
-rep2:: T.Text
-rep2 = "/setRepetition2"
-
-rep3:: T.Text
-rep3 = "/setRepetition3"
-
-rep4:: T.Text
-rep4 = "/setRepetition4"
-
-rep5:: T.Text
-rep5 = "/setRepetition5"
