@@ -24,18 +24,23 @@ import qualified API.VK.Structs as VKStructs
 import qualified API.VK.Cleaners as VKCleaners 
 import qualified API.VK.Wrapper as VKWrappers 
 
+import qualified API.Wrapper as Wrapper 
+
 
 new :: Config.Config -> IO (Handle.Handle IO) 
 new config =  pure $ Handle.Handle 
     {
         Handle.hConfig = getConfig config  
         , Handle.hLogger = Logger.createLogger (Config.priority config)
-        , Handle.hGetUpdates = makeMessages  
+        , Handle.hGetUpdates = Wrapper.getUpdate  --makeMessages  
         , Handle.hSendMessage_ = sendM_
     }
 
 getConfig :: Config.Config -> IO (Either Logger.LogMessage Config.Config)
 getConfig config = pure $ Right config 
+
+
+-- the functions below will be removed soon 
 
 getU :: Config.Config -> IO (Either Logger.LogMessage VKStructs.VKUpdates) 
 getU config@(Config.Config (Config.VK _ _ key server ts) _ _ _ _) = do 
