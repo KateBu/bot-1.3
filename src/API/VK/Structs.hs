@@ -18,7 +18,8 @@ parseFailMessage :: String
 parseFailMessage = "VK bot got unexpected imput data type while parsing JSON"
 
 data VKUpdates = VKUpdates {
-        updates :: [VKUpdInfo]
+        ts :: String 
+        , updates :: [VKUpdInfo]
     } 
     | VKUpdateError {
         failed :: Int
@@ -32,7 +33,8 @@ instance FromJSON VKUpdates where
             Just val -> VKUpdateError val <$> 
                 obj .:? "ts"
             Nothing -> VKUpdates <$> 
-                obj .: "updates" 
+                obj .: "ts"
+                <*> obj .: "updates" 
 
 data VKUpdInfo = VKUpdInfo
     {
