@@ -6,6 +6,9 @@ import qualified Config.Config as Config
 import qualified Logic.PureStructs as PureStructs 
 
 
+-- this file will be removed soon 
+
+
 sendMessageHttpRequest :: Config.Config -> String 
 sendMessageHttpRequest (Config.Config (Config.VK tok _ _ _ _) _ _ _ _) = 
     "https://api.vk.com/method/messages.send?access_token="
