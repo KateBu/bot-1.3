@@ -139,3 +139,19 @@ unreadableConfig = Logger.LogMessage Logger.Error
 vkUpdToMsgFld :: Logger.LogMessage
 vkUpdToMsgFld = Logger.LogMessage Logger.Error      
     "VKUpdate to Message parsing failed"
+
+unexpBotType :: Logger.LogMessage
+unexpBotType = Logger.LogMessage Logger.Error      
+    "Unexpected bot type"
+
+notImplemented :: Logger.LogMessage
+notImplemented = Logger.LogMessage Logger.Error      
+    "Pattern is not implemented yet"
+
+unexpVKEvent :: Logger.LogMessage
+unexpVKEvent = Logger.LogMessage Logger.Error      
+    "Unexpected VK event"
+
+vkUpdNotImplemented :: Logger.LogMessage
+vkUpdNotImplemented = Logger.LogMessage Logger.Error      
+    "This type od vk updates is not implemented yet"
