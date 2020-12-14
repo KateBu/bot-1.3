@@ -1,4 +1,17 @@
-# bot13
+# Echo bot for Telegram and VK 
+
+<p> The bot is not completed yet, code is not good organized, there are hardcoded spaces and so on. And I usually make new commits every day.  But it works anyway (if you want to try it). </p>
+
+## What the bot can do 
+
+<p> The bot can get a message from user (any kinds of messages) and then send the message back to user several times. If user sends "/help" command, bot sends to user some information about itself. If user sends "/repeat" command, bot sends to user an inline keyboard, so user can choose the number of repetitions.</p>
+
+## How to run
+
+- clone the repo
+- build project with stack
+- check and fill in a config.cofig file (see below)
+- run an execute file
 
 ## how to fill in the Config File (config.config):
 
@@ -14,3 +27,5 @@
 *Note:
 The only thing the VK bot can do is to send back your text message several times. 
 So if you want to see something else, please use the Telegram bot.
+
+
