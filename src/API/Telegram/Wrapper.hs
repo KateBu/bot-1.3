@@ -1,5 +1,8 @@
 module API.Telegram.Wrapper where
 
+-- this file will be removed soon 
+
+{-
 import Data.Aeson ( Value, object, KeyValue((.=)), ToJSON(toJSON) )
 import Data.Aeson.Types ( Pair )
 import qualified Data.Text as T 
@@ -82,4 +85,4 @@ sendMessageHttpRequest (Config.Config (Config.Telegram tok _) _ _ _ _) msg = cas
         <> tok 
         <> "/send" 
         <> T.unpack (PureStructs.getContentType msg)
-sendMessageHttpRequest _ _ = undefined         
+sendMessageHttpRequest _ _ = undefined         -}

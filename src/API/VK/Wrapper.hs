@@ -1,13 +1,14 @@
 module API.VK.Wrapper where
 
+
+-- this file will be removed soon 
+
+{-
+
 import qualified Data.Text as T 
 
 import qualified Config.Config as Config 
 import qualified Logic.PureStructs as PureStructs 
-
-
--- this file will be removed soon 
-
 
 sendMessageHttpRequest :: Config.Config -> String 
 sendMessageHttpRequest (Config.Config (Config.VK tok _ _ _ _) _ _ _ _) = 
@@ -35,3 +36,4 @@ getMaybeText (Just txt) = T.unpack ("&message=" <> txt)
 makeInlineKeyboard :: Bool -> String
 makeInlineKeyboard False = ""
 makeInlineKeyboard _ = undefined 
+-}
