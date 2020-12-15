@@ -3,6 +3,7 @@ module Logic.PureStructs where
 import qualified Data.Text as T 
 import qualified Data.Text.Lazy as TL 
 import Data.Aeson ( Value ) 
+--import qualified Data.ByteString.Lazy as BSL 
 
 import Logger.Logger ()
 
@@ -11,12 +12,13 @@ type UpdateID = Int
 type ChatID = Int 
 type MbCaption = Maybe T.Text
 
-data MessageType = MTEmpty | MTUserCommand | MTCallbackQuery | MTCommon | NotImplemented 
+data MessageType = MTEmpty | MTUserCommand | MTCallbackQuery T.Text | MTCommon T.Text | NotImplemented 
 
 data PureMessage = PureMessage 
     {
         messageType :: MessageType
         , updateID :: UpdateID 
+        , mbChatID :: Maybe ChatID
         , mbParams :: Maybe [Params] 
     }
 
@@ -27,7 +29,7 @@ data Params = ParamsText T.Text T.Text
         | ParamsNum T.Text Int 
         | ParamsBool T.Text Bool 
         | ParamsJSON T.Text Value 
-     --   | ParamsFile T.Text T.Text BSL.ByteString 
+    --    | ParamsFile T.Text T.Text BSL.ByteString 
         deriving (Show, Eq)
 
 buttons' :: [[PureButtons]]
@@ -58,8 +60,14 @@ rep4 = "/setRepetition4"
 rep5:: T.Text
 rep5 = "/setRepetition5"
 
--- the code below will be removed soon
+data HostPath = HostPath T.Text [T.Text] 
+    deriving Show 
 
+data PureButtons = PureButtons T.Text T.Text 
+    deriving Show 
+
+-- the code below will be removed soon
+{-
 data Command = Command 
     {
          chatID :: ChatID
@@ -145,8 +153,7 @@ data PureSticker = PureSticker
         , stickerIsAnimated :: Bool 
     }deriving Show 
 
-data PureButtons = PureButtons T.Text T.Text 
-    deriving Show 
+
 
 getMsgUid :: Message -> UpdateID
 getMsgUid (UserCommand uid _) = uid 
@@ -187,3 +194,4 @@ getMsgType (UserCommand _ _) = "UserCommand"
 getMsgType (CommonMessage _ _ _ _) = "CommonMessage"
 getMsgType (CallbackQuery _ _ _) = "CallbackQuery"
 
+-}
