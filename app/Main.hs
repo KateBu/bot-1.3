@@ -25,22 +25,20 @@ main = do
 
 runBot :: Config.Config -> IO ()
 runBot config = do 
-    handle <- makeHandle config 
+    handle <- Handle.new config  --makeHandle config 
     logger <- Handle.hLogger handle 
-    hConf <- Handle.hConfig handle 
-    case hConf of 
-        Left err -> Logger.botLog logger err 
-        Right conf -> do   
-            updates <- Handle.hGetUpdates handle conf
-            case updates of 
-                Left err -> Logger.botLog logger err
-                Right upd -> case upd of 
+    conf <- Handle.hConfig handle 
+     
+    updates <- Handle.hGetUpdates handle conf logger
+    case updates of 
+        Left err -> Logger.botLog logger err
+        Right upd -> case upd of 
                     [] -> do
                         Logger.botLog logger LoggerMsgs.noUpd
                         nextLoop logger config
                     _ -> do
                         Logger.botLog logger LoggerMsgs.getUpdScs
-                        processedMessages <- Logic.processMessages config upd (Handle.hSendMessage_ handle)
+                        processedMessages <- Logic.processMsgs config logger upd (Handle.hSendMessage_ handle)
                         case processedMessages of 
                             Left err -> do 
                                 Logger.botLog logger err
@@ -49,16 +47,13 @@ runBot config = do
                                 Logger.botLog logger LoggerMsgs.sndMsgScs
                                 nextLoop logger newConfig         
 
-makeHandle :: Config.Config -> IO (Handle.Handle IO)
-makeHandle config = case Config.botType config of 
-    Config.Telegram _ _ -> Telegram.new config 
-    Config.VK _ _ _ _ _ -> VK.new config 
-
 nextLoop :: Logger.Logger -> Config.Config -> IO ()
 nextLoop logger config = do 
     Logger.botLog logger LoggerMsgs.nextLoop
     runBot config 
 
+-- the functions below will be removed soon 
+{-
 showTS :: Config.Config -> IO ()
 showTS (Config.Config (Config.VK _ _ _ _ ts) _ _ _ _) = 
     TIO.putStrLn ("\n------------\nNew ts: " <> (T.pack . show) ts <> "\n-------------\n")
@@ -76,14 +71,14 @@ showConfig (Config.Config bt hm rep uss prior) = do
 showBotSettings :: Config.BotType -> T.Text
 showBotSettings (Config.Telegram tok off) = 
     "Bot type: Telegram \n" 
-    <> "token: " <> T.pack tok <> "\n"
+    <> "token: " <> tok <> "\n"
     <> "offset: " <> T.pack (show off)
 showBotSettings (Config.VK tok group key serv ts) = 
     "Bot type: VK \n"
-    <> "token: " <> T.pack tok <> "\n"
+    <> "token: " <>tok <> "\n"
     <> "group ID: " <> T.pack (show group) <> "\n"
-    <> "key: " <> T.pack key <> "\n"
-    <> "server: " <> T.pack serv <> "\n"
+    <> "key: " <> key <> "\n"
+    <> "server: " <>serv <> "\n"
     <> "ts: " <> T.pack (show ts) <> "\n"
 
 showMessage :: PureStructs.Message -> IO () 
@@ -91,4 +86,4 @@ showMessage (PureStructs.CommonMessage uid chid cMsg _) =
     TIO.putStrLn ( (T.pack $ "\nMessage: \nUpdateID: " <> show uid <> "\nchat id:" <> show chid <> "\n") 
         <> PureStructs.cMsgToText cMsg)
 showMessage _ = pure () 
- 
+ -}
