@@ -1,16 +1,12 @@
 module Main where
 
-import qualified Data.Text as T 
 import qualified Data.Text.IO as TIO 
 
 import qualified Config.Config as Config 
-import qualified API.Telegram.Telegram as Telegram
-import qualified API.VK.VK as VK 
 import qualified Handle.Handle as Handle 
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs 
 import qualified Logic.Logic as Logic 
-import qualified Logic.PureStructs as PureStructs 
 
 
 configPath :: String 
@@ -25,11 +21,26 @@ main = do
 
 runBot :: Config.Config -> IO ()
 runBot config = do 
-    handle <- Handle.new config  --makeHandle config 
+    handle <- Handle.new config  
     logger <- Handle.hLogger handle 
     conf <- Handle.hConfig handle 
-     
-    updates <- Handle.hGetUpdates handle conf logger
+    Handle.hGetUpdates handle conf logger 
+        >>= Logic.processMsgs config logger (Handle.hSendMessage_ handle)
+        >>= nextLoop logger 
+ 
+nextLoop :: Logger.Logger -> (Either Logger.LogMessage Config.Config) -> IO ()
+nextLoop logger (Left err) = do 
+    Logger.botLog logger (Logger.makeLogMessage err "\nProgram terminated")
+nextLoop logger (Right config) = do 
+    Logger.botLog logger LoggerMsgs.nextLoop
+    runBot config 
+
+
+
+
+-- the code below will be removed soon 
+
+    {-updates <- Handle.hGetUpdates handle conf logger
     case updates of 
         Left err -> Logger.botLog logger err
         Right upd -> case upd of 
@@ -45,14 +56,8 @@ runBot config = do
                                 nextLoop logger config
                             Right newConfig -> do 
                                 Logger.botLog logger LoggerMsgs.sndMsgScs
-                                nextLoop logger newConfig         
+                                nextLoop logger newConfig   -}      
 
-nextLoop :: Logger.Logger -> Config.Config -> IO ()
-nextLoop logger config = do 
-    Logger.botLog logger LoggerMsgs.nextLoop
-    runBot config 
-
--- the functions below will be removed soon 
 {-
 showTS :: Config.Config -> IO ()
 showTS (Config.Config (Config.VK _ _ _ _ ts) _ _ _ _) = 
