@@ -1,6 +1,7 @@
 module Logic.Logic where
 
 import qualified Data.Text as T
+import Data.Maybe ( fromJust )
 
 import qualified Logic.PureStructs as PureStructs 
 import qualified Logger.Logger as Logger 
@@ -8,6 +9,46 @@ import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Config.Config as Config 
 
 
+processMsgs :: (Monad m) => Config.Config -> Logger.Logger
+    -> [PureStructs.PureMessage]
+    -> (Config.Config -> Logger.Logger -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config))
+    -> m (Either Logger.LogMessage Config.Config)
+processMsgs config logger msgs sendFunction = do 
+    eiConfs <- mapM (processMsgs_ config logger sendFunction) msgs 
+    case eiConfs of 
+        [] -> pure $ Left LoggerMsgs.emptyList
+        _ -> case last eiConfs of 
+            Left err -> pure $ Left err
+            Right conf -> pure $ Right conf   
+
+processMsgs_ :: Monad m => Config.Config -> Logger.Logger
+    -> (Config.Config -> Logger.Logger -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config)) 
+    -> PureStructs.PureMessage     
+    -> m (Either Logger.LogMessage Config.Config)
+processMsgs_ config logger sendFunction msg = case PureStructs.messageType msg of 
+    PureStructs.MTEmpty -> pure $ Right (Config.configSetOffset config ((succ . PureStructs.updateID) msg))
+    PureStructs.MTUserCommand -> sendFunction config logger msg
+    PureStructs.MTCommon _ -> do 
+        case PureStructs.mbChatID msg of 
+            Nothing -> pure $ Left LoggerMsgs.noChatId
+            Just chid -> repeatMsg config logger msg (Config.findUserRepeat config chid) sendFunction
+
+repeatMsg :: Monad m => Config.Config -> Logger.Logger
+    -> PureStructs.PureMessage 
+    -> Int
+    -> (Config.Config -> Logger.Logger -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config))
+    -> m (Either Logger.LogMessage Config.Config)
+repeatMsg config _ _ 0 _ = pure $ Right config
+repeatMsg config logger msg n function =  do
+    eiConfig <- function config logger msg 
+    case eiConfig of 
+        Left err -> pure $ Left err 
+        Right newConfig -> repeatMsg newConfig logger msg (n-1) function
+
+
+
+-- the functions below will be removed soon 
+{-
 processMessages :: (Monad m) => Config.Config 
     -> [PureStructs.Message] 
     -> (Config.Config -> PureStructs.Message -> m (Either Logger.LogMessage Config.Config))  
@@ -88,3 +129,4 @@ maybeChid (Just chid) = (T.pack . show) chid
 maybeMsgInfo :: Maybe PureStructs.ComMessage -> T.Text
 maybeMsgInfo Nothing = T.empty
 maybeMsgInfo (Just msg) = PureStructs.commonMsgType msg 
+-}
