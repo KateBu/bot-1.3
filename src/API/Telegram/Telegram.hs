@@ -1,5 +1,9 @@
 module API.Telegram.Telegram where
 
+-- this file will be removed soon probably 
+
+
+{-
 import qualified Data.Text as T
 import Control.Exception ( bracket )
 import qualified Data.ByteString.Lazy as LC 
@@ -23,15 +27,20 @@ import qualified API.Telegram.Structs as TStructs
 import qualified Logic.PureStructs as PureStructs 
 import qualified API.Telegram.Wrapper as TWrapper 
 import qualified API.Telegram.Cleaners as Cleaners 
+import qualified API.Wrapper as Wrapper 
+
+-}
 
 
+
+{-
 new :: Config.Config -> IO (Handle.Handle IO) 
 new config =  pure $ Handle.Handle 
     {
-        Handle.hConfig = pure $ Right config 
+        Handle.hConfig = pure config 
         , Handle.hLogger = Logger.createLogger (Config.priority config)
-        , Handle.hGetUpdates = makeMessages  
-        , Handle.hSendMessage_ = sendM_
+        , Handle.hGetUpdates = Wrapper.getPureMessageList -- undefined -- makeMessages  
+        , Handle.hSendMessage_ = Wrapper.sendM-- undefined --sendM_
     }
 
 close :: Handle.Handle m -> IO ()
@@ -45,6 +54,13 @@ withHandle :: Config.Config -> (Handle.Handle IO -> c -> IO a) -> c -> IO a
 withHandle config func params = 
     bracket (new config) close (flip func params)
 
+
+-}
+
+-- the functions below will be removed soon 
+
+
+{-
 getU :: Config.Config -> IO (Either Logger.LogMessage TStructs.TelegramUpdates)
 getU (Config.Config (Config.Telegram tok off) _ _ _ _) = do 
     http <- parseRequest $ "https://api.telegram.org/bot" <> tok <> "/getUpdates?offset=" <> show off <> "&timeout=" <> Config.timeOut
@@ -83,4 +99,4 @@ decodeUpd js = case (decode js :: Maybe TStructs.TelegramUpdates) of
                 ("\n\terror code: " <> (T.pack . show . TStructs.error_code) val 
                 <> "\n\terror describtion: " <> TStructs.description val))
         Left msg -> return $ Left (Logger.makeLogMessage LoggerMsgs.getUpdFld (T.pack msg))
-            
+            -}

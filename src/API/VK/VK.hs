@@ -1,5 +1,11 @@
 module API.VK.VK where
 
+-- this file will be removed soon probably 
+
+
+
+
+{-
 import qualified Data.Text as T
 import qualified Data.ByteString.Lazy as LC 
 import Network.HTTP.Simple
@@ -14,6 +20,7 @@ import Network.HTTP.Types.Status (statusCode)
 import Data.Aeson ( eitherDecode )
 import System.Random ( Random(random), newStdGen ) 
 import Data.Maybe ( fromJust ) 
+import Data.ByteString.Lazy as BSL 
 
 import qualified Handle.Handle as Handle 
 import qualified Config.Config as Config 
@@ -27,21 +34,44 @@ import qualified API.VK.Wrapper as VKWrappers
 import qualified API.Wrapper as Wrapper 
 
 
+
+
+
 new :: Config.Config -> IO (Handle.Handle IO) 
 new config =  pure $ Handle.Handle 
     {
-        Handle.hConfig = getConfig config  
+        Handle.hConfig = pure config  
         , Handle.hLogger = Logger.createLogger (Config.priority config)
-        , Handle.hGetUpdates = Wrapper.getUpdate  --makeMessages  
-        , Handle.hSendMessage_ = sendM_
+        , Handle.hGetUpdates = Wrapper.getPureMessageList  --makeMessages  
+        , Handle.hSendMessage_ = Wrapper.sendM  -- sendM_
     }
 
 getConfig :: Config.Config -> IO (Either Logger.LogMessage Config.Config)
 getConfig config = pure $ Right config 
 
 
--- the functions below will be removed soon 
 
+-}
+
+
+{-
+getU :: Config.Config -> IO (Either Logger.LogMessage BSL.ByteString) 
+getU config = do
+    params <- paramsToUrlOption (updateParam (Config.botType config))
+    runReq defaultHttpConfig $ do     
+        response <- req 
+            POST
+            (mkHostPath config Update Nothing)
+            NoReqBody 
+            lbsResponse 
+            params
+        pure $ pure $ (responseBody response :: BSL.ByteString) 
+
+-}
+
+
+-- the functions below will be removed soon 
+{-
 getU :: Config.Config -> IO (Either Logger.LogMessage VKStructs.VKUpdates) 
 getU config@(Config.Config (Config.VK _ _ key server ts) _ _ _ _) = do 
     http <- parseRequest $ server 
@@ -106,3 +136,4 @@ getRandonId :: IO Int
 getRandonId = do 
     gen <- newStdGen 
     pure $ ( (fst . random) gen :: Int)
+-}
