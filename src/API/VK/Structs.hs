@@ -170,8 +170,8 @@ data Keyboard = Keyboard
  --   deriving Show 
 
 data VKResponse = VKResponse {
-        key :: String
-        , server :: String
+        key :: T.Text
+        , server :: T.Text
         , currentTs :: String 
     } 
     | VKError {
