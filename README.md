@@ -1,6 +1,6 @@
 # Update info
 ## The bot doesn't work properly now, I started to change structures and haven't completed yet.
-## Please don't look at this code (it's in very bad condition) and don't try to run it for a while.
+## Please don't look at this code (it's in a very bad condition) and don't try to run it for a while.
 
 # Echo bot for Telegram and VK 
 
