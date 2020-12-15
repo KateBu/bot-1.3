@@ -8,9 +8,38 @@ fatalConfig :: T.Text
 fatalConfig = "FATAL ERROR: couldn't find or read the config file," 
             <> " check the path to the file and the information inside it"
 
+getTelUpdScs :: Logger.LogMessage
+getTelUpdScs = Logger.LogMessage Logger.Debug 
+    "Telegram bot got updates successfully!"
+
+getVKUpdScs :: Logger.LogMessage
+getVKUpdScs = Logger.LogMessage Logger.Debug 
+    "VK bot got updates successfully!"
+
+
+getUpdScs :: Logger.LogMessage
+getUpdScs = Logger.LogMessage Logger.Debug 
+    "GetUpdates fuction processed successfully!"
+
+
+
+
+
+
+
+
+
+
+
+
+
 parseVKConfFld :: Logger.LogMessage
 parseVKConfFld = Logger.LogMessage Logger.Error 
     "Parse VK Config Failed: "
+
+
+
+
 
 parseVKConfNoInfo :: Logger.LogMessage
 parseVKConfNoInfo = Logger.LogMessage Logger.Error 
@@ -56,9 +85,7 @@ rptMsgFld :: Logger.LogMessage
 rptMsgFld = Logger.LogMessage Logger.Error 
     "Repeat message process failed: "
 
-getUpdScs :: Logger.LogMessage
-getUpdScs = Logger.LogMessage Logger.Debug 
-    "GetUpdates fuction processed successfully!"
+
 
 getUpdFld :: Logger.LogMessage
 getUpdFld = Logger.LogMessage Logger.Error 
@@ -155,3 +182,11 @@ unexpVKEvent = Logger.LogMessage Logger.Error
 vkUpdNotImplemented :: Logger.LogMessage
 vkUpdNotImplemented = Logger.LogMessage Logger.Error      
     "This type od vk updates is not implemented yet"
+
+noChatId :: Logger.LogMessage
+noChatId = Logger.LogMessage Logger.Error      
+    "Cannot find chat_id"
+
+noParams :: Logger.LogMessage
+noParams = Logger.LogMessage Logger.Error      
+    "No message params"
