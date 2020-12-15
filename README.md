@@ -1,3 +1,5 @@
+## The bot doesn't work properly now
+
 # Echo bot for Telegram and VK 
 
 <p> The bot is not completed yet, code is not good organized, there are hardcoded spaces and so on. And I usually make new commits every day.  But it works anyway (if you want to try it). </p>
@@ -13,7 +15,7 @@
 - check and fill in a config.cofig file (see below)
 - run an execute file
 
-## how to fill in the Config File (config.config):
+## How to fill in the Config File (config.config):
 
 <p><b>botType</b>: Either "VK" or "Telegram" (quotes are required); </p>
 <p><b>repetition</b>: an Int (recommended from 1 to 5);</p>
