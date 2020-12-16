@@ -44,9 +44,10 @@ vkUpdInfoToPureMessage config uid updInfo = case VKStructs.updType updInfo of
 getMessageType :: VKStructs.VKMessage -> PureStructs.MessageType 
 getMessageType vkMsg = case VKStructs.msgText vkMsg of 
     Nothing -> PureStructs.NotImplemented   
-    Just txt -> if txt == "/help" || txt == "/repeat" 
-        then PureStructs.MTUserCommand 
-        else PureStructs.MTCommon "Message"
+    Just txt -> case txt of 
+        "/help" -> PureStructs.MTUserCommand PureStructs.Help
+        "/repeat"  -> PureStructs.MTUserCommand PureStructs.Repeat
+        _ -> PureStructs.MTCommon "Message"
 
 makeParams :: Config.Config -> VKStructs.VKMessage -> Maybe [PureStructs.Params]
 makeParams config vkMsg = do 
@@ -55,12 +56,10 @@ makeParams config vkMsg = do
             ]
     case getMessageType vkMsg of 
         PureStructs.NotImplemented -> Nothing 
-        PureStructs.MTUserCommand -> do         
-            txt <- VKStructs.msgText vkMsg         
-            case txt of 
-                "/help" -> pure $ (PureStructs.ParamsText "message" (Config.helpMessage config)) : params
-                "/repeat" -> pure $ (PureStructs.ParamsText "command" "repeat") : params
-                _ -> pure params
+        PureStructs.MTUserCommand PureStructs.Help -> pure $ 
+            (PureStructs.ParamsText "message" (Config.helpMessage config)) : params
+        PureStructs.MTUserCommand PureStructs.Repeat -> pure $ 
+            (PureStructs.ParamsText "message" "Repeat command is not implemented yet") : params
         PureStructs.MTCommon _ -> do 
             txt <- VKStructs.msgText vkMsg       
             pure $ (PureStructs.ParamsText "message" txt) : params 
