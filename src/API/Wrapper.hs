@@ -3,25 +3,29 @@ module API.Wrapper where
 
 import Network.HTTP.Req
     ( Url,
-      Option,
       Scheme(Https),
       req,
       POST(POST),
-      NoReqBody(NoReqBody),
+      LbsResponse,
       defaultHttpConfig,
       (/:),
       (=:),
       https,
       lbsResponse,
+      reqBodyMultipart,
       responseBody,
       responseStatusCode,
       runReq,
-      ReqBodyUrlEnc(ReqBodyUrlEnc) )
+      FormUrlEncodedParam,
+      ReqBodyMultipart,
+      ReqBodyUrlEnc(..) )
+  
 import qualified Data.Text as T 
 import qualified Data.ByteString.Lazy as BSL  
-import Data.Aeson ( eitherDecode ) 
-import Data.Maybe ( fromJust )
+import Data.Aeson ( eitherDecode, encode ) 
 import Control.Monad.IO.Class ( MonadIO(liftIO) )
+import Data.Maybe ( fromJust ) 
+import qualified Network.HTTP.Client.MultipartFormData as LM
 
 import qualified Config.Config as Config 
 import qualified Logger.Logger as Logger 
@@ -41,14 +45,27 @@ urlScheme :: Url Https -> [T.Text] -> Url Https
 urlScheme acc [] = acc
 urlScheme acc (x:xs) = urlScheme (acc /: x) xs 
 
-paramToUrlOption :: PureStructs.Params -> Option Https 
-paramToUrlOption (PureStructs.ParamsText key val) = key =: val
-paramToUrlOption (PureStructs.ParamsNum key val) = key =: val 
-paramToUrlOption (PureStructs.ParamsBool key val) = key =: val 
---paramToUrlOption (PureStructs.ParamsJSON key val) = key =: val 
+paramToUrl :: PureStructs.Params -> FormUrlEncodedParam 
+paramToUrl (PureStructs.ParamsText key val) = key =: val :: FormUrlEncodedParam
+paramToUrl (PureStructs.ParamsNum key val) = key =: val :: FormUrlEncodedParam
+paramToUrl (PureStructs.ParamsBool key val) = key =: val :: FormUrlEncodedParam
+paramToUrl (PureStructs.ParamsJSON _ _) = mempty 
 
-paramsToUrlOption :: Monad m => [PureStructs.Params] -> m (Option Https) 
-paramsToUrlOption params = pure $ mconcat (map paramToUrlOption params)
+paramToMultipart :: PureStructs.Params -> [LM.Part] 
+paramToMultipart (PureStructs.ParamsText key val) = [LM.partLBS key (encode val)]
+paramToMultipart (PureStructs.ParamsNum key val) = [LM.partLBS key (encode val)]
+paramToMultipart (PureStructs.ParamsBool key val) = [LM.partLBS key (encode val)]
+paramToMultipart (PureStructs.ParamsJSON key val) = [LM.partLBS key (encode val)]
+
+paramsToUrlBody :: [PureStructs.Params] -> ReqBodyUrlEnc
+paramsToUrlBody params = ReqBodyUrlEnc $ mconcat (paramToUrl <$> params)
+
+paramsToMultipartBody :: [PureStructs.Params]-> IO ReqBodyMultipart
+paramsToMultipartBody params = reqBodyMultipart $ mconcat (mapM paramToMultipart params)
+
+isJsonParam :: PureStructs.Params -> Bool 
+isJsonParam (PureStructs.ParamsJSON _ _) = True 
+isJsonParam _ = False 
 
 updateParam :: Config.BotType -> [PureStructs.Params] 
 updateParam vk@(Config.VK _ _ _ _ _) = VKData.updateParams vk     
@@ -71,46 +88,100 @@ getPureMessageList config logger = getU config >>= byteStringToPureMessageList c
 
 getU :: Config.Config ->  IO (Either Logger.LogMessage BSL.ByteString) 
 getU config = do
-    params <- paramsToUrlOption (updateParam (Config.botType config))
-    runReq defaultHttpConfig $ do     
+    let params = (updateParam (Config.botType config)) 
+    if any isJsonParam params 
+        then getUMultipartParams config params 
+        else getUUrlParams config params 
+
+getUUrlParams :: Config.Config -> [PureStructs.Params] -> IO (Either Logger.LogMessage BSL.ByteString) 
+getUUrlParams config params = runReq defaultHttpConfig $ do     
         response <- req 
             POST
             (mkHostPath config Update Nothing)
-            NoReqBody 
+            (paramsToUrlBody params)
             lbsResponse 
-            params        
-        pure $ pure $ (responseBody response :: BSL.ByteString) 
+            mempty        
+        (pure . pure) (responseBody response :: BSL.ByteString)  
+
+getUMultipartParams :: Config.Config -> [PureStructs.Params] -> IO (Either Logger.LogMessage BSL.ByteString) 
+getUMultipartParams config params = do 
+        multiPartParams <- paramsToMultipartBody params 
+        runReq defaultHttpConfig $ do     
+            response <- req 
+                POST
+                (mkHostPath config Update Nothing)
+                multiPartParams
+                lbsResponse 
+                mempty        
+            (pure . pure) (responseBody response :: BSL.ByteString)  
 
 sendM :: Config.Config -> Logger.Logger -> PureStructs.PureMessage -> IO (Either Logger.LogMessage Config.Config) 
 sendM config logger msg = do 
     case PureStructs.mbParams msg of 
-        Nothing -> pure $ Right config --Left LoggerMsgs.noParams 
+        Nothing -> pure $ Right config 
         Just params -> do     
-            urlOp <- paramsToUrlOption params 
             basicParams <- VKData.sendBasicParams (Config.botType config)
-            basicUrl <- paramsToUrlOption basicParams 
-            runReq defaultHttpConfig $ do 
-                response <- req 
-                    POST 
-                    (mkHostPath config Send (Just msg))
-                    (ReqBodyUrlEnc mempty)
-                    lbsResponse $
-                    (basicUrl <> urlOp)
-                case responseStatusCode response of 
-                    200 -> case Config.botType config of 
-                        (Config.VK _ _ _ _ ts) -> do                            
-                            let sndMsgResult = eitherDecode (responseBody response) :: Either String VKStructs.VKResult 
-                            case sndMsgResult of 
-                                Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (T.pack err))
-                                Right (VKStructs.SendMsgError err) -> pure $ 
-                                    Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (VKStructs.errMsg err))
-                                Right (VKStructs.SendMsgScs _) -> do 
-                                    liftIO $ Logger.botLog logger LoggerMsgs.sndMsgScsVK
-                                    pure $ pure (Config.configSetOffset config (PureStructs.updateID msg)) 
-                        (Config.Telegram _ _) -> do 
-                            liftIO $ Logger.botLog logger LoggerMsgs.sndMsgScsTel
-                            pure $ Right (Config.configSetOffset config (succ (PureStructs.updateID msg))) 
-                    err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
+            let allParams = params <> basicParams   
+            getApiResponse config allParams msg >>= checkApiResponse config logger msg              
+    
+getApiResponse :: Config.Config 
+    -> [PureStructs.Params] 
+    -> PureStructs.PureMessage 
+    -> IO (Either Logger.LogMessage LbsResponse)  
+getApiResponse config params msg = if any isJsonParam params 
+    then sendMMultipartParams config msg params
+    else sendMUrlParams config msg params 
+    
+checkApiResponse :: Config.Config
+    -> Logger.Logger 
+    -> PureStructs.PureMessage 
+    -> Either Logger.LogMessage LbsResponse
+    -> IO (Either Logger.LogMessage Config.Config) 
+checkApiResponse _ _ _ (Left err) = pure $ Left err 
+checkApiResponse config logger msg (Right lbsResp) = case responseStatusCode lbsResp of 
+    200 -> case Config.botType config of 
+        (Config.VK _ _ _ _ _) -> do                            
+            let sndMsgResult = eitherDecode (responseBody lbsResp) :: Either String VKStructs.VKResult 
+            case sndMsgResult of 
+                Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (T.pack err))
+                Right (VKStructs.SendMsgError err) -> pure $ 
+                    Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (VKStructs.errMsg err))
+                Right (VKStructs.SendMsgScs _) -> do 
+                    liftIO $ Logger.botLog logger LoggerMsgs.sndMsgScsVK
+                    pure $ pure (Config.configSetOffset config (PureStructs.updateID msg)) 
+        (Config.Telegram _ _) -> do 
+            liftIO $ Logger.botLog logger LoggerMsgs.sndMsgScsTel
+            pure $ Right (Config.configSetOffset config (succ (PureStructs.updateID msg))) 
+    err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
+
+sendMMultipartParams :: Config.Config 
+    -> PureStructs.PureMessage
+    -> [PureStructs.Params] 
+    -> IO (Either Logger.LogMessage LbsResponse)  
+sendMMultipartParams config msg params = do
+    multiPartParams <- paramsToMultipartBody params 
+    response <- runReq defaultHttpConfig $ do 
+        req 
+            POST 
+            (mkHostPath config Send (Just msg))
+            multiPartParams
+            lbsResponse $
+            mempty 
+    (pure . pure) response 
+            
+sendMUrlParams :: Config.Config 
+    -> PureStructs.PureMessage
+    -> [PureStructs.Params] 
+    -> IO (Either Logger.LogMessage LbsResponse)  
+sendMUrlParams config msg params = do
+    response <- runReq defaultHttpConfig $ do 
+        req 
+            POST 
+            (mkHostPath config Send (Just msg))
+            (paramsToUrlBody params)
+            lbsResponse $
+            mempty 
+    (pure . pure) response 
 
 byteStringToPureMessageList :: Config.Config -> Logger.Logger 
     -> Either Logger.LogMessage BSL.ByteString 
@@ -119,4 +190,3 @@ byteStringToPureMessageList config@(Config.Config (Config.VK _ _ _ _ _)_ _ _ _) 
     VKCleaners.vkByteStringToPureMessageList config logger eiBS 
 byteStringToPureMessageList config@(Config.Config (Config.Telegram _ _)_ _ _ _) logger eiBS = 
     TelCleaners.telByteStringToPureMessageList config logger eiBS 
-
