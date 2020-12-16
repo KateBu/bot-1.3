@@ -15,7 +15,7 @@ import GHC.Generics ( Generic )
 
 
 parseFailMessage :: String
-parseFailMessage = "VK bot got unexpected imput data type while parsing JSON"
+parseFailMessage = "VK bot got unexpected input data type while parsing JSON"
 
 data VKUpdates = VKUpdates {
         ts :: String 
