@@ -2,10 +2,26 @@
 module API.Wrapper where
 
 import Network.HTTP.Req
+    ( Url,
+      Option,
+      Scheme(Https),
+      req,
+      POST(POST),
+      NoReqBody(NoReqBody),
+      defaultHttpConfig,
+      (/:),
+      (=:),
+      https,
+      lbsResponse,
+      responseBody,
+      responseStatusCode,
+      runReq,
+      ReqBodyUrlEnc(ReqBodyUrlEnc) )
 import qualified Data.Text as T 
 import qualified Data.ByteString.Lazy as BSL  
 import Data.Aeson ( eitherDecode ) 
 import Data.Maybe ( fromJust )
+import Control.Monad.IO.Class ( MonadIO(liftIO) )
 
 import qualified Config.Config as Config 
 import qualified Logger.Logger as Logger 
@@ -82,17 +98,19 @@ sendM config logger msg = do
                     (basicUrl <> urlOp)
                 case responseStatusCode response of 
                     200 -> case Config.botType config of 
-                        (Config.VK _ _ _ _ ts) -> do
+                        (Config.VK _ _ _ _ ts) -> do                            
                             let sndMsgResult = eitherDecode (responseBody response) :: Either String VKStructs.VKResult 
                             case sndMsgResult of 
                                 Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (T.pack err))
                                 Right (VKStructs.SendMsgError err) -> pure $ 
                                     Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (VKStructs.errMsg err))
-                                Right (VKStructs.SendMsgScs _) -> pure $ pure (Config.configSetOffset config (PureStructs.updateID msg)) 
-                        (Config.Telegram _ _) -> 
+                                Right (VKStructs.SendMsgScs _) -> do 
+                                    liftIO $ Logger.botLog logger LoggerMsgs.sndMsgScsVK
+                                    pure $ pure (Config.configSetOffset config (PureStructs.updateID msg)) 
+                        (Config.Telegram _ _) -> do 
+                            liftIO $ Logger.botLog logger LoggerMsgs.sndMsgScsTel
                             pure $ Right (Config.configSetOffset config (succ (PureStructs.updateID msg))) 
                     err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
-
 
 byteStringToPureMessageList :: Config.Config -> Logger.Logger 
     -> Either Logger.LogMessage BSL.ByteString 
