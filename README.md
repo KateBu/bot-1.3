@@ -1,6 +1,6 @@
 # Update info
-## The bot doesn't work properly now, I started to change structures and haven't completed yet.
-## Please don't look at this code (it's in a very bad condition) and don't try to run it for a while.
+## I started to change structures and haven't completed yet. The Telegram bot can work with text messages, audio files, documents, voice files, videos, animations and /help command. The VK bot can work with text messages and /help command.
+## The code is not formatted yet.
 
 # Echo bot for Telegram and VK 
 
