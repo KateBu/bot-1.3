@@ -39,34 +39,57 @@ telUpdatesToPureMessageList _ (Left err) = pure $ Left err
 telUpdatesToPureMessageList config (Right tUpd) = pure $ mapM (telUpdateToPureMessage config) (TStructs.result tUpd)
 
 telUpdateToPureMessage :: Config.Config -> TStructs.TelUpdateResult 
-    -> (Either Logger.LogMessage PureStructs.PureMessage)
+    -> Either Logger.LogMessage PureStructs.PureMessage
 telUpdateToPureMessage config res = do 
     let uid = TStructs.update_id res 
-    case TStructs.callback_query res of 
-        Just (TStructs.Callback _ cbData) -> Right (PureStructs.PureMessage 
+    let mbPureMessage = mbMakeCallbackPureMessage res uid <|> mbGetMessageInfo config res uid 
+    case mbPureMessage of 
+        Just msg -> pure msg 
+        Nothing -> Left LoggerMsgs.noUpd 
+    
+mbMakeCallbackPureMessage :: TStructs.TelUpdateResult 
+    -> PureStructs.UpdateID
+    -> Maybe PureStructs.PureMessage
+mbMakeCallbackPureMessage res uid = case TStructs.callback_query res of 
+    Just (TStructs.Callback _ cbData) -> pure (PureStructs.PureMessage 
             (PureStructs.MTCallbackQuery cbData)
             uid 
             Nothing
             Nothing)
-        Nothing -> do 
-            case TStructs.messageInfo res of 
-                Nothing -> Left LoggerMsgs.noUpd 
-                Just mInfo -> do 
-                    let chid = TStructs.chat_id $ TStructs.chat mInfo 
-                    case makePureMessage config uid chid mInfo of 
-                        Nothing -> Left LoggerMsgs.noUpd 
-                        Just pureMsg -> Right pureMsg 
+    _ -> Nothing
 
-makePureMessage :: Config.Config -> PureStructs.UpdateID -> PureStructs.ChatID -> TStructs.MessageInfo -> Maybe PureStructs.PureMessage
+mbGetMessageInfo :: Config.Config
+    ->  TStructs.TelUpdateResult 
+    -> PureStructs.UpdateID
+    -> Maybe PureStructs.PureMessage
+mbGetMessageInfo config res uid = case TStructs.messageInfo res of 
+    Nothing -> Nothing
+    Just mInfo -> do 
+        let chid = TStructs.chat_id $ TStructs.chat mInfo 
+        case makePureMessage config uid chid mInfo of 
+            Nothing -> Nothing 
+            Just pureMsg -> pure pureMsg 
+
+makePureMessage :: Config.Config 
+    -> PureStructs.UpdateID 
+    -> PureStructs.ChatID 
+    -> TStructs.MessageInfo 
+    -> Maybe PureStructs.PureMessage
 makePureMessage config uid chid mInfo = mbAnimation uid chid mInfo 
     <|> mbAudio uid chid mInfo 
     <|> mbDoc uid chid mInfo 
     <|> mbVideo uid chid mInfo 
     <|> mbVoice uid chid mInfo
+    <|> mbPhoto uid chid mInfo
+    <|> mbContact uid chid mInfo 
+    <|> mbVenue uid chid mInfo
+    <|> mbLocation uid chid mInfo    
+--    <|> mbSticker uid chid mInfo
     <|> mbTextMessage config uid chid mInfo
 
 mbAnimation, mbAudio, mbDoc, mbVideo
-    , mbVoice :: PureStructs.UpdateID 
+    , mbVoice, mbPhoto, mbContact, mbVenue 
+    , mbLocation, mbSticker :: PureStructs.UpdateID 
     -> PureStructs.ChatID 
     -> TStructs.MessageInfo 
     -> Maybe PureStructs.PureMessage      
@@ -136,6 +159,67 @@ mbVoice uid chid mInfo = case TStructs.voice mInfo of
             <> [PureStructs.ParamsText "voice" (TStructs.voice_file_id voice)])
     Nothing -> Nothing
 
+mbPhoto uid chid mInfo = case TStructs.photo mInfo of 
+    Just photo -> pure $ PureStructs.PureMessage 
+        (PureStructs.MTCommon "Photo")
+        uid 
+        (Just chid)
+        (Just $ basicParams chid mInfo 
+        <> getPhotoParams photo)    
+    Nothing -> Nothing 
+
+mbContact uid chid mInfo = case TStructs.contact mInfo of 
+    Just contact -> pure $ PureStructs.PureMessage 
+        (PureStructs.MTCommon "Contact")
+        uid 
+        (Just chid)
+        (Just $ basicParams chid mInfo 
+        <> [PureStructs.ParamsText "phone_number" (TStructs.phone_number contact)
+            , PureStructs.ParamsText "first_name" (TStructs.first_name contact)            
+            ] 
+        <> makeMaybeTextParams "last_name" (TStructs.last_name contact)
+        <> makeMaybeTextParams "vcard" (TStructs.vcard contact)
+        )
+    Nothing -> Nothing
+
+mbVenue uid chid mInfo = case TStructs.venue mInfo of 
+    Just venue -> pure $ PureStructs.PureMessage 
+        (PureStructs.MTCommon "Venue")
+        uid 
+        (Just chid)
+        (Just $ basicParams chid mInfo 
+        <> [PureStructs.ParamsText "latitude" ((T.pack . show) $ TStructs.v_latitude venue)
+            , PureStructs.ParamsText "longitude" ((T.pack . show) $ TStructs.v_longitude venue)
+            , PureStructs.ParamsText "title" (TStructs.v_title venue)      
+            , PureStructs.ParamsText "address" (TStructs.v_address venue)      
+            ] )
+    Nothing -> Nothing
+
+mbLocation uid chid mInfo = case TStructs.location mInfo of 
+    Just location -> pure $ PureStructs.PureMessage 
+        (PureStructs.MTCommon "Location")
+        uid 
+        (Just chid)
+        (Just $ basicParams chid mInfo 
+        <> [PureStructs.ParamsText "latitude" ((T.pack . show) $ TStructs.latitude location)
+            , PureStructs.ParamsText "longitude" ((T.pack . show) $ TStructs.longitude location) 
+        ])
+    Nothing -> Nothing
+
+mbSticker uid chid mInfo = case TStructs.sticker mInfo of 
+    Just sticker -> pure $ PureStructs.PureMessage 
+        (PureStructs.MTCommon "Sticker")
+        uid 
+        (Just chid)
+        (Just $ basicParams chid mInfo 
+        <> [PureStructs.ParamsText "sticker" ((T.pack . show) $ TStructs.s_file_id sticker)
+        ])
+    Nothing -> Nothing 
+
+getPhotoParams :: [TStructs.TelPhoto] -> [PureStructs.Params]
+getPhotoParams [] = []
+getPhotoParams (x:_) = [PureStructs.ParamsText "photo" (TStructs.photo_file_id x)]
+
 mbCaption :: TStructs.MessageInfo -> [PureStructs.Params]
 mbCaption mInfo = case TStructs.caption mInfo of 
     Just caption -> pure $ PureStructs.ParamsText "caption" caption 
@@ -143,6 +227,10 @@ mbCaption mInfo = case TStructs.caption mInfo of
 
 basicParams :: PureStructs.ChatID -> TStructs.MessageInfo -> [PureStructs.Params] 
 basicParams chid mInfo = PureStructs.ParamsNum "chat_id" chid : mbCaption mInfo 
+
+makeMaybeTextParams ::  T.Text -> Maybe T.Text -> [PureStructs.Params]
+makeMaybeTextParams _ Nothing = [] 
+makeMaybeTextParams key (Just val) = pure $ PureStructs.ParamsText key val
 
 
 -- The functions below will be removed soon 
