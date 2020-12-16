@@ -9,14 +9,15 @@ import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Config.Config as Config 
 
 
-processMsgs :: (Monad m) => Config.Config -> Logger.Logger
-    -> [PureStructs.PureMessage]
+processMsgs :: (Monad m) => Config.Config -> Logger.Logger    
     -> (Config.Config -> Logger.Logger -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config))
+    -> (Either Logger.LogMessage [PureStructs.PureMessage])
     -> m (Either Logger.LogMessage Config.Config)
-processMsgs config logger msgs sendFunction = do 
+processMsgs _ _ _ (Left err)  = pure $ Left err 
+processMsgs config logger sendFunction (Right msgs) = do 
     eiConfs <- mapM (processMsgs_ config logger sendFunction) msgs 
     case eiConfs of 
-        [] -> pure $ Left LoggerMsgs.emptyList
+        [] -> pure $ Right config 
         _ -> case last eiConfs of 
             Left err -> pure $ Left err
             Right conf -> pure $ Right conf   
@@ -27,7 +28,8 @@ processMsgs_ :: Monad m => Config.Config -> Logger.Logger
     -> m (Either Logger.LogMessage Config.Config)
 processMsgs_ config logger sendFunction msg = case PureStructs.messageType msg of 
     PureStructs.MTEmpty -> pure $ Right (Config.configSetOffset config ((succ . PureStructs.updateID) msg))
-    PureStructs.MTUserCommand -> sendFunction config logger msg
+    PureStructs.MTUserCommand PureStructs.Help -> sendFunction config logger msg  
+    PureStructs.MTUserCommand PureStructs.Repeat -> undefined
     PureStructs.MTCommon _ -> do 
         case PureStructs.mbChatID msg of 
             Nothing -> pure $ Left LoggerMsgs.noChatId
