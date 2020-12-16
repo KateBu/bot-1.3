@@ -12,7 +12,7 @@ type UpdateID = Int
 type ChatID = Int 
 type MbCaption = Maybe T.Text
 
-data MessageType = MTEmpty | MTUserCommand | MTCallbackQuery T.Text | MTCommon T.Text | NotImplemented 
+data MessageType = MTEmpty | MTUserCommand UCommand | MTCallbackQuery T.Text | MTCommon T.Text | NotImplemented 
 
 data PureMessage = PureMessage 
     {
