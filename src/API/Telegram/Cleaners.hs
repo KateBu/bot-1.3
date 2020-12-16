@@ -2,8 +2,8 @@ module API.Telegram.Cleaners where
 
 import qualified Data.Text as T 
 import qualified Data.ByteString.Lazy as BSL 
-import Data.Aeson 
-import Control.Applicative
+import Data.Aeson ( decode, eitherDecode ) 
+import Control.Applicative ( Alternative((<|>)) )
 
 import qualified API.Telegram.Structs as TStructs 
 import qualified Logic.PureStructs as PureStructs 
@@ -17,23 +17,21 @@ telByteStringToPureMessageList :: Config.Config -> Logger.Logger
     -> IO (Either Logger.LogMessage [PureStructs.PureMessage])
 telByteStringToPureMessageList config logger eiBS = decodeByteString logger eiBS >>= telUpdatesToPureMessageList config 
 
-
 decodeByteString :: Logger.Logger
     -> Either Logger.LogMessage BSL.ByteString     
     -> IO (Either Logger.LogMessage TStructs.TelegramUpdates)
-decodeByteString logger eiJs = case eiJs of 
-    Left err -> pure $ Left err 
-    Right js -> do 
-        Logger.botLog logger LoggerMsgs.getTelUpdScs
-        case (decode js :: Maybe TStructs.TelegramUpdates) of 
-            Just val -> 
-                    return $ Right val
-            Nothing -> case (eitherDecode js :: Either String TStructs.TelegramUpdatesError) of 
-                Right val -> return $ Left 
-                    (Logger.makeLogMessage LoggerMsgs.getUpdFld 
-                        ("\n\terror code: " <> (T.pack . show . TStructs.error_code) val 
-                        <> "\n\terror describtion: " <> TStructs.description val))
-                Left msg -> return $ Left (Logger.makeLogMessage LoggerMsgs.getUpdFld (T.pack msg))
+decodeByteString _ (Left err) = pure $ Left err
+decodeByteString logger (Right json) = do 
+    Logger.botLog logger LoggerMsgs.getTelUpdScs
+    case (decode json :: Maybe TStructs.TelegramUpdates) of 
+        Just val -> 
+                return $ Right val
+        Nothing -> case (eitherDecode json :: Either String TStructs.TelegramUpdatesError) of 
+            Right val -> return $ Left 
+                (Logger.makeLogMessage LoggerMsgs.getUpdFld 
+                    ("\n\terror code: " <> (T.pack . show . TStructs.error_code) val 
+                    <> "\n\terror describtion: " <> TStructs.description val))
+            Left msg -> return $ Left (Logger.makeLogMessage LoggerMsgs.getUpdFld (T.pack msg))
 
 telUpdatesToPureMessageList :: Config.Config ->  Either Logger.LogMessage TStructs.TelegramUpdates 
     -> IO (Either Logger.LogMessage [PureStructs.PureMessage])
@@ -42,7 +40,6 @@ telUpdatesToPureMessageList config (Right tUpd) = pure $ mapM (telUpdateToPureMe
 
 telUpdateToPureMessage :: Config.Config -> TStructs.TelUpdateResult 
     -> (Either Logger.LogMessage PureStructs.PureMessage)
---telUpdateToPureMessage _ (Left err) = pure $ Left err 
 telUpdateToPureMessage config res = do 
     let uid = TStructs.update_id res 
     case TStructs.callback_query res of 
@@ -56,29 +53,42 @@ telUpdateToPureMessage config res = do
                 Nothing -> Left LoggerMsgs.noUpd 
                 Just mInfo -> do 
                     let chid = TStructs.chat_id $ TStructs.chat mInfo 
-                    case makePureMessage uid chid mInfo of 
+                    case makePureMessage config uid chid mInfo of 
                         Nothing -> Left LoggerMsgs.noUpd 
                         Just pureMsg -> Right pureMsg 
 
-makePureMessage :: PureStructs.UpdateID -> PureStructs.ChatID -> TStructs.MessageInfo -> Maybe PureStructs.PureMessage
-makePureMessage uid chid mInfo = mbAnimation uid chid mInfo 
-    <|> mbTextMessage uid chid mInfo
+makePureMessage :: Config.Config -> PureStructs.UpdateID -> PureStructs.ChatID -> TStructs.MessageInfo -> Maybe PureStructs.PureMessage
+makePureMessage config uid chid mInfo = mbAnimation uid chid mInfo 
+    <|> mbAudio uid chid mInfo 
+    <|> mbDoc uid chid mInfo 
+    <|> mbVideo uid chid mInfo 
+    <|> mbVoice uid chid mInfo
+    <|> mbTextMessage config uid chid mInfo
 
-
-
-mbTextMessage, mbAnimation, mbAudio :: PureStructs.UpdateID 
+mbAnimation, mbAudio, mbDoc, mbVideo
+    , mbVoice :: PureStructs.UpdateID 
     -> PureStructs.ChatID 
     -> TStructs.MessageInfo 
-    -> Maybe PureStructs.PureMessage             
+    -> Maybe PureStructs.PureMessage      
 
-mbTextMessage uid chid mInfo = case TStructs.txt mInfo of 
-    Just text -> pure $ PureStructs.PureMessage 
-        (PureStructs.MTCommon "Message")
-        uid 
-        (Just chid)
-        (Just [PureStructs.ParamsText "text" text
-            , PureStructs.ParamsNum "chat_id" chid
-            ])
+mbTextMessage :: Config.Config -> PureStructs.UpdateID 
+    -> PureStructs.ChatID 
+    -> TStructs.MessageInfo 
+    -> Maybe PureStructs.PureMessage  
+mbTextMessage config uid chid mInfo = case TStructs.txt mInfo of 
+    Just text -> case text of 
+        "/help" -> pure $ PureStructs.PureMessage
+            (PureStructs.MTUserCommand PureStructs.Help)
+            uid 
+            (Just chid)
+            (Just $ basicParams chid mInfo 
+                <> [PureStructs.ParamsText "text" (Config.helpMessage config)])        
+        _ -> pure $ PureStructs.PureMessage 
+            (PureStructs.MTCommon "Message")
+            uid 
+            (Just chid)
+            (Just $ basicParams chid mInfo 
+                <> [PureStructs.ParamsText "text" text])
     Nothing -> Nothing 
 
 mbAnimation uid chid mInfo = case TStructs.animation mInfo of 
@@ -86,9 +96,8 @@ mbAnimation uid chid mInfo = case TStructs.animation mInfo of
         (PureStructs.MTCommon "Animation")
         uid
         (Just chid)
-        (Just [PureStructs.ParamsText "animation" (TStructs.animation_file_id anim)
-            , PureStructs.ParamsNum "chat_id" chid
-            ])
+        (Just $ basicParams chid mInfo 
+            <> [PureStructs.ParamsText "animation" (TStructs.animation_file_id anim)])
     Nothing -> Nothing 
 
 mbAudio uid chid mInfo = case TStructs.audio mInfo of 
@@ -96,9 +105,44 @@ mbAudio uid chid mInfo = case TStructs.audio mInfo of
         (PureStructs.MTCommon "Audio")
         uid 
         (Just chid)
-        (Just [PureStructs.ParamsText "audio" (TStructs.audio_id aud)
-            , PureStructs.ParamsNum "chat_id" chid
-            ])
+        (Just $ basicParams chid mInfo 
+            <> [PureStructs.ParamsText "audio" (TStructs.audio_id aud)])
+    Nothing -> Nothing 
+
+mbDoc uid chid mInfo = case TStructs.document mInfo of
+    Just doc -> pure $ PureStructs.PureMessage 
+        (PureStructs.MTCommon "Document")
+        uid
+        (Just chid)
+        (Just $ basicParams chid mInfo 
+            <> [PureStructs.ParamsText "document" (TStructs.doc_file_id doc)])
+    Nothing -> Nothing 
+
+mbVideo uid chid mInfo = case TStructs.video mInfo of
+    Just video -> pure $ PureStructs.PureMessage 
+        (PureStructs.MTCommon "Video")
+        uid
+        (Just chid)
+        (Just $ basicParams chid mInfo 
+            <> [PureStructs.ParamsText "video" (TStructs.video_file_id video)])
+    Nothing -> Nothing 
+
+mbVoice uid chid mInfo = case TStructs.voice mInfo of
+    Just voice -> pure $ PureStructs.PureMessage 
+        (PureStructs.MTCommon "Voice")
+        uid 
+        (Just chid)
+        (Just $ basicParams chid mInfo 
+            <> [PureStructs.ParamsText "voice" (TStructs.voice_file_id voice)])
+    Nothing -> Nothing
+
+mbCaption :: TStructs.MessageInfo -> [PureStructs.Params]
+mbCaption mInfo = case TStructs.caption mInfo of 
+    Just caption -> pure $ PureStructs.ParamsText "caption" caption 
+    Nothing -> [] 
+
+basicParams :: PureStructs.ChatID -> TStructs.MessageInfo -> [PureStructs.Params] 
+basicParams chid mInfo = PureStructs.ParamsNum "chat_id" chid : mbCaption mInfo 
 
 
 -- The functions below will be removed soon 
