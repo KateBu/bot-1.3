@@ -16,17 +16,21 @@ getVKUpdScs :: Logger.LogMessage
 getVKUpdScs = Logger.LogMessage Logger.Debug 
     "VK bot got updates successfully!"
 
-
 getUpdScs :: Logger.LogMessage
 getUpdScs = Logger.LogMessage Logger.Debug 
     "GetUpdates fuction processed successfully!"
 
+sndMsgScsVK :: Logger.LogMessage
+sndMsgScsVK = Logger.LogMessage Logger.Debug 
+    "VK bot sent message successfully"
 
+sndMsgScsTel :: Logger.LogMessage
+sndMsgScsTel = Logger.LogMessage Logger.Debug 
+    "Telegram bot sent message successfully"
 
-
-
-
-
+sndMsgScs :: Logger.LogMessage
+sndMsgScs = Logger.LogMessage Logger.Debug 
+    "sendMessage function processed successfully!"
 
 
 
@@ -99,9 +103,7 @@ prsMsgFld :: Logger.LogMessage
 prsMsgFld = Logger.LogMessage Logger.Error 
     "parseMessage function failed: "
 
-sndMsgScs :: Logger.LogMessage
-sndMsgScs = Logger.LogMessage Logger.Debug 
-    "sendMessage function processed successfully!"
+
 
 sndMsgFld :: Logger.LogMessage
 sndMsgFld = Logger.LogMessage Logger.Error 
