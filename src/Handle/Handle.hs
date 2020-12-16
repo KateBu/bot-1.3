@@ -12,7 +12,7 @@ data Handle m = Handle
         hConfig :: m Config.Config
         , hLogger :: m Logger.Logger
         , hGetUpdates :: Config.Config -> Logger.Logger -> m (Either Logger.LogMessage [PureStructs.PureMessage]) 
-        , hSendMessage_ :: Config.Config -> Logger.Logger -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config)
+        , hSendMessage_ :: Config.Config -> Logger.Logger -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config)       
     }
 
 new :: Config.Config -> IO (Handle IO) 
@@ -20,8 +20,8 @@ new config = pure $ Handle
     {
         hConfig = pure config 
         , hLogger = Logger.createLogger (Config.priority config)
-        , hGetUpdates = Wrapper.getPureMessageList -- undefined -- makeMessages  
-        , hSendMessage_ = Wrapper.sendM-- undefined --sendM_
+        , hGetUpdates = Wrapper.getPureMessageList  
+        , hSendMessage_ = Wrapper.sendM 
     }
 
 close :: Handle m -> IO ()
@@ -34,3 +34,4 @@ withHandleNoParams config =
 withHandle :: Config.Config -> (Handle IO -> c -> IO a) -> c -> IO a 
 withHandle config func params = 
     bracket (new config) close (flip func params)
+
