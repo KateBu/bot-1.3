@@ -10,13 +10,13 @@ import Data.Aeson ( eitherDecode )
 import Data.Maybe ( fromJust, isNothing )
 import Network.HTTP.Simple
     ( parseRequest, getResponseBody, httpLBS ) 
-
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified API.VK.Structs as VKStructs 
 
 
 type Users = Map.Map Int Int 
+type Token = T.Text 
 
 data Config = Config 
     {
@@ -27,12 +27,18 @@ data Config = Config
         , priority :: Logger.Priority
     } deriving Show 
 
-data BotType = Telegram {
-        tToken :: T.Text
+data BotType = TBot Telegram | VKBot VK 
+    deriving Show
+
+data Telegram = Telegram 
+    {
+        tToken :: Token
         , tOffset :: Int
-    }
-    | VK {
-        vkToken :: T.Text
+    } deriving Show  
+
+data VK = VK 
+    {
+        vkToken :: Token
         , groupID :: Int
         , vkKey :: T.Text 
         , vkServer :: T.Text 
@@ -56,36 +62,33 @@ parseConfig path = do
         rep <- Configurator.lookup conf (T.pack "bot.repetition") :: IO (Maybe Int)
         msg <- Configurator.lookup conf (T.pack "bot.helpMessage") :: IO (Maybe T.Text)
         prior <- Configurator.lookup conf (T.pack "bot.logPriority") :: IO (Maybe String)
-        case botT of 
-            Just "Telegram" -> do 
-                tok <- Configurator.lookup conf (T.pack "bot.telegramToken") :: IO (Maybe T.Text)  
-                let tSet = Telegram <$> tok <*> Just 0
-                pure $ Config <$> tSet
-                    <*>  msg
-                    <*> rep 
-                    <*> Just Map.empty 
-                    <*> (read <$> prior)
-            Just "VK" -> do 
-                tok <- Configurator.lookup conf (T.pack "bot.VKToken") :: IO (Maybe T.Text)
-                group <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Int)
-                vkSettings <- getVKSettings group tok
-                case vkSettings of
-                    Left err -> do 
-                        TIO.putStrLn err                        
-                        pure Nothing
-                    Right (key,serv,ts) -> do 
-                        let vkSet = VK <$> tok <*> group <*> Just key <*> Just serv <*> Just ts 
-                        pure $  Config <$> vkSet 
-                            <*> msg 
-                            <*> rep 
-                            <*> Just Map.empty
-                            <*> (read <$> prior)
-            _ -> pure Nothing 
+        tTok <- Configurator.lookup conf (T.pack "bot.telegramToken") :: IO (Maybe Token)  
+        vkTok <- Configurator.lookup conf (T.pack "bot.VKToken") :: IO (Maybe Token)
+        vkGroup <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Int)
+        setBotTypeSettings botT vkGroup vkTok tTok >>= initConfig msg rep prior 
+
+setBotTypeSettings :: Maybe T.Text -> Maybe Int -> Maybe Token -> Maybe Token -> IO (Maybe BotType)
+setBotTypeSettings (Just "VK") mbGroup mbVKToken _ = do 
+    vkSettings <- getVKSettings mbGroup mbVKToken 
+    case vkSettings of 
+        Left err -> do 
+            TIO.putStrLn err 
+            pure Nothing 
+        Right (key,serv,ts) -> do 
+            let vk = (VK <$> mbVKToken 
+                    <*> mbGroup 
+                    <*> Just key
+                    <*> Just serv
+                    <*> Just ts)
+            pure $ VKBot <$> vk 
+setBotTypeSettings (Just "Telegram") _ _ mbTToken =
+    pure $ TBot <$> (Telegram <$> mbTToken <*> Just 0)
+setBotTypeSettings _ _ _ _ = pure $ Nothing 
 
 getVKSettings :: Maybe Int -> Maybe T.Text -> IO (Either T.Text (T.Text, T.Text, Int))
 getVKSettings group tok = do 
     if (isNothing group || isNothing tok) 
-        then pure $ Left "VK Config parsing: Coulnd find group id or token"
+        then pure $ Left LoggerMsgs.vkFatalError
         else do 
             http <- parseRequest $ "https://api.vk.com/method/groups.getLongPollServer?group_id="
                 <> (show . fromJust) group
@@ -106,28 +109,27 @@ getVKSettings group tok = do
                     VKStructs.VKParseError -> pure $ Left "parse Error "
                 Left err -> pure $ Left (T.pack err) 
 
+initConfig :: Maybe T.Text -> Maybe Int -> Maybe String -> Maybe BotType 
+    -> IO (Maybe Config)
+initConfig mbHelpMsg mbRep mbPrior mbBotType = do 
+    let config = Config <$> mbBotType 
+            <*> mbHelpMsg
+            <*> mbRep 
+            <*> Just Map.empty 
+            <*> (read <$> mbPrior)
+    pure config 
+
 getVkGroup :: Config -> Maybe Int
-getVkGroup (Config (VK _ group _ _ _) _ _ _ _) = Just group 
+getVkGroup (Config (VKBot bot) _ _ _ _) = Just $ groupID bot
 getVkGroup _ = Nothing 
 
 getVkTok :: Config -> Maybe T.Text 
-getVkTok (Config (VK tok _ _ _ _) _ _ _ _) = Just tok 
+getVkTok (Config (VKBot bot) _ _ _ _) = Just $ vkToken bot  
 getVkTok _ = Nothing 
 
-
 getUid :: Config -> Int
-getUid (Config (VK _ _ _ _ ts) _ _ _ _) = ts 
-getUid (Config (Telegram _ offset) _ _ _ _) = offset 
-
-getVkTs :: Config -> Maybe Int
-getVkTs (Config (VK _ _ _ _ ts) _ _ _ _) = Just ts 
-getVkTs _ = Nothing
-
-setVkSettings :: Config ->  Either T.Text (T.Text, T.Text, Int) -> Either Logger.LogMessage Config 
-setVkSettings _ (Left txt) = Left (Logger.LogMessage Logger.Error txt)
-setVkSettings (Config (VK tok group _ _ _) hm rep uss prior) (Right (key, serv, ts)) = Right $ 
-    Config (VK tok group key serv ts ) hm rep uss prior 
-setVkSettings _ _ = Left LoggerMsgs.unreadableConfig
+getUid (Config (VKBot bot) _ _ _ _) = vkTs bot  
+getUid (Config (TBot bot) _ _ _ _) = tOffset bot 
 
 setUserRepeat :: Config -> Int -> Int -> Config
 setUserRepeat config chid newRep = case Map.lookup chid (users config) of 
@@ -150,7 +152,7 @@ addUser chid newRep (Config bt hm rep uss prior) =
 configSetOffset :: Config -> Int -> Config
 configSetOffset (Config bt hm rep uss prior) newOffset = 
     case bt of 
-        Telegram tok _  -> 
-            Config (Telegram tok newOffset) hm rep uss prior
-        VK tok group key serv _ -> 
-            Config (VK tok group key serv newOffset) hm rep uss prior
+        TBot (Telegram tok _)  -> 
+            Config (TBot $ Telegram tok newOffset) hm rep uss prior
+        VKBot (VK tok group key serv _) -> 
+            Config (VKBot $ VK tok group key serv newOffset) hm rep uss prior

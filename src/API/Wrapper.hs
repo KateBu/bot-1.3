@@ -26,7 +26,6 @@ import Data.Aeson ( eitherDecode, encode )
 import Control.Monad.IO.Class ( MonadIO(liftIO) )
 import Data.Maybe ( fromJust ) 
 import qualified Network.HTTP.Client.MultipartFormData as LM
-
 import qualified Config.Config as Config 
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs 
@@ -37,7 +36,6 @@ import qualified API.VK.VKData as VKData
 import qualified API.Telegram.TelData as TelData 
 import qualified API.Telegram.Cleaners as TelCleaners 
 
-
 hostPathToUrlScheme :: PureStructs.HostPath -> Url Https 
 hostPathToUrlScheme (PureStructs.HostPath hpHost hpPath) = urlScheme (https hpHost) hpPath 
 
@@ -46,9 +44,9 @@ urlScheme acc [] = acc
 urlScheme acc (x:xs) = urlScheme (acc /: x) xs 
 
 paramToUrl :: PureStructs.Params -> FormUrlEncodedParam 
-paramToUrl (PureStructs.ParamsText key val) = key =: val :: FormUrlEncodedParam
-paramToUrl (PureStructs.ParamsNum key val) = key =: val :: FormUrlEncodedParam
-paramToUrl (PureStructs.ParamsBool key val) = key =: val :: FormUrlEncodedParam
+paramToUrl (PureStructs.ParamsText key val) = key =: val 
+paramToUrl (PureStructs.ParamsNum key val) = key =: val 
+paramToUrl (PureStructs.ParamsBool key val) = key =: val 
 paramToUrl (PureStructs.ParamsJSON _ _) = mempty 
 
 paramToMultipart :: PureStructs.Params -> [LM.Part] 
@@ -68,20 +66,20 @@ isJsonParam (PureStructs.ParamsJSON _ _) = True
 isJsonParam _ = False 
 
 updateParam :: Config.BotType -> [PureStructs.Params] 
-updateParam vk@(Config.VK _ _ _ _ _) = VKData.updateParams vk     
-updateParam tel@(Config.Telegram _ _) = TelData.updateParams tel 
+updateParam vk@(Config.VKBot _) = VKData.updateParams vk     
+updateParam tel@(Config.TBot _) = TelData.updateParams tel 
 
 data Method = Update | Send deriving Show 
 
 mkHostPath :: Config.Config -> Method -> Maybe PureStructs.PureMessage-> Url Https
 mkHostPath config Update _ = 
     case Config.botType config of     
-        vk@(Config.VK _ _ _ _ _)-> hostPathToUrlScheme (fromJust $ VKData.updateHostPath vk) 
-        tel@(Config.Telegram _ _) -> hostPathToUrlScheme (fromJust $ TelData.updateHostPath tel) 
+        vk@(Config.VKBot _)-> hostPathToUrlScheme (fromJust $ VKData.updateHostPath vk) 
+        tel@(Config.TBot _) -> hostPathToUrlScheme (fromJust $ TelData.updateHostPath tel) 
 mkHostPath config Send (Just msg)= 
     case Config.botType config of 
-        (Config.VK _ _ _ _ _)-> hostPathToUrlScheme VKData.sendHostPath 
-        tel@(Config.Telegram _ _) -> hostPathToUrlScheme $ fromJust (TelData.sendHostPath tel (PureStructs.messageType msg)) 
+        (Config.VKBot _)-> hostPathToUrlScheme VKData.sendHostPath 
+        tel@(Config.TBot _) -> hostPathToUrlScheme $ fromJust (TelData.sendHostPath tel (PureStructs.messageType msg)) 
 
 getPureMessageList :: Config.Config -> Logger.Logger -> IO (Either Logger.LogMessage [PureStructs.PureMessage])
 getPureMessageList config logger = getU config >>= byteStringToPureMessageList config logger 
@@ -140,7 +138,7 @@ checkApiResponse :: Config.Config
 checkApiResponse _ _ _ (Left err) = pure $ Left err 
 checkApiResponse config logger msg (Right lbsResp) = case responseStatusCode lbsResp of 
     200 -> case Config.botType config of 
-        (Config.VK _ _ _ _ _) -> do                            
+        (Config.VKBot _) -> do                            
             let sndMsgResult = eitherDecode (responseBody lbsResp) :: Either String VKStructs.VKResult 
             case sndMsgResult of 
                 Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (T.pack err))
@@ -149,7 +147,7 @@ checkApiResponse config logger msg (Right lbsResp) = case responseStatusCode lbs
                 Right (VKStructs.SendMsgScs _) -> do 
                     liftIO $ Logger.botLog logger LoggerMsgs.sndMsgScsVK
                     pure $ pure (Config.configSetOffset config (PureStructs.updateID msg)) 
-        (Config.Telegram _ _) -> do 
+        (Config.TBot _) -> do 
             liftIO $ Logger.botLog logger LoggerMsgs.sndMsgScsTel
             pure $ Right (Config.configSetOffset config (succ (PureStructs.updateID msg))) 
     err -> return $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err))
@@ -186,7 +184,7 @@ sendMUrlParams config msg params = do
 byteStringToPureMessageList :: Config.Config -> Logger.Logger 
     -> Either Logger.LogMessage BSL.ByteString 
     -> IO (Either Logger.LogMessage [PureStructs.PureMessage])
-byteStringToPureMessageList config@(Config.Config (Config.VK _ _ _ _ _)_ _ _ _) logger eiBS = 
+byteStringToPureMessageList config@(Config.Config (Config.VKBot _)_ _ _ _) logger eiBS = 
     VKCleaners.vkByteStringToPureMessageList config logger eiBS 
-byteStringToPureMessageList config@(Config.Config (Config.Telegram _ _)_ _ _ _) logger eiBS = 
+byteStringToPureMessageList config@(Config.Config (Config.TBot _)_ _ _ _) logger eiBS = 
     TelCleaners.telByteStringToPureMessageList config logger eiBS 
