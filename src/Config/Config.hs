@@ -82,7 +82,7 @@ setBotTypeSettings (Just "VK") mbGroup mbVKToken _ = do
                     <*> Just ts)
             pure $ VKBot <$> vk 
 setBotTypeSettings (Just "Telegram") _ _ mbTToken =
-    pure $ TBot <$> (Telegram <$> mbTToken <*> Just 0)
+    pure $ TBot <$> (Telegram <$> mbTToken <*> Just 41076887)
 setBotTypeSettings _ _ _ _ = pure $ Nothing 
 
 getVKSettings :: Maybe Int -> Maybe T.Text -> IO (Either T.Text (T.Text, T.Text, Int))
