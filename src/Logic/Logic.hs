@@ -1,13 +1,10 @@
 module Logic.Logic where
 
-import qualified Data.Text as T
-import Data.Maybe ( fromJust )
-
+import qualified Data.Text as T 
 import qualified Logic.PureStructs as PureStructs 
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Config.Config as Config 
-
 
 processMsgs :: (Monad m) => Config.Config -> Logger.Logger    
     -> (Config.Config -> Logger.Logger -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config))
@@ -29,7 +26,15 @@ processMsgs_ :: Monad m => Config.Config -> Logger.Logger
 processMsgs_ config logger sendFunction msg = case PureStructs.messageType msg of 
     PureStructs.MTEmpty -> pure $ Right (Config.configSetOffset config ((succ . PureStructs.updateID) msg))
     PureStructs.MTUserCommand PureStructs.Help -> sendFunction config logger msg  
-    PureStructs.MTUserCommand PureStructs.Repeat -> undefined
+    PureStructs.MTUserCommand PureStructs.Repeat -> sendFunction config logger (makeRepeatMsg msg) 
+    PureStructs.MTCallbackQuery callbackData -> do 
+        let mbChid = PureStructs.mbChatID msg
+        case mbChid of 
+            Nothing -> pure $ Left LoggerMsgs.chidNotFound
+            Just chid -> do 
+                let newRep = getNewRep callbackData
+                let newConfig = Config.setUserRepeat config chid newRep
+                sendFunction newConfig logger (makeCallbackResponse (PureStructs.updateID msg) chid newRep)
     PureStructs.MTCommon _ -> do 
         case PureStructs.mbChatID msg of 
             Nothing -> pure $ Left LoggerMsgs.noChatId
@@ -47,88 +52,26 @@ repeatMsg config logger msg n function =  do
         Left err -> pure $ Left err 
         Right newConfig -> repeatMsg newConfig logger msg (n-1) function
 
+makeRepeatMsg :: PureStructs.PureMessage -> PureStructs.PureMessage 
+makeRepeatMsg msg = PureStructs.PureMessage 
+    (PureStructs.MTCommon "Message")
+    (PureStructs.updateID msg)
+    (PureStructs.mbChatID msg)
+    (mconcat [PureStructs.mbParams msg, Just [(PureStructs.ParamsText "text" PureStructs.repeatText)]])
 
-
--- the functions below will be removed soon 
-{-
-processMessages :: (Monad m) => Config.Config 
-    -> [PureStructs.Message] 
-    -> (Config.Config -> PureStructs.Message -> m (Either Logger.LogMessage Config.Config))  
-    -> m (Either Logger.LogMessage Config.Config)
-processMessages config msgs function = do 
-    eiConfs <- mapM (processMessage_ config function) msgs 
-    case eiConfs of 
-        [] -> pure $ Left LoggerMsgs.emptyList
-        _ -> case last eiConfs of 
-            Left err -> pure $ Left err
-            Right conf -> pure $ Right conf 
-
-processMessage_ :: (Monad m) => Config.Config 
-    -> (Config.Config -> PureStructs.Message -> m (Either Logger.LogMessage Config.Config)) 
-    -> PureStructs.Message     
-    -> m (Either Logger.LogMessage Config.Config)
-processMessage_ config _ (PureStructs.EmptyMessage uid)  = 
-    pure $ Right (Config.configSetOffset config (succ uid))
-processMessage_ config sendFunction (PureStructs.UserCommand uid command)  = case PureStructs.text command of 
-    "/help" -> sendFunction config 
-        (PureStructs.CommonMessage uid (PureStructs.chatID command) (makeHelpMessage config) Nothing)
-    "/repeat" -> sendFunction config 
-        (PureStructs.CommonMessage uid (PureStructs.chatID command) makeRepeatMessage Nothing)
-    _ -> pure $ Left LoggerMsgs.cmdMsgFld
-processMessage_ config sendFunction (PureStructs.CallbackQuery uid chid txt)  = do 
-    let newConfig = setNewRepetition config chid txt 
-    sendFunction newConfig 
-        (PureStructs.CommonMessage uid chid (makeCallbackResponse txt) Nothing )
-processMessage_ config sendFunction (PureStructs.CommonMessage uid chid cMsg mCap)  = 
-    repeatMessage config (PureStructs.CommonMessage uid chid cMsg mCap)(Config.findUserRepeat config chid) sendFunction 
-
-repeatMessage :: (Monad m) => Config.Config -> PureStructs.Message 
-    -> Int
-    -> (Config.Config -> PureStructs.Message -> m (Either Logger.LogMessage Config.Config))
-    -> m (Either Logger.LogMessage Config.Config)
-repeatMessage config _ 0 _ = pure $ Right config 
-repeatMessage config msg n function = do 
-    eiConfig <- function config msg 
-    case eiConfig of 
-        Left err -> pure $ Left err 
-        Right newConfig -> repeatMessage newConfig msg (n-1) function 
-
-setNewRepetition :: Config.Config -> Int -> T.Text -> Config.Config 
-setNewRepetition config chid queryText = 
-    Config.setUserRepeat config chid (getNewRepetition queryText)
-
-getNewRepetition :: T.Text -> Int 
-getNewRepetition txt 
+getNewRep :: T.Text -> Int 
+getNewRep txt 
     | txt == PureStructs.rep1 = 1 
     | txt == PureStructs.rep2 = 2 
     | txt == PureStructs.rep3 = 2 
     | txt == PureStructs.rep4 = 2 
     | otherwise = 5 
 
-makeHelpMessage :: Config.Config -> PureStructs.ComMessage
-makeHelpMessage config = PureStructs.defaultComMsg {
-        PureStructs.commonMsgType = "Message"
-        , PureStructs.mbText = Just (Config.helpMessage config)
-    }
-
-makeRepeatMessage :: PureStructs.ComMessage
-makeRepeatMessage = PureStructs.defaultComMsg {
-        PureStructs.commonMsgType = "Message"
-        , PureStructs.mbText = Just PureStructs.repeatText 
-        , PureStructs.buttons = True 
-    }
-
-makeCallbackResponse :: T.Text -> PureStructs.ComMessage 
-makeCallbackResponse txt = PureStructs.defaultComMsg {
-        PureStructs.commonMsgType = "Message"
-        , PureStructs.mbText = Just $ PureStructs.newRepeatText (getNewRepetition txt)
-    }
-
-maybeChid :: Maybe Int -> T.Text
-maybeChid Nothing = T.empty
-maybeChid (Just chid) = (T.pack . show) chid 
-
-maybeMsgInfo :: Maybe PureStructs.ComMessage -> T.Text
-maybeMsgInfo Nothing = T.empty
-maybeMsgInfo (Just msg) = PureStructs.commonMsgType msg 
--}
+makeCallbackResponse :: PureStructs.UpdateID -> PureStructs.ChatID -> Int -> PureStructs.PureMessage 
+makeCallbackResponse uid chid newRep = PureStructs.PureMessage 
+    (PureStructs.MTCommon "Message")
+    uid 
+    (Just chid)
+    (Just [PureStructs.ParamsText "text" (PureStructs.newRepeatText newRep)
+        , PureStructs.ParamsNum "chat_id" chid 
+    ])
