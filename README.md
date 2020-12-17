@@ -1,5 +1,5 @@
 # Update info
-## I started to change structures and haven't completed yet. The Telegram bot can work with text messages, audio files, documents, voice files, videos, animations and /help command. The VK bot can work with text messages and /help command.
+## Telegram bot works properly now. The VK bot can work with text messages and /help command.
 ## The code is not formatted yet.
 
 # Echo bot for Telegram and VK 
