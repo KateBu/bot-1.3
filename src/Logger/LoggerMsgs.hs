@@ -8,6 +8,9 @@ fatalConfig :: T.Text
 fatalConfig = "FATAL ERROR: couldn't find or read the config file," 
             <> " check the path to the file and the information inside it"
 
+vkFatalError ::T.Text
+vkFatalError = "FATAL ERROR: VK Config parsing error. Couldn't find group id or token"
+
 getTelUpdScs :: Logger.LogMessage
 getTelUpdScs = Logger.LogMessage Logger.Debug 
     "Telegram bot got updates successfully!"
