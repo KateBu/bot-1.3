@@ -1,62 +1,28 @@
 module Main where
 
 import qualified Data.Text.IO as TIO 
-
+import qualified API.Bot as Bot 
 import qualified Config.Config as Config 
-import qualified Handle.Handle as Handle 
-import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs 
-import qualified Logic.Logic as Logic 
 
 
 configPath :: String 
-configPath = "config.config"
+configPath = "local.config"
 
 main :: IO ()
 main = do
     config <- Config.parseConfig configPath 
     case config of 
-        Just existedConfig -> runBot existedConfig
+        Just existedConfig -> Bot.runBot existedConfig
         _ -> TIO.putStrLn LoggerMsgs.fatalConfig 
 
-runBot :: Config.Config -> IO ()
-runBot config = do 
-    handle <- Handle.new config  
-    logger <- Handle.hLogger handle 
-    conf <- Handle.hConfig handle 
-    Handle.hGetUpdates handle conf logger 
-        >>= Logic.processMsgs config logger (Handle.hSendMessage_ handle)
-        >>= nextLoop logger 
- 
-nextLoop :: Logger.Logger -> (Either Logger.LogMessage Config.Config) -> IO ()
-nextLoop logger (Left err) = do 
-    Logger.botLog logger (Logger.makeLogMessage err "\nProgram terminated")
-nextLoop logger (Right config) = do 
-    Logger.botLog logger LoggerMsgs.nextLoop
-    runBot config 
+
 
 
 
 
 -- the code below will be removed soon 
 
-    {-updates <- Handle.hGetUpdates handle conf logger
-    case updates of 
-        Left err -> Logger.botLog logger err
-        Right upd -> case upd of 
-                    [] -> do
-                        Logger.botLog logger LoggerMsgs.noUpd
-                        nextLoop logger config
-                    _ -> do
-                        Logger.botLog logger LoggerMsgs.getUpdScs
-                        processedMessages <- Logic.processMsgs config logger upd (Handle.hSendMessage_ handle)
-                        case processedMessages of 
-                            Left err -> do 
-                                Logger.botLog logger err
-                                nextLoop logger config
-                            Right newConfig -> do 
-                                Logger.botLog logger LoggerMsgs.sndMsgScs
-                                nextLoop logger newConfig   -}      
 
 {-
 showTS :: Config.Config -> IO ()
@@ -85,10 +51,4 @@ showBotSettings (Config.VK tok group key serv ts) =
     <> "key: " <> key <> "\n"
     <> "server: " <>serv <> "\n"
     <> "ts: " <> T.pack (show ts) <> "\n"
-
-showMessage :: PureStructs.Message -> IO () 
-showMessage (PureStructs.CommonMessage uid chid cMsg _) = 
-    TIO.putStrLn ( (T.pack $ "\nMessage: \nUpdateID: " <> show uid <> "\nchat id:" <> show chid <> "\n") 
-        <> PureStructs.cMsgToText cMsg)
-showMessage _ = pure () 
  -}
