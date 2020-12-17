@@ -18,8 +18,7 @@ import Network.HTTP.Req
       runReq,
       FormUrlEncodedParam,
       ReqBodyMultipart,
-      ReqBodyUrlEnc(..) )
-  
+      ReqBodyUrlEnc(..) )  
 import qualified Data.Text as T 
 import qualified Data.ByteString.Lazy as BSL  
 import Data.Aeson ( eitherDecode, encode ) 
@@ -47,6 +46,7 @@ paramToUrl :: PureStructs.Params -> FormUrlEncodedParam
 paramToUrl (PureStructs.ParamsText key val) = key =: val 
 paramToUrl (PureStructs.ParamsNum key val) = key =: val 
 paramToUrl (PureStructs.ParamsBool key val) = key =: val 
+paramToUrl (PureStructs.ParamsTextList _ _) = mempty 
 paramToUrl (PureStructs.ParamsJSON _ _) = mempty 
 
 paramToMultipart :: PureStructs.Params -> [LM.Part] 
@@ -54,6 +54,7 @@ paramToMultipart (PureStructs.ParamsText key val) = [LM.partLBS key (encode val)
 paramToMultipart (PureStructs.ParamsNum key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsBool key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsJSON key val) = [LM.partLBS key (encode val)]
+paramToMultipart (PureStructs.ParamsTextList key val) = [LM.partLBS key (encode val)]
 
 paramsToUrlBody :: [PureStructs.Params] -> ReqBodyUrlEnc
 paramsToUrlBody params = ReqBodyUrlEnc $ mconcat (paramToUrl <$> params)
@@ -61,9 +62,10 @@ paramsToUrlBody params = ReqBodyUrlEnc $ mconcat (paramToUrl <$> params)
 paramsToMultipartBody :: [PureStructs.Params]-> IO ReqBodyMultipart
 paramsToMultipartBody params = reqBodyMultipart $ mconcat (mapM paramToMultipart params)
 
-isJsonParam :: PureStructs.Params -> Bool 
-isJsonParam (PureStructs.ParamsJSON _ _) = True 
-isJsonParam _ = False 
+isMultipart :: PureStructs.Params -> Bool 
+isMultipart (PureStructs.ParamsJSON _ _) = True 
+isMultipart (PureStructs.ParamsTextList _ _) = True 
+isMultipart _ = False 
 
 updateParam :: Config.BotType -> [PureStructs.Params] 
 updateParam vk@(Config.VKBot _) = VKData.updateParams vk     
@@ -87,7 +89,7 @@ getPureMessageList config logger = getU config >>= byteStringToPureMessageList c
 getU :: Config.Config ->  IO (Either Logger.LogMessage BSL.ByteString) 
 getU config = do
     let params = (updateParam (Config.botType config)) 
-    if any isJsonParam params 
+    if any isMultipart params 
         then getUMultipartParams config params 
         else getUUrlParams config params 
 
@@ -126,7 +128,7 @@ getApiResponse :: Config.Config
     -> [PureStructs.Params] 
     -> PureStructs.PureMessage 
     -> IO (Either Logger.LogMessage LbsResponse)  
-getApiResponse config params msg = if any isJsonParam params 
+getApiResponse config params msg = if any isMultipart params 
     then sendMMultipartParams config msg params
     else sendMUrlParams config msg params 
     
