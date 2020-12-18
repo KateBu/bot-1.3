@@ -35,18 +35,9 @@ sndMsgScs :: Logger.LogMessage
 sndMsgScs = Logger.LogMessage Logger.Debug 
     "sendMessage function processed successfully!"
 
-
-
-
-
-
 parseVKConfFld :: Logger.LogMessage
 parseVKConfFld = Logger.LogMessage Logger.Error 
     "Parse VK Config Failed: "
-
-
-
-
 
 parseVKConfNoInfo :: Logger.LogMessage
 parseVKConfNoInfo = Logger.LogMessage Logger.Error 
@@ -92,8 +83,6 @@ rptMsgFld :: Logger.LogMessage
 rptMsgFld = Logger.LogMessage Logger.Error 
     "Repeat message process failed: "
 
-
-
 getUpdFld :: Logger.LogMessage
 getUpdFld = Logger.LogMessage Logger.Error 
     "GetUpdates function failed: "
@@ -105,8 +94,6 @@ prsMsgScs = Logger.LogMessage Logger.Debug
 prsMsgFld :: Logger.LogMessage
 prsMsgFld = Logger.LogMessage Logger.Error 
     "parseMessage function failed: "
-
-
 
 sndMsgFld :: Logger.LogMessage
 sndMsgFld = Logger.LogMessage Logger.Error 
