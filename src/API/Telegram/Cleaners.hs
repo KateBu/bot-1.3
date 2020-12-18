@@ -47,7 +47,7 @@ telUpdateToPureMessage :: Config.Config -> TStructs.TelUpdateResult
     -> Either Logger.LogMessage PureStructs.PureMessage
 telUpdateToPureMessage config res = do 
     let uid = TStructs.update_id res 
-    let mbPureMessage = mbMakeCallbackPureMessage res uid <|> mbGetMessageInfo config res uid 
+    let mbPureMessage = mbMakeCallbackPureMessage res uid <|> mbMakePureMessage config res uid 
     case mbPureMessage of 
         Just msg -> pure msg 
         Nothing -> Left LoggerMsgs.noUpd 
@@ -56,31 +56,34 @@ mbMakeCallbackPureMessage :: TStructs.TelUpdateResult
     -> PureStructs.UpdateID
     -> Maybe PureStructs.PureMessage
 mbMakeCallbackPureMessage res uid = case TStructs.callback_query res of 
-    Just (TStructs.Callback callback cbData) -> pure (PureStructs.PureMessage 
-        (PureStructs.MTCallbackQuery cbData)
+    Just (TStructs.Callback callback cbData) -> do 
+        let chid = (TStructs.cb_chid . TStructs.cb_chat) callback
+        pure (PureStructs.PureMessage 
+            (PureStructs.MTCallbackQuery cbData)
             uid 
-            (Just $ (TStructs.cb_chid . TStructs.cb_chat) callback)
-            Nothing)
+            (Just chid)
+            (Just $ [PureStructs.ParamsText "text" (PureStructs.newRepeatText (PureStructs.getNewRep cbData))
+                , PureStructs.ParamsNum "chat_id" chid]))
     _ -> Nothing
 
-mbGetMessageInfo :: Config.Config
+mbMakePureMessage :: Config.Config
     ->  TStructs.TelUpdateResult 
     -> PureStructs.UpdateID
     -> Maybe PureStructs.PureMessage
-mbGetMessageInfo config res uid = case TStructs.messageInfo res of 
+mbMakePureMessage config res uid = case TStructs.messageInfo res of 
     Nothing -> pure $ PureStructs.PureMessage PureStructs.MTEmpty uid Nothing Nothing 
     Just mInfo -> do 
         let chid = TStructs.chat_id $ TStructs.chat mInfo 
-        case makePureMessage config uid chid mInfo of 
+        case makeCommonMessage config uid chid mInfo of 
             Nothing -> Nothing 
             Just pureMsg -> pure pureMsg 
 
-makePureMessage :: Config.Config 
+makeCommonMessage :: Config.Config 
     -> PureStructs.UpdateID 
     -> PureStructs.ChatID 
     -> TStructs.MessageInfo 
     -> Maybe PureStructs.PureMessage
-makePureMessage config uid chid mInfo = mbAnimation uid chid mInfo 
+makeCommonMessage config uid chid mInfo = mbAnimation uid chid mInfo 
     <|> mbAudio uid chid mInfo 
     <|> mbDoc uid chid mInfo 
     <|> mbVideo uid chid mInfo 
