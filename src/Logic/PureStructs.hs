@@ -1,7 +1,7 @@
 module Logic.PureStructs where
 
 import qualified Data.Text as T 
-import Data.Aeson 
+import Data.Aeson ( object, Value, KeyValue((.=)), ToJSON(toJSON) ) 
 import Logger.Logger ()
 
 type UpdateID = Int
