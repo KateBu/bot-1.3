@@ -1,5 +1,5 @@
 # Update info
-## Telegram bot works properly now. The VK bot can work with text messages and /help command.
+## Telegram bot works properly now. The VK bot can work with text messages, /repeat and /help commands.
 ## The code is not formatted yet.
 
 # Echo bot for Telegram and VK 
