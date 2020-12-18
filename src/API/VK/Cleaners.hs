@@ -3,14 +3,16 @@ module API.VK.Cleaners where
 --import qualified Data.ByteString as BS 
 import qualified Data.ByteString.Lazy as BSL 
 import qualified Data.Text as T 
-import Data.Aeson ( eitherDecode )
+import Data.Aeson
+    ( decode, eitherDecode, encode, object, Value, KeyValue((.=)) )
+import Data.ByteString.Lazy.Char8 as C8 ( unpack )  
+import Control.Applicative ( Alternative((<|>)) ) 
 
 import qualified API.VK.Structs as VKStructs 
 import qualified Logic.PureStructs as PureStructs
 import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Config.Config as Config 
---import qualified Config.Config as Config 
 
 vkByteStringToPureMessageList :: Config.Config -> Logger.Logger
     -> Either Logger.LogMessage BSL.ByteString 
@@ -20,7 +22,7 @@ vkByteStringToPureMessageList config logger bs = decodeByteString logger bs >>= 
 vkUpdInfoToPureMessageList ::Config.Config ->  Either Logger.LogMessage (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
     -> IO (Either Logger.LogMessage [PureStructs.PureMessage])
 vkUpdInfoToPureMessageList _ (Left err) = pure $ Left err 
-vkUpdInfoToPureMessageList config (Right (uid, upds)) = pure $ mapM (vkUpdInfoToPureMessage config uid) upds 
+vkUpdInfoToPureMessageList config (Right (uid, upds)) = pure $ mapM (vkUpdInfoToPureMessage config uid) upds
 
 vkUpdInfoToPureMessage ::Config.Config -> PureStructs.UpdateID -> VKStructs.VKUpdInfo
     -> Either Logger.LogMessage PureStructs.PureMessage
@@ -31,38 +33,128 @@ vkUpdInfoToPureMessage config uid updInfo = case VKStructs.updType updInfo of
             Nothing -> Right (PureStructs.PureMessage PureStructs.MTEmpty uid Nothing Nothing)
             Just obj -> do         
                 let vkMessage = VKStructs.vkMessage obj  
-                let mType = getMessageType vkMessage
-                case mType of 
-                    PureStructs.NotImplemented -> Left LoggerMsgs.vkUpdNotImplemented
-                    _ -> Right (PureStructs.PureMessage 
-                        mType
-                        uid  
-                        (Just $ VKStructs.from_id vkMessage)
-                        (makeParams config vkMessage) 
-                        )
- 
-getMessageType :: VKStructs.VKMessage -> PureStructs.MessageType 
-getMessageType vkMsg = case VKStructs.msgText vkMsg of 
-    Nothing -> PureStructs.NotImplemented   
-    Just txt -> case txt of 
-        "/help" -> PureStructs.MTUserCommand PureStructs.Help
-        "/repeat"  -> PureStructs.MTUserCommand PureStructs.Repeat
-        _ -> PureStructs.MTCommon "Message"
+                makePureMessage config uid vkMessage 
+                
+makePureMessage :: Config.Config 
+    -> PureStructs.UpdateID
+    -> VKStructs.VKMessage 
+    -> Either Logger.LogMessage PureStructs.PureMessage
+makePureMessage config uid vkMsg = case getMessageType vkMsg of 
+    Left err -> Left err 
+    Right mType -> case mType of 
+        PureStructs.MTCallbackQuery callback -> Right $ PureStructs.PureMessage
+            mType
+            uid 
+            (Just $ VKStructs.from_id vkMsg)
+            (Just $ 
+                (PureStructs.ParamsText "message" (PureStructs.newRepeatText $ PureStructs.getNewRep callback) 
+                    : baseParams vkMsg))  
+        PureStructs.MTUserCommand _ -> Right $ PureStructs.PureMessage 
+            mType
+            uid 
+            (Just $ VKStructs.from_id vkMsg)
+            (makeParams config mType vkMsg)
+        PureStructs.MTCommon _ -> Right $ PureStructs.PureMessage 
+            mType 
+            uid 
+            (Just $ VKStructs.from_id vkMsg)
+            (makeParams config mType vkMsg)
+        _ -> Left $ LoggerMsgs.notImplemented
 
-makeParams :: Config.Config -> VKStructs.VKMessage -> Maybe [PureStructs.Params]
-makeParams config vkMsg = do 
-    let params = [
-            PureStructs.ParamsNum "user_id" (VKStructs.from_id vkMsg)
-            ]
-    case getMessageType vkMsg of 
-        PureStructs.NotImplemented -> Nothing 
-        PureStructs.MTUserCommand PureStructs.Help -> pure $ 
-            (PureStructs.ParamsText "message" (Config.helpMessage config)) : params
-        PureStructs.MTUserCommand PureStructs.Repeat -> pure $ 
-            (PureStructs.ParamsText "message" "Repeat command is not implemented yet") : params
-        PureStructs.MTCommon _ -> do 
+getMessageType :: VKStructs.VKMessage -> Either Logger.LogMessage PureStructs.MessageType
+getMessageType vkMsg = case msgType of 
+    Nothing -> Left LoggerMsgs.notImplemented 
+    Just mType -> Right mType 
+    where msgType = isCallBackMsg vkMsg
+            <|> isUserCommand vkMsg
+            <|> isAttachmentMsg vkMsg
+            <|> isTextMsg vkMsg 
+    
+isCallBackMsg, isUserCommand, isAttachmentMsg
+    , isTextMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType 
+
+isCallBackMsg vkMsg = case VKStructs.cbPayload vkMsg of 
+    Nothing -> Nothing 
+    Just callback -> 
+        let result = mbRep1 callback
+                <|> mbRep2 callback 
+                <|> mbRep3 callback
+                <|> mbRep4 callback 
+                <|> mbRep5 callback
+        in case result of 
+                Nothing -> Nothing 
+                Just val -> Just $ PureStructs.MTCallbackQuery val 
+
+isUserCommand vkMsg = case VKStructs.msgText vkMsg of  
+    Nothing -> Nothing 
+    Just txt -> case txt of 
+        "/help" -> pure $ PureStructs.MTUserCommand PureStructs.Help
+        "/repeat"  -> pure $ PureStructs.MTUserCommand PureStructs.Repeat
+        _ -> Nothing 
+
+isAttachmentMsg vkMsg = Nothing 
+
+isTextMsg vkMsg = case VKStructs.msgText vkMsg of 
+    Nothing -> Nothing 
+    _ -> pure $ PureStructs.MTCommon "Message"
+
+mbRep1 :: T.Text -> Maybe T.Text 
+mbRep1 txt = if T.isInfixOf PureStructs.rep1 txt 
+    then pure PureStructs.rep1 
+    else Nothing 
+
+mbRep2 :: T.Text -> Maybe T.Text 
+mbRep2 txt = if T.isInfixOf PureStructs.rep2 txt 
+    then pure PureStructs.rep2 
+    else Nothing 
+
+mbRep3 :: T.Text -> Maybe T.Text 
+mbRep3 txt = if T.isInfixOf PureStructs.rep3 txt 
+    then pure PureStructs.rep3 
+    else Nothing 
+
+mbRep4 :: T.Text -> Maybe T.Text 
+mbRep4 txt = if T.isInfixOf PureStructs.rep4 txt 
+    then pure PureStructs.rep4 
+    else Nothing 
+
+mbRep5 :: T.Text -> Maybe T.Text 
+mbRep5 txt = if T.isInfixOf PureStructs.rep5 txt 
+    then pure PureStructs.rep5 
+    else Nothing 
+
+baseParams :: VKStructs.VKMessage -> [PureStructs.Params] 
+baseParams vkMsg = [PureStructs.ParamsNum "user_id" (VKStructs.from_id vkMsg)]
+
+makeParams :: Config.Config 
+    -> PureStructs.MessageType    
+    -> VKStructs.VKMessage 
+    -> Maybe [PureStructs.Params]
+makeParams config (PureStructs.MTUserCommand PureStructs.Help) vkMsg = pure $ 
+            (PureStructs.ParamsText "message" (Config.helpMessage config)) : baseParams vkMsg 
+makeParams _ (PureStructs.MTUserCommand PureStructs.Repeat) vkMsg = pure $ baseParams vkMsg 
+    <> [PureStructs.ParamsText "message" PureStructs.repeatText
+        , PureStructs.ParamsJSON "keyboard" keyboard]     
+makeParams _ (PureStructs.MTCommon "Message") vkMsg = do 
             txt <- VKStructs.msgText vkMsg       
-            pure $ (PureStructs.ParamsText "message" txt) : params 
+            pure $ (PureStructs.ParamsText "message" txt) : baseParams vkMsg  
+makeParams _ _ _ = Nothing 
+
+decodeKeyboard  :: T.Text
+decodeKeyboard = case (decode . encode) keyboard of 
+    Nothing -> ""
+    Just val -> val 
+
+keyboard :: Value
+keyboard = object ["inline" .= True 
+    , "buttons" .= (((fmap . fmap) pureBtnToVKBtnAct PureStructs.buttons')) ]
+
+pureBtnToVKBtnAct :: PureStructs.PureButtons -> VKStructs.BtnAction 
+pureBtnToVKBtnAct btn@(PureStructs.PureButtons btnLabel _) = 
+    VKStructs.BtnAction $ VKStructs.VKButtons "callback" ((T.pack . C8.unpack) $ mkLBS btn) btnLabel
+
+mkLBS :: PureStructs.PureButtons -> BSL.ByteString
+mkLBS (PureStructs.PureButtons btnLabel btnData) = encode $ object [btnLabel .= btnData]
 
 decodeByteString :: Logger.Logger 
     -> Either Logger.LogMessage BSL.ByteString 
@@ -80,40 +172,3 @@ decodeByteString logger eiJson = case eiJson of
                 _ -> pure $ Left LoggerMsgs.vkUpdatesFailed4 
             Right upd -> pure $ Right (read (VKStructs.ts upd), (VKStructs.updates upd)) 
     
-
-
--- the functions below will be removed soon 
-{-
-updatesToPureMessageList :: (VKStructs.VKUpdates, PureStructs.UpdateID) -> IO (Either Logger.LogMessage [PureStructs.Message])
-updatesToPureMessageList (upds, uid) = do 
-    msgs <- mapM vkUpdatesToMessage (zip (VKStructs.updates upds) [uid ..])
-    pure $ (sequence msgs) 
-
-vkUpdatesToMessage :: (VKStructs.VKUpdInfo, PureStructs.UpdateID) -> IO (Either Logger.LogMessage PureStructs.Message) 
-vkUpdatesToMessage ((VKStructs.VKUpdInfo VKStructs.OtherEvent _ _), _) = pure $ Left LoggerMsgs.vkUpdatesParsingUnknownMsgType
-vkUpdatesToMessage ((VKStructs.VKUpdInfo VKStructs.MsgNew msg _), uid) = case msg of 
-    Nothing -> pure $ Left LoggerMsgs.vkUpdatesParsingNoMsg
-    Just val -> do 
-        let chid = (VKStructs.from_id . VKStructs.vkMessage) val
-        pure $ updatesToMessage (VKStructs.vkMessage val) uid chid 
-
-updatesToComMessage :: VKStructs.VKMessage -> PureStructs.ComMessage 
-updatesToComMessage msg = case VKStructs.msgText msg of 
-    Just val -> PureStructs.defaultComMsg {
-            PureStructs.commonMsgType = "Message"
-            , PureStructs.mbText = Just val
-        }
-    Nothing -> PureStructs.defaultComMsg 
-        {
-            PureStructs.commonMsgType = "Other"
-        }  
-
-updatesToMessage :: VKStructs.VKMessage -> PureStructs.UpdateID -> PureStructs.ChatID -> Either Logger.LogMessage PureStructs.Message
-updatesToMessage msg uid chid = case VKStructs.msgText msg of 
-    Just txt -> case txt of 
-        "/help" -> pure $ PureStructs.UserCommand uid (PureStructs.Command chid txt)
-        "/repeat" -> pure $ PureStructs.UserCommand uid (PureStructs.Command chid txt)
-        _ -> pure $ PureStructs.CommonMessage uid chid (updatesToComMessage msg) Nothing 
-    _ -> Left LoggerMsgs.vkUpdToMsgFld 
-
--}
