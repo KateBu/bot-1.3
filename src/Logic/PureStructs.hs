@@ -1,7 +1,7 @@
 module Logic.PureStructs where
 
 import qualified Data.Text as T 
-import Data.Aeson ( Value ) 
+import Data.Aeson 
 import Logger.Logger ()
 
 type UpdateID = Int
@@ -27,6 +27,13 @@ data Params = ParamsText T.Text T.Text
         | ParamsJSON T.Text Value 
         deriving (Show, Eq)
 
+instance ToJSON Params where 
+    toJSON (ParamsText key val) = object [key .= val]
+    toJSON (ParamsTextList key val) = object [key .= val]
+    toJSON (ParamsNum key val) = object [key .= val]
+    toJSON (ParamsBool key val) = object [key .= val]
+    toJSON (ParamsJSON key val) = object [key .= val]
+
 buttons' :: [[PureButtons]]
 buttons' = [[PureButtons "1" rep1]
     , [PureButtons "2" rep2]
@@ -38,7 +45,7 @@ repeatText :: T.Text
 repeatText = "Выберите количество повторов: "
 
 newRepeatText :: Int -> T.Text
-newRepeatText rep = "Установлено количество обновлений: " <> (T.pack . show) rep
+newRepeatText rep = "Установлено количество повторов: " <> (T.pack . show) rep
 
 rep1:: T.Text
 rep1 = "/setRepetition1"
@@ -55,8 +62,24 @@ rep4 = "/setRepetition4"
 rep5:: T.Text
 rep5 = "/setRepetition5"
 
+getNewRep :: T.Text -> Int 
+getNewRep txt 
+    | txt == rep1 = 1 
+    | txt == rep2 = 2 
+    | txt == rep3 = 2 
+    | txt == rep4 = 2 
+    | otherwise = 5 
+
+
 data HostPath = HostPath T.Text [T.Text] 
     deriving Show 
 
-data PureButtons = PureButtons T.Text T.Text 
+data PureButtons = PureButtons 
+    {
+        btnValue :: T.Text 
+        , btnData :: T.Text 
+    }
     deriving Show 
+
+    
+
