@@ -1,6 +1,5 @@
 module Logic.Logic where
 
-import qualified Data.Text as T 
 import qualified Logic.PureStructs as PureStructs 
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs
@@ -32,9 +31,9 @@ processMsgs_ config logger sendFunction msg = case PureStructs.messageType msg o
         case mbChid of 
             Nothing -> pure $ Left LoggerMsgs.chidNotFound
             Just chid -> do 
-                let newRep = getNewRep callbackData
+                let newRep = PureStructs.getNewRep callbackData
                 let newConfig = Config.setUserRepeat config chid newRep
-                sendFunction newConfig logger (makeCallbackResponse (PureStructs.updateID msg) chid newRep)
+                sendFunction newConfig logger (makeCallbackResponse msg)--(makeCallbackResponse (PureStructs.updateID msg) chid newRep)
     PureStructs.MTCommon _ -> do 
         case PureStructs.mbChatID msg of 
             Nothing -> pure $ Left LoggerMsgs.noChatId
@@ -59,19 +58,9 @@ makeRepeatMsg msg = PureStructs.PureMessage
     (PureStructs.mbChatID msg)
     (mconcat [PureStructs.mbParams msg, Just [(PureStructs.ParamsText "text" PureStructs.repeatText)]])
 
-getNewRep :: T.Text -> Int 
-getNewRep txt 
-    | txt == PureStructs.rep1 = 1 
-    | txt == PureStructs.rep2 = 2 
-    | txt == PureStructs.rep3 = 2 
-    | txt == PureStructs.rep4 = 2 
-    | otherwise = 5 
-
-makeCallbackResponse :: PureStructs.UpdateID -> PureStructs.ChatID -> Int -> PureStructs.PureMessage 
-makeCallbackResponse uid chid newRep = PureStructs.PureMessage 
+makeCallbackResponse :: PureStructs.PureMessage -> PureStructs.PureMessage  
+makeCallbackResponse msg = PureStructs.PureMessage 
     (PureStructs.MTCommon "Message")
-    uid 
-    (Just chid)
-    (Just [PureStructs.ParamsText "text" (PureStructs.newRepeatText newRep)
-        , PureStructs.ParamsNum "chat_id" chid 
-    ])
+    (PureStructs.updateID msg)
+    (PureStructs.mbChatID msg)
+    (PureStructs.mbParams msg)
