@@ -89,9 +89,9 @@ data VKMessage = VKMessage
      --   , ref_source :: Maybe String
         , attachments :: Maybe [Attachment]
      --   , important :: Maybe Bool
-     {-   , geo :: Maybe Geo
-        , payload :: Maybe String 
-        , keyboard :: Maybe Keyboard 
+     --   , geo :: Maybe Geo
+        , cbPayload :: Maybe T.Text  
+     {-   , keyboard :: Maybe Keyboard 
         , fwd_messages :: Maybe [VKMessage]
         , reply_message :: Maybe VKMessage
         , action :: Maybe Action 
@@ -111,6 +111,7 @@ instance FromJSON VKMessage where
             <*> obj .: "from_id"
             <*> obj .:? "text"
             <*> obj .:? "attachments"
+            <*> obj .:? "payload"
     parseJSON _ = parseFail parseFailMessage
 
 data Attachment = Attachment 
@@ -230,35 +231,35 @@ instance FromJSON VKResultError where
 
 data VKKeyBoard = VKKeyBoard 
     {
-        one_time :: Bool
-        , inline :: Bool
-        , buttons :: [[Action]] 
+        --one_time :: Bool
+        inline :: Bool
+        , buttons :: [[BtnAction]] 
     } deriving (Show, Generic) 
 
 instance ToJSON VKKeyBoard 
 
-data Action = Action VKButtons 
+data BtnAction = BtnAction VKButtons 
     deriving (Show)
 
-instance ToJSON Action where 
-    toJSON (Action btns) = object ["action" .= btns]
+instance ToJSON BtnAction where 
+    toJSON (BtnAction btns) = object ["action" .= btns]
 
 data VKButtons = VKButtons 
     {
-        butType :: String
-        , payload :: VKPayload
-        , label :: String 
+        butType :: T.Text
+        , payload :: T.Text --VKPayload
+        , label :: T.Text 
     } deriving Show
-
+{-
 data VKPayload = VKPayload 
     {
-        plType :: T.Text 
-        , plVal :: String 
+        plKey :: T.Text 
+        , plVal :: T.Text 
     } deriving Show 
 
 instance ToJSON VKPayload where 
     toJSON (VKPayload t v) = object [ t .= v]
-
+-}
 instance ToJSON VKButtons where 
     toJSON (VKButtons btnType pld btnLab) = object ["type" .= btnType
         , "payload" .= pld
