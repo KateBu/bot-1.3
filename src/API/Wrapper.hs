@@ -2,26 +2,27 @@
 module API.Wrapper where
 
 import Network.HTTP.Req
-    ( Url,
-      Scheme(Https),
-      req,
-      POST(POST),
-      LbsResponse,
-      defaultHttpConfig,
+    ( LbsResponse,
+      Url,
+      FormUrlEncodedParam,
+      ReqBodyMultipart,
+      ReqBodyUrlEnc(..),
       (/:),
       (=:),
+      defaultHttpConfig,
       https,
       lbsResponse,
+      req,
       reqBodyMultipart,
       responseBody,
       responseStatusCode,
       runReq,
-      FormUrlEncodedParam,
-      ReqBodyMultipart,
-      ReqBodyUrlEnc(..) )  
+      Option,
+      POST(POST),
+      Scheme(Https) ) 
 import qualified Data.Text as T 
 import qualified Data.ByteString.Lazy as BSL  
-import Data.Aeson ( eitherDecode, encode ) 
+import Data.Aeson ( eitherDecode, encode )
 import Control.Monad.IO.Class ( MonadIO(liftIO) )
 import Data.Maybe ( fromJust ) 
 import qualified Network.HTTP.Client.MultipartFormData as LM
@@ -56,6 +57,9 @@ paramToMultipart (PureStructs.ParamsBool key val) = [LM.partLBS key (encode val)
 paramToMultipart (PureStructs.ParamsJSON key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsTextList key val) = [LM.partLBS key (encode val)]
 
+paramToLBS :: PureStructs.Params -> BSL.ByteString 
+paramToLBS = encode 
+
 paramsToUrlBody :: [PureStructs.Params] -> ReqBodyUrlEnc
 paramsToUrlBody params = ReqBodyUrlEnc $ mconcat (paramToUrl <$> params)
 
@@ -66,6 +70,17 @@ isMultipart :: PureStructs.Params -> Bool
 isMultipart (PureStructs.ParamsJSON _ _) = True 
 isMultipart (PureStructs.ParamsTextList _ _) = True 
 isMultipart _ = False 
+
+paramsToHttps :: PureStructs.Params -> Option Https 
+paramsToHttps (PureStructs.ParamsText key val) = key =: val 
+paramsToHttps (PureStructs.ParamsNum key val) = key =: val 
+paramsToHttps _ = mempty
+
+mbSendOption :: Config.BotType -> IO (Option Https)
+mbSendOption vk@(Config.VKBot _) = do 
+    params <-VKData.sendBasicParams vk    
+    pure $ (mconcat (paramsToHttps <$> params))
+mbSendOption _ = mempty
 
 updateParam :: Config.BotType -> [PureStructs.Params] 
 updateParam vk@(Config.VKBot _) = VKData.updateParams vk     
@@ -120,17 +135,17 @@ sendM config logger msg = do
     case PureStructs.mbParams msg of 
         Nothing -> pure $ Right config 
         Just params -> do     
-            basicParams <- VKData.sendBasicParams (Config.botType config)
-            let allParams = params <> basicParams   
-            getApiResponse config allParams msg >>= checkApiResponse config logger msg              
+            basicParams <- mbSendOption (Config.botType config)
+            getApiResponse config basicParams params msg >>= checkApiResponse config logger msg              
     
 getApiResponse :: Config.Config 
+    -> Option Https
     -> [PureStructs.Params] 
     -> PureStructs.PureMessage 
     -> IO (Either Logger.LogMessage LbsResponse)  
-getApiResponse config params msg = if any isMultipart params 
-    then sendMMultipartParams config msg params
-    else sendMUrlParams config msg params 
+getApiResponse config basicParams params msg = if any isMultipart params 
+    then sendMMultipartParams config msg basicParams params
+    else sendMUrlParams config msg basicParams params         
     
 checkApiResponse :: Config.Config
     -> Logger.Logger 
@@ -156,9 +171,10 @@ checkApiResponse config logger msg (Right lbsResp) = case responseStatusCode lbs
 
 sendMMultipartParams :: Config.Config 
     -> PureStructs.PureMessage
+    -> Option Https
     -> [PureStructs.Params] 
     -> IO (Either Logger.LogMessage LbsResponse)  
-sendMMultipartParams config msg params = do
+sendMMultipartParams config msg basic params = do
     multiPartParams <- paramsToMultipartBody params 
     response <- runReq defaultHttpConfig $ do 
         req 
@@ -166,21 +182,22 @@ sendMMultipartParams config msg params = do
             (mkHostPath config Send (Just msg))
             multiPartParams
             lbsResponse $
-            mempty 
+            basic 
     (pure . pure) response 
             
 sendMUrlParams :: Config.Config 
     -> PureStructs.PureMessage
+    -> Option Https
     -> [PureStructs.Params] 
     -> IO (Either Logger.LogMessage LbsResponse)  
-sendMUrlParams config msg params = do
+sendMUrlParams config msg basic params = do
     response <- runReq defaultHttpConfig $ do 
         req 
             POST 
             (mkHostPath config Send (Just msg))
             (paramsToUrlBody params)
             lbsResponse $
-            mempty 
+            basic 
     (pure . pure) response 
 
 byteStringToPureMessageList :: Config.Config -> Logger.Logger 
