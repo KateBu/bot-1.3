@@ -13,7 +13,6 @@ import Data.Aeson
 import Data.Aeson.Types ( parseFail )
 import GHC.Generics ( Generic )
 
-
 parseFailMessage :: String
 parseFailMessage = "VK bot got unexpected input data type while parsing JSON"
 
@@ -80,24 +79,22 @@ data EventType = MsgNew | OtherEvent
 data VKMessage = VKMessage 
     {
         id :: Integer
-    --    , date :: Integer 
-        , peer_id :: Int --reciever id 
+ --        peer_id :: Int --reciever id 
         , from_id :: Int --sender id
         , msgText :: Maybe T.Text
-     --   , random_id :: Maybe Integer
-     --   , ref :: Maybe String 
-     --   , ref_source :: Maybe String
+        , ref :: Maybe T.Text 
+        , refSource :: Maybe T.Text
         , attachments :: Maybe [Attachment]
      --   , important :: Maybe Bool
-     --   , geo :: Maybe Geo
+        , geo :: Maybe Geo
         , cbPayload :: Maybe T.Text  
-     {-   , keyboard :: Maybe Keyboard 
-        , fwd_messages :: Maybe [VKMessage]
-        , reply_message :: Maybe VKMessage
+     --   , keyboard :: Maybe Keyboard 
+        , fwdMessages :: Maybe [VKMessage]
+     {-   , reply_message :: Maybe VKMessage
         , action :: Maybe Action 
-        , admin_author_id ::Maybe Integer 
-        , conversation_message_id :: Maybe Integer
-        , is_cropped :: Maybe Bool
+        , admin_author_id ::Maybe Integer -}
+    --    , conversation_message_id :: Integer
+     {-}   , is_cropped :: Maybe Bool
         , members_count :: Maybe Integer 
         , update_time :: Maybe Integer 
         , was_listened :: Maybe Bool 
@@ -107,16 +104,19 @@ data VKMessage = VKMessage
 instance FromJSON VKMessage where 
     parseJSON (Object obj) = 
         VKMessage <$> obj .: "id"
-            <*> obj .: "peer_id"
             <*> obj .: "from_id"
             <*> obj .:? "text"
+            <*> obj .:? "ref"
+            <*> obj .:? "ref_source"
             <*> obj .:? "attachments"
+            <*> obj .:? "geo"
             <*> obj .:? "payload"
+            <*> obj .:? "fwd_messages"
     parseJSON _ = parseFail parseFailMessage
 
 data Attachment = Attachment 
     {
-        aType :: String 
+        aType :: T.Text 
         , aObject :: AObject
     } | UnknownAttachment
     deriving Show 
@@ -124,25 +124,67 @@ data Attachment = Attachment
 instance FromJSON Attachment where 
     parseJSON = withObject "Attachment" $ \obj -> do 
         attachType <- obj .: "type"
-        case (attachType :: String) of 
+        case (attachType :: T.Text) of 
+            "link" -> do 
+                link <- obj .: "link"
+                Attachment attachType <$> (VKLink <$> link .: "url")
+            "sticker" -> do 
+                sticker <- obj .: "sticker"
+                Attachment attachType <$> (VKSticker <$> sticker .: "sticker_id")
+            "audio" -> do 
+                audio <- obj .: "audio"
+                Attachment attachType <$> (VKAudio <$> audio .: "id"
+                    <*> audio .: "owner_id")
+            "video" -> do 
+                video <- obj .: "video"
+                Attachment attachType <$> (VKVideo <$> video .: "id"
+                    <*> video .: "owner_id"
+                    <*> video .: "access_key")
+            "wall" -> do 
+                wall <- obj .: "wall"
+                Attachment attachType <$> (VKWall <$> wall .: "id" 
+                    <*> wall .: "to_id")
             "photo" -> do
                 photo <- obj .: "photo" 
                 Attachment attachType <$> 
                     (VKPhoto <$> photo .: "id"
                     <*> photo .: "owner_id"
-                    <*> photo .: "text"
                     <*> photo .: "access_key")
             _ -> pure UnknownAttachment 
 
 data AObject = 
-    VKPhoto 
+    VKLink 
         {
-            phId :: Int
+            url :: T.Text
+        }
+    | VKSticker
+        {
+            stickerId :: Int 
+        }
+    | VKAudio 
+        {
+            audioId :: Int 
+            , audioOwnerId :: Int 
+        }
+    | VKVideo
+        {
+            videoId :: Int 
+            , videoOwnerId :: Int 
+            , videoAccessKey :: T.Text
+        }
+    | VKWall 
+        {
+            wallId :: Int 
+            , toId :: Int 
+        }
+    | VKPhoto 
+        {
+            photoId :: Int
            -- , albumId :: Integer 
-            , ownerId :: Int 
+            , photoOwnerId :: Int 
            -- , userId :: Integer 
-            , phText :: T.Text
-            , accessID :: T.Text
+           -- , phText :: T.Text
+            , photoAccessID :: T.Text
             --, phDate :: Integer 
            -- , phSizes :: [PhSizes]
            -- , phWidth :: Integer 
@@ -161,14 +203,24 @@ data PhSizes = PhSizes
 
 data Geo = Geo 
     {
-        gType :: String
+        gCoordinates :: Coordinates
     } deriving Show 
+
+instance FromJSON Geo where 
+    parseJSON (Object obj) = Geo <$> 
+        obj .: "coordinates"
+    parseJSON _ = parseFail parseFailMessage
+
+data Coordinates = Coordinates
+    {
+        latitude :: Double 
+        , longitude :: Double 
+    } deriving (Show, Generic)
+
+instance FromJSON Coordinates 
 
 data Keyboard = Keyboard
     deriving Show
-
---data Action = Action 
- --   deriving Show 
 
 data VKResponse = VKResponse {
         key :: T.Text
@@ -176,8 +228,8 @@ data VKResponse = VKResponse {
         , currentTs :: String 
     } 
     | VKError {
-        error_code :: Int 
-        , error_msg :: T.Text
+        errorCode :: Int 
+        , errorMsg :: T.Text
     } 
     | VKParseError deriving Show
 
@@ -231,7 +283,6 @@ instance FromJSON VKResultError where
 
 data VKKeyBoard = VKKeyBoard 
     {
-        --one_time :: Bool
         inline :: Bool
         , buttons :: [[BtnAction]] 
     } deriving (Show, Generic) 
@@ -250,16 +301,7 @@ data VKButtons = VKButtons
         , payload :: T.Text --VKPayload
         , label :: T.Text 
     } deriving Show
-{-
-data VKPayload = VKPayload 
-    {
-        plKey :: T.Text 
-        , plVal :: T.Text 
-    } deriving Show 
 
-instance ToJSON VKPayload where 
-    toJSON (VKPayload t v) = object [ t .= v]
--}
 instance ToJSON VKButtons where 
     toJSON (VKButtons btnType pld btnLab) = object ["type" .= btnType
         , "payload" .= pld
