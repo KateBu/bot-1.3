@@ -68,10 +68,14 @@ getMessageType vkMsg = case msgType of
     where msgType = isCallBackMsg vkMsg
             <|> isUserCommand vkMsg
             <|> isAttachmentMsg vkMsg
-            <|> isTextMsg vkMsg 
+            <|> isGeo vkMsg
+            <|> isFwd vkMsg 
+            <|> isAttachmentMsg vkMsg
+            <|> isTextMsg vkMsg              
     
-isCallBackMsg, isUserCommand, isAttachmentMsg
-    , isTextMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType 
+isCallBackMsg, isUserCommand
+    , isAttachmentMsg, isTextMsg
+    , isGeo, isFwd :: VKStructs.VKMessage -> Maybe PureStructs.MessageType 
 
 isCallBackMsg vkMsg = case VKStructs.cbPayload vkMsg of 
     Nothing -> Nothing 
@@ -87,16 +91,28 @@ isCallBackMsg vkMsg = case VKStructs.cbPayload vkMsg of
 
 isUserCommand vkMsg = case VKStructs.msgText vkMsg of  
     Nothing -> Nothing 
+    Just "" -> Nothing 
     Just txt -> case txt of 
         "/help" -> pure $ PureStructs.MTUserCommand PureStructs.Help
         "/repeat"  -> pure $ PureStructs.MTUserCommand PureStructs.Repeat
         _ -> Nothing 
 
-isAttachmentMsg vkMsg = Nothing 
+isAttachmentMsg vkMsg = case VKStructs.attachments vkMsg of 
+    Nothing -> Nothing 
+    Just [] -> Nothing 
+    _ -> pure $ PureStructs.MTCommon "Attachment"
 
 isTextMsg vkMsg = case VKStructs.msgText vkMsg of 
     Nothing -> Nothing 
     _ -> pure $ PureStructs.MTCommon "Message"
+
+isGeo vkMsg = case VKStructs.geo vkMsg of 
+    Nothing -> Nothing 
+    _ -> pure $ PureStructs.MTCommon "Geo"
+
+isFwd vkMsg = case VKStructs.fwdMessages vkMsg of 
+    Nothing -> Nothing 
+    _ -> pure $ PureStructs.MTCommon "Fwd"
 
 mbRep1 :: T.Text -> Maybe T.Text 
 mbRep1 txt = if T.isInfixOf PureStructs.rep1 txt 
@@ -136,9 +152,113 @@ makeParams _ (PureStructs.MTUserCommand PureStructs.Repeat) vkMsg = pure $ baseP
     <> [PureStructs.ParamsText "message" PureStructs.repeatText
         , PureStructs.ParamsJSON "keyboard" keyboard]     
 makeParams _ (PureStructs.MTCommon "Message") vkMsg = do 
-            txt <- VKStructs.msgText vkMsg       
-            pure $ (PureStructs.ParamsText "message" txt) : baseParams vkMsg  
+    txt <- VKStructs.msgText vkMsg       
+    pure $ (PureStructs.ParamsText "message" txt) : baseParams vkMsg  
+makeParams _ (PureStructs.MTCommon "Geo") vkMsg = 
+    pure $ setMessageParam vkMsg 
+        <> setMaybeDoubleParam "lat" ((fmap VKStructs.latitude) . (fmap VKStructs.gCoordinates) . VKStructs.geo) vkMsg 
+        <> setMaybeDoubleParam "long" ((fmap VKStructs.longitude) . (fmap VKStructs.gCoordinates) . VKStructs.geo) vkMsg 
+        <> baseParams vkMsg
+makeParams _ (PureStructs.MTCommon "Fwd") vkMsg = do 
+    let msgIds = getFwdMsgIds (VKStructs.fwdMessages vkMsg)
+    pure $ setMessageParam vkMsg  
+        <> [PureStructs.ParamsText "forward_messages" msgIds]
+        <> baseParams vkMsg
+makeParams _ (PureStructs.MTCommon "Attachment") vkMsg = 
+    pure $ setMessageParam vkMsg  
+        <> baseParams vkMsg  
+        <> attachmentListParams vkMsg (VKStructs.attachments vkMsg)
 makeParams _ _ _ = Nothing 
+
+attachmentListParams :: VKStructs.VKMessage -> Maybe [VKStructs.Attachment] -> [PureStructs.Params]
+attachmentListParams _ Nothing = [] 
+attachmentListParams _ (Just []) = [] 
+attachmentListParams vkMsg (Just attachments) = 
+    let 
+        links = filter isLink (VKStructs.aObject <$> attachments) 
+        stickers = filter isSticker (VKStructs.aObject <$> attachments)  
+        media = filter isMedia (VKStructs.aObject <$> attachments)  
+    in makeLinkParams vkMsg links 
+        <> makeStickerParams stickers 
+        <> makeMediaParams media 
+
+makeLinkParams :: VKStructs.VKMessage -> [VKStructs.AObject] -> [PureStructs.Params]
+makeLinkParams _ [] = []
+makeLinkParams vkMsg links = case VKStructs.msgText vkMsg of 
+    Nothing -> [PureStructs.ParamsText "message" $ getLinks links]
+    Just "" -> [PureStructs.ParamsText "message" $ getLinks links]
+    _ ->  []
+
+getLinks :: [VKStructs.AObject] -> T.Text
+getLinks [] = ""
+getLinks (VKStructs.VKLink url : links) = 
+    url <> " " <> getLinks links 
+getLinks _ = ""
+
+makeStickerParams :: [VKStructs.AObject] -> [PureStructs.Params]
+makeStickerParams [] = [] 
+makeStickerParams (VKStructs.VKSticker sticker : _) = [PureStructs.ParamsText "sticker_id" $ (T.pack . show) sticker]
+
+makeMediaParams :: [VKStructs.AObject] -> [PureStructs.Params]
+makeMediaParams [] = [] 
+makeMediaParams media = 
+    [PureStructs.ParamsText "attachment" $ getMediaInfo media]
+
+getMediaInfo :: [VKStructs.AObject] -> T.Text
+getMediaInfo media = T.intercalate "," $ makeMediaInfo <$> media 
+
+makeMediaInfo :: VKStructs.AObject -> T.Text 
+makeMediaInfo (VKStructs.VKAudio audioId ownerId) = 
+    "audio" <> (T.pack . show) ownerId <> "_" <> (T.pack . show) audioId
+makeMediaInfo (VKStructs.VKVideo videoId ownerId accessKey) = 
+    "video" <> (T.pack . show) ownerId <> "_" 
+        <> (T.pack . show) videoId <> "_"
+        <> accessKey
+makeMediaInfo (VKStructs.VKWall wallId ownerId) = 
+    "wall" <> (T.pack . show) ownerId <> "_" 
+        <> (T.pack . show) wallId
+makeMediaInfo _ = ""
+
+isLink, isSticker, isMedia :: VKStructs.AObject -> Bool 
+isLink (VKStructs.VKLink _) = True 
+isLink _ = False 
+
+isSticker (VKStructs.VKSticker _) = True 
+isSticker _ = False 
+
+isMedia (VKStructs.VKAudio _ _) = True 
+isMedia (VKStructs.VKVideo _ _ _) = True 
+isMedia (VKStructs.VKWall _ _) = True 
+isMedia _ = False 
+
+getFwdMsgIds :: Maybe [VKStructs.VKMessage] -> T.Text
+getFwdMsgIds Nothing = ""
+getFwdMsgIds (Just []) = ""
+getFwdMsgIds (Just [x]) = T.pack . show $ VKStructs.id x
+getFwdMsgIds (Just (x:xs)) = (T.pack . show $ VKStructs.id x) <> ","
+    <> (getFwdMsgIds (Just xs))
+
+setMessageParam :: VKStructs.VKMessage -> [PureStructs.Params]
+setMessageParam vkMsg = case VKStructs.msgText vkMsg of 
+    Nothing -> []
+    Just "" -> []
+    Just msg -> [PureStructs.ParamsText "message" msg]
+
+setMaybeTextParam :: T.Text
+    -> (VKStructs.VKMessage -> Maybe T.Text) 
+    -> VKStructs.VKMessage 
+    -> [PureStructs.Params]
+setMaybeTextParam key field vkMsg = case field vkMsg of 
+    Nothing -> [] 
+    Just txt -> [PureStructs.ParamsText key txt]
+
+setMaybeDoubleParam :: T.Text
+    -> (VKStructs.VKMessage -> Maybe Double) 
+    -> VKStructs.VKMessage 
+    -> [PureStructs.Params]
+setMaybeDoubleParam key field vkMsg = case field vkMsg of 
+    Nothing -> [] 
+    Just val -> [PureStructs.ParamsDouble key val]
 
 decodeKeyboard  :: T.Text
 decodeKeyboard = case (decode . encode) keyboard of 
