@@ -1,5 +1,6 @@
 # Update info
-## Telegram bot works properly now. VK bot can work with text messages, /repeat and /help commands.
+## Telegram bot works properly now. 
+## VK bot can process text messages, /repeat and /help commands, map coordinates, links, stickers, audio and video attachments. 
 ## The code is not formatted yet.
 
 # Echo bot for Telegram and VK 
