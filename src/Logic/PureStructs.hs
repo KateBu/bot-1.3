@@ -23,6 +23,7 @@ data UCommand = Help | Repeat
 data Params = ParamsText T.Text T.Text
         | ParamsTextList T.Text [T.Text] 
         | ParamsNum T.Text Int  
+        | ParamsDouble T.Text Double
         | ParamsBool T.Text Bool 
         | ParamsJSON T.Text Value 
         deriving (Show, Eq)

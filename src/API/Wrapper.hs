@@ -46,6 +46,7 @@ urlScheme acc (x:xs) = urlScheme (acc /: x) xs
 paramToUrl :: PureStructs.Params -> FormUrlEncodedParam 
 paramToUrl (PureStructs.ParamsText key val) = key =: val 
 paramToUrl (PureStructs.ParamsNum key val) = key =: val 
+paramToUrl (PureStructs.ParamsDouble key val) = key =: val 
 paramToUrl (PureStructs.ParamsBool key val) = key =: val 
 paramToUrl (PureStructs.ParamsTextList _ _) = mempty 
 paramToUrl (PureStructs.ParamsJSON _ _) = mempty 
@@ -53,6 +54,7 @@ paramToUrl (PureStructs.ParamsJSON _ _) = mempty
 paramToMultipart :: PureStructs.Params -> [LM.Part] 
 paramToMultipart (PureStructs.ParamsText key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsNum key val) = [LM.partLBS key (encode val)]
+paramToMultipart (PureStructs.ParamsDouble key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsBool key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsJSON key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsTextList key val) = [LM.partLBS key (encode val)]
