@@ -11,6 +11,7 @@ updateParams (Config.VKBot(Config.VK _ _ key _ ts)) = [PureStructs.ParamsText "a
     , PureStructs.ParamsText "key" key
     , PureStructs.ParamsNum "ts" ts
     , PureStructs.ParamsText "wait" Config.timeOut
+    , PureStructs.ParamsNum "mode" 2 
     ]
 updateParams _ = [] 
 
