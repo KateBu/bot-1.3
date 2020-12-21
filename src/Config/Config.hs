@@ -18,6 +18,12 @@ import qualified API.VK.Structs as VKStructs
 type Users = Map.Map Int Int 
 type Token = T.Text 
 
+vkApiVersion :: T.Text 
+vkApiVersion = "5.126"
+
+timeOut :: T.Text 
+timeOut = "25"
+
 data Config = Config 
     {
         botType :: BotType 
@@ -44,12 +50,6 @@ data VK = VK
         , vkServer :: T.Text 
         , vkTs :: Int
     } deriving Show 
-
-vkApiVersion :: T.Text 
-vkApiVersion = "5.126"
-
-timeOut :: T.Text 
-timeOut = "25"
 
 parseConfig :: String -> IO (Maybe Config)
 parseConfig path = do 
@@ -114,10 +114,17 @@ initConfig :: Maybe T.Text -> Maybe Int -> Maybe String -> Maybe BotType
 initConfig mbHelpMsg mbRep mbPrior mbBotType = do 
     let config = Config <$> mbBotType 
             <*> mbHelpMsg
-            <*> mbRep 
+            <*> checkRepNumber mbRep 
             <*> Just Map.empty 
             <*> (read <$> mbPrior)
     pure config 
+
+checkRepNumber :: Maybe Int -> Maybe Int 
+checkRepNumber Nothing = Nothing 
+checkRepNumber (Just val) 
+    | val <= 1      = Just 1 
+    | val >= 5      = Just 5 
+    | otherwise     = Just val 
 
 getVkGroup :: Config -> Maybe Int
 getVkGroup (Config (VKBot bot) _ _ _ _) = Just $ groupID bot
