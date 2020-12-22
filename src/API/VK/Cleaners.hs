@@ -1,6 +1,5 @@
 module API.VK.Cleaners where
 
---import qualified Data.ByteString as BS 
 import qualified Data.ByteString.Lazy as BSL 
 import qualified Data.Text as T 
 import Data.Aeson
@@ -209,15 +208,28 @@ getMediaInfo media = T.intercalate "," $ makeMediaInfo <$> media
 
 makeMediaInfo :: VKStructs.AObject -> T.Text 
 makeMediaInfo (VKStructs.VKAudio audioId ownerId) = 
-    "audio" <> (T.pack . show) ownerId <> "_" <> (T.pack . show) audioId
+    "audio" <> getOwnerIdItemId ownerId audioId 
 makeMediaInfo (VKStructs.VKVideo videoId ownerId accessKey) = 
-    "video" <> (T.pack . show) ownerId <> "_" 
-        <> (T.pack . show) videoId <> "_"
-        <> accessKey
+    "video" <> getOwnerIdItemIdAccessKey ownerId videoId accessKey 
 makeMediaInfo (VKStructs.VKWall wallId ownerId) = 
-    "wall" <> (T.pack . show) ownerId <> "_" 
-        <> (T.pack . show) wallId
+    "wall" <> getOwnerIdItemId ownerId wallId 
+makeMediaInfo (VKStructs.VKMarket marketId ownerId) = 
+    "market" <> getOwnerIdItemId ownerId marketId 
+makeMediaInfo (VKStructs.VKPoll pollId ownerId) = 
+    "poll" <> getOwnerIdItemId ownerId pollId 
 makeMediaInfo _ = ""
+
+getOwnerIdItemId :: VKStructs.OwnerID -> VKStructs.ItemID -> T.Text
+getOwnerIdItemId ownerId itemId = (T.pack . show) ownerId 
+    <> "_" 
+    <> (T.pack . show) itemId 
+
+getOwnerIdItemIdAccessKey :: VKStructs.OwnerID -> VKStructs.ItemID 
+    -> VKStructs.AccessKey -> T.Text
+getOwnerIdItemIdAccessKey ownerId itemId accessKey = 
+    (T.pack . show) ownerId <> "_" 
+        <> (T.pack . show) itemId <> "_"
+        <> accessKey
 
 isLink, isSticker, isMedia :: VKStructs.AObject -> Bool 
 isLink (VKStructs.VKLink _) = True 
@@ -229,6 +241,8 @@ isSticker _ = False
 isMedia (VKStructs.VKAudio _ _) = True 
 isMedia (VKStructs.VKVideo _ _ _) = True 
 isMedia (VKStructs.VKWall _ _) = True 
+isMedia (VKStructs.VKMarket _ _) = True 
+isMedia (VKStructs.VKPoll _ _) = True 
 isMedia _ = False 
 
 getFwdMsgIds :: Maybe [VKStructs.VKMessage] -> T.Text
@@ -241,7 +255,7 @@ getFwdMsgIds (Just (x:xs)) = (T.pack . show $ VKStructs.id x) <> ","
 setMessageParam :: VKStructs.VKMessage -> [PureStructs.Params]
 setMessageParam vkMsg = case VKStructs.msgText vkMsg of 
     Nothing -> []
-    Just "" -> []
+    Just "" -> [PureStructs.ParamsText "message" ""]
     Just msg -> [PureStructs.ParamsText "message" msg]
 
 setMaybeTextParam :: T.Text
