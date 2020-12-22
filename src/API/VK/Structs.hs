@@ -78,7 +78,7 @@ data EventType = MsgNew | OtherEvent
 
 data VKMessage = VKMessage 
     {
-        id :: Integer
+        id :: Int
  --        peer_id :: Int --reciever id 
         , from_id :: Int --sender id
         , msgText :: Maybe T.Text
@@ -118,8 +118,7 @@ data Attachment = Attachment
     {
         aType :: T.Text 
         , aObject :: AObject
-    } | UnknownAttachment
-    deriving Show 
+    } deriving Show 
 
 instance FromJSON Attachment where 
     parseJSON = withObject "Attachment" $ \obj -> do 
@@ -144,62 +143,62 @@ instance FromJSON Attachment where
                 wall <- obj .: "wall"
                 Attachment attachType <$> (VKWall <$> wall .: "id" 
                     <*> wall .: "to_id")
+            "market" -> do 
+                market <- obj .: "market"
+                Attachment attachType <$> (VKMarket <$> market .: "id"
+                    <*> market .: "owner_id")
+            "poll" -> do 
+                poll <- obj .: "poll"
+                Attachment attachType <$> (VKPoll <$> poll .: "id"
+                    <*> poll .: "owner_id")
             "photo" -> do
                 photo <- obj .: "photo" 
                 Attachment attachType <$> 
                     (VKPhoto <$> photo .: "id"
                     <*> photo .: "owner_id"
-                    <*> photo .: "access_key")
-            _ -> pure UnknownAttachment 
+                    <*> photo .: "access_key"
+                    <*> photo .: "sizes")
+            _ -> pure $ Attachment attachType VKUnknown
+
+type ItemID = Int 
+type OwnerID = Int 
+type AccessKey = T.Text
+type Url = T.Text
 
 data AObject = 
-    VKLink 
-        {
-            url :: T.Text
-        }
-    | VKSticker
-        {
-            stickerId :: Int 
-        }
-    | VKAudio 
-        {
-            audioId :: Int 
-            , audioOwnerId :: Int 
-        }
-    | VKVideo
-        {
-            videoId :: Int 
-            , videoOwnerId :: Int 
-            , videoAccessKey :: T.Text
-        }
-    | VKWall 
-        {
-            wallId :: Int 
-            , toId :: Int 
-        }
-    | VKPhoto 
-        {
-            photoId :: Int
+    VKLink Url
+    | VKSticker ItemID
+    | VKAudio ItemID OwnerID         
+    | VKVideo ItemID OwnerID AccessKey        
+    | VKWall ItemID OwnerID 
+    | VKMarket ItemID OwnerID 
+    | VKPoll ItemID OwnerID 
+    | VKPhoto ItemID OwnerID AccessKey [PhSizes]
+    | VKUnknown 
+    deriving Show 
+--        {
+  --          photoId :: Int
            -- , albumId :: Integer 
-            , photoOwnerId :: Int 
+    --        , photoOwnerId :: Int 
            -- , userId :: Integer 
            -- , phText :: T.Text
-            , photoAccessID :: T.Text
+      --      , photoAccessKey :: T.Text
             --, phDate :: Integer 
            -- , phSizes :: [PhSizes]
            -- , phWidth :: Integer 
            -- , phHeight :: Integer 
-        } deriving Show 
+ --       } deriving Show 
 
-{-
+
 data PhSizes = PhSizes
     {
-        url :: String 
-        , sWidth :: Int 
-        , sHeight :: Int 
-        , sType :: String 
+        url :: T.Text 
+        , sType :: T.Text 
     } deriving Show 
--}
+
+instance FromJSON PhSizes where 
+    parseJSON (Object obj) = PhSizes <$> obj .: "url"
+        <*> obj .: "type"
 
 data Geo = Geo 
     {
@@ -298,7 +297,7 @@ instance ToJSON BtnAction where
 data VKButtons = VKButtons 
     {
         butType :: T.Text
-        , payload :: T.Text --VKPayload
+        , payload :: T.Text 
         , label :: T.Text 
     } deriving Show
 
@@ -307,4 +306,26 @@ instance ToJSON VKButtons where
         , "payload" .= pld
         , "label" .= btnLab]
 
+data VKUploadPhotoServerResponse = PhotoServer 
+    {
+        response :: UploadUrl 
+    } 
+    | PhotoServerError 
+    {
+        phsError :: VKResultError 
+    }
+    deriving Show 
 
+instance FromJSON VKUploadPhotoServerResponse where 
+    parseJSON = withObject "VKUploadPhotoServerResponse" $ \obj -> do 
+        isError <- obj .:? "error"
+        case isError of 
+            Just val -> pure $ PhotoServerError val 
+            Nothing -> PhotoServer <$> obj .: "response"
+
+data UploadUrl = UploadUrl Url  
+    deriving Show 
+
+instance FromJSON UploadUrl where 
+    parseJSON (Object obj) = UploadUrl <$> obj .: "upload_url"
+    parseJSON _ = parseFail parseFailMessage
