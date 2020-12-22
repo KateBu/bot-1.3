@@ -1,6 +1,7 @@
 module Logic.PureStructs where
 
 import qualified Data.Text as T 
+import qualified Data.ByteString.Lazy as BSL 
 import Data.Aeson ( object, Value, KeyValue((.=)), ToJSON(toJSON) ) 
 import Logger.Logger ()
 
@@ -26,6 +27,7 @@ data Params = ParamsText T.Text T.Text
         | ParamsDouble T.Text Double
         | ParamsBool T.Text Bool 
         | ParamsJSON T.Text Value 
+        | ParamsFile T.Text BSL.ByteString 
         deriving (Show, Eq)
 
 instance ToJSON Params where 
