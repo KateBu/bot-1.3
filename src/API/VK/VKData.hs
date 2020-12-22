@@ -1,10 +1,10 @@
 module API.VK.VKData where
 
 import qualified Data.Text as T 
-import Data.List.Split ( splitOn )
 import System.Random ( newStdGen, Random(random) )
 import qualified Logic.PureStructs as PureStructs 
 import qualified Config.Config as Config 
+import qualified API.VK.Structs as VKStructs 
 
 updateParams :: Config.BotType -> [PureStructs.Params]
 updateParams (Config.VKBot(Config.VK _ _ key _ ts)) = [PureStructs.ParamsText "act" "a_check"
@@ -17,9 +17,10 @@ updateParams _ = []
 
 updateHostPath :: Config.BotType -> Maybe PureStructs.HostPath 
 updateHostPath (Config.VKBot(Config.VK _ _ _ server _)) = pure $ let 
-    (host,rest) = span (/='/') (drop 8 (T.unpack server))
-    path = filter (/="") (splitOn "/" rest) 
-    in PureStructs.HostPath (T.pack host) (map T.pack path) 
+    (host,rest) = T.span (/='/') (T.drop 8 server)
+    path = filter (/="") (T.splitOn "/" rest) 
+    in PureStructs.HostPath host path
+updateHostPath _ = Nothing 
 
 sendHostPath :: PureStructs.HostPath
 sendHostPath = PureStructs.HostPath "api.vk.com" ["method","messages.send"]
@@ -37,3 +38,38 @@ getRandonId :: IO Int
 getRandonId = do 
     gen <- newStdGen 
     pure $ ( (fst . random) gen :: Int)
+
+getUploadPhotoServerHostPath :: PureStructs.HostPath
+getUploadPhotoServerHostPath = PureStructs.HostPath "api.vk.com" ["method","photos.getMessagesUploadServer"]
+
+getUploadFileParams :: Config.BotType -> [PureStructs.Params]
+getUploadFileParams (Config.VKBot(Config.VK tok _ _ _ _)) = 
+    [
+        PureStructs.ParamsText "v" Config.vkApiVersion
+        , PureStructs.ParamsText "access_token" tok
+    ]
+getUploadFileParams _ = []
+
+uploadPhotoHostPath :: VKStructs.UploadUrl -> Maybe PureStructs.HostPath 
+uploadPhotoHostPath (VKStructs.UploadUrl url) = urlToHostPath url 
+
+urlToHostPath :: VKStructs.Url -> Maybe PureStructs.HostPath 
+urlToHostPath url = let 
+    hostPath = T.takeWhile (/='?') url
+    (host, rest) = T.span (/='/') (T.drop 8 hostPath)
+    path = filter (/="") (T.splitOn "/" rest)  
+    in pure $ PureStructs.HostPath host path 
+    
+uploadPhotoParams :: VKStructs.UploadUrl -> Maybe [PureStructs.Params] 
+uploadPhotoParams (VKStructs.UploadUrl url) = urlToParams url 
+
+urlToParams :: VKStructs.Url -> Maybe [PureStructs.Params] 
+urlToParams url = let 
+    params = T.drop 1 $ T.dropWhile (/='?') url 
+    keyVals = filter (/="") $ T.splitOn "&" params 
+    keys = T.splitOn "=" <$> keyVals   
+    in mapM listToParams keys  
+
+listToParams :: [T.Text] -> Maybe PureStructs.Params 
+listToParams (key : val : []) = Just $ PureStructs.ParamsText key val 
+listToParams _ = Nothing 
