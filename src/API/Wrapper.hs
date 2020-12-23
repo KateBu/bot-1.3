@@ -1,4 +1,4 @@
-{-# LANGUAGE DataKinds #-}
+-- {-# LANGUAGE DataKinds #-}
 module API.Wrapper where
 
 import Network.HTTP.Req
@@ -59,8 +59,8 @@ paramToMultipart (PureStructs.ParamsBool key val) = [LM.partLBS key (encode val)
 paramToMultipart (PureStructs.ParamsJSON key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsTextList key val) = [LM.partLBS key (encode val)]
 
-paramToLBS :: PureStructs.Params -> BSL.ByteString 
-paramToLBS = encode 
+--paramToLBS :: PureStructs.Params -> BSL.ByteString 
+--paramToLBS = encode 
 
 paramsToUrlBody :: [PureStructs.Params] -> ReqBodyUrlEnc
 paramsToUrlBody params = ReqBodyUrlEnc $ mconcat (paramToUrl <$> params)
@@ -133,12 +133,15 @@ getUMultipartParams config params = do
             (pure . pure) (responseBody response :: BSL.ByteString)  
 
 sendM :: Config.Config -> Logger.Logger -> PureStructs.PureMessage -> IO (Either Logger.LogMessage Config.Config) 
-sendM config logger msg = do 
-    case PureStructs.mbParams msg of 
-        Nothing -> pure $ Right config 
-        Just params -> do     
-            basicParams <- mbSendOption (Config.botType config)
-            getApiResponse config basicParams params msg >>= checkApiResponse config logger msg              
+sendM config logger basicMsg = do 
+    eiMsg <- mbUploadFile (Config.botType config) logger basicMsg 
+    case eiMsg of 
+        Left err -> pure $ Left err 
+        Right msg -> case PureStructs.mbParams msg of 
+            Nothing -> pure $ Right config 
+            Just params -> do     
+                basicParams <- mbSendOption (Config.botType config)
+                getApiResponse config basicParams params msg >>= checkApiResponse config logger msg              
     
 getApiResponse :: Config.Config 
     -> Option Https
@@ -209,3 +212,27 @@ byteStringToPureMessageList config@(Config.Config (Config.VKBot _)_ _ _ _) logge
     VKCleaners.vkByteStringToPureMessageList config logger eiBS 
 byteStringToPureMessageList config@(Config.Config (Config.TBot _)_ _ _ _) logger eiBS = 
     TelCleaners.telByteStringToPureMessageList config logger eiBS 
+
+mbUploadFile :: Config.BotType 
+    -> Logger.Logger
+    -> PureStructs.PureMessage 
+    -> IO (Either Logger.LogMessage PureStructs.PureMessage)
+mbUploadFile botType logger msg = case PureStructs.messageType msg of 
+    PureStructs.MTCommon "VKPhoto" -> do 
+        eiParams <- getUploadFileParams botType logger (PureStructs.mbParams msg)  
+        case eiParams of 
+            Left err -> pure $ Left err 
+            Right params -> (pure . Right) $ PureStructs.PureMessage 
+                (PureStructs.MTCommon "Photo")
+                (PureStructs.updateID msg)
+                (PureStructs.mbChatID msg)
+                (Just params)     
+    PureStructs.MTCommon "VKDocument" -> undefined 
+    _ -> pure $ Right msg 
+
+getUploadFileParams :: Config.BotType 
+    -> Logger.Logger 
+    -> Maybe [PureStructs.Params]
+    -> IO (Either Logger.LogMessage [PureStructs.Params])
+getUploadFileParams (Config.VKBot _) logger mbParams = undefined
+getUploadFileParams _ _ _  = pure $ Left LoggerMsgs.unexpBotType
