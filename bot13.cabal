@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 735c30660e495e2003f301e32f0317ba0ef906b3171aa9b4543769e48f1eace2
+-- hash: 4ad80da65d03faf654f783d481d3e02887da3bb8f30fb922603275508a1b85c6
 
 name:           bot13
 version:        0.1.0.0
@@ -46,7 +46,7 @@ library
       Paths_bot13
   hs-source-dirs:
       src
-  default-extensions: OverloadedStrings DeriveGeneric
+  default-extensions: OverloadedStrings DeriveGeneric DataKinds
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -71,7 +71,7 @@ executable bot13-exe
       Paths_bot13
   hs-source-dirs:
       app
-  default-extensions: OverloadedStrings DeriveGeneric
+  default-extensions: OverloadedStrings DeriveGeneric DataKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -99,7 +99,7 @@ test-suite bot13-test
       Paths_bot13
   hs-source-dirs:
       test
-  default-extensions: OverloadedStrings DeriveGeneric
+  default-extensions: OverloadedStrings DeriveGeneric DataKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
