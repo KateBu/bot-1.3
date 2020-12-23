@@ -176,9 +176,11 @@ attachmentListParams vkMsg (Just attachments) =
         links = filter isLink (VKStructs.aObject <$> attachments) 
         stickers = filter isSticker (VKStructs.aObject <$> attachments)  
         media = filter isMedia (VKStructs.aObject <$> attachments)  
+        photos = filter isPhoto (VKStructs.aObject <$> attachments)
     in makeLinkParams vkMsg links 
         <> makeStickerParams stickers 
         <> makeMediaParams media 
+        <> makePhotoParams photos 
 
 makeLinkParams :: VKStructs.VKMessage -> [VKStructs.AObject] -> [PureStructs.Params]
 makeLinkParams _ [] = []
@@ -218,6 +220,16 @@ makeMediaInfo (VKStructs.VKPoll pollId ownerId) =
     "poll" <> getOwnerIdItemId ownerId pollId 
 makeMediaInfo _ = ""
 
+makePhotoParams :: [VKStructs.AObject] ->  [PureStructs.Params]
+makePhotoParams vkPhotos = case mapM makePhotoParam vkPhotos of 
+    Nothing -> [] 
+    Just params -> params 
+
+makePhotoParam :: VKStructs.AObject -> Maybe PureStructs.Params
+makePhotoParam (VKStructs.VKPhoto _ _ _ []) = Nothing 
+makePhotoParam (VKStructs.VKPhoto _ _ _ (size:_)) =  Just $
+    PureStructs.ParamsText "VKPhotoUrl" (VKStructs.phUrl size)
+
 getOwnerIdItemId :: VKStructs.OwnerID -> VKStructs.ItemID -> T.Text
 getOwnerIdItemId ownerId itemId = (T.pack . show) ownerId 
     <> "_" 
@@ -230,7 +242,7 @@ getOwnerIdItemIdAccessKey ownerId itemId accessKey =
         <> (T.pack . show) itemId <> "_"
         <> accessKey
 
-isLink, isSticker, isMedia :: VKStructs.AObject -> Bool 
+isLink, isSticker, isMedia, isPhoto :: VKStructs.AObject -> Bool 
 isLink (VKStructs.VKLink _) = True 
 isLink _ = False 
 
@@ -243,6 +255,9 @@ isMedia (VKStructs.VKWall _ _) = True
 isMedia (VKStructs.VKMarket _ _) = True 
 isMedia (VKStructs.VKPoll _ _) = True 
 isMedia _ = False 
+
+isPhoto (VKStructs.VKPhoto _ _ _ _) = True 
+isPhoto _ = False 
 
 getFwdMsgIds :: Maybe [VKStructs.VKMessage] -> T.Text
 getFwdMsgIds Nothing = ""
