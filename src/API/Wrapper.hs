@@ -218,21 +218,18 @@ mbUploadFile :: Config.BotType
     -> PureStructs.PureMessage 
     -> IO (Either Logger.LogMessage PureStructs.PureMessage)
 mbUploadFile botType logger msg = case PureStructs.messageType msg of 
-    PureStructs.MTCommon "VKPhoto" -> do 
-        eiParams <- getUploadFileParams botType logger (PureStructs.mbParams msg)  
-        case eiParams of 
-            Left err -> pure $ Left err 
-            Right params -> (pure . Right) $ PureStructs.PureMessage 
-                (PureStructs.MTCommon "Photo")
-                (PureStructs.updateID msg)
-                (PureStructs.mbChatID msg)
-                (Just params)     
-    PureStructs.MTCommon "VKDocument" -> undefined 
+    PureStructs.MTCommon "Attachment" -> 
+        if any isVKPhotoParam $ fromJust (PureStructs.mbParams msg)
+            then makeUploadFileParams botType logger msg 
+            else pure $ Right msg
     _ -> pure $ Right msg 
 
-getUploadFileParams :: Config.BotType 
+isVKPhotoParam ::  PureStructs.Params -> Bool 
+isVKPhotoParam (PureStructs.ParamsText "VKPhotoUrl" _) = True 
+isVKPhotoParam _ = False 
+
+makeUploadFileParams :: Config.BotType
     -> Logger.Logger 
-    -> Maybe [PureStructs.Params]
-    -> IO (Either Logger.LogMessage [PureStructs.Params])
-getUploadFileParams (Config.VKBot _) logger mbParams = undefined
-getUploadFileParams _ _ _  = pure $ Left LoggerMsgs.unexpBotType
+    -> PureStructs.PureMessage 
+    -> IO (Either Logger.LogMessage PureStructs.PureMessage)
+makeUploadFileParams = undefined
