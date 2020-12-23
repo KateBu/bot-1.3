@@ -182,3 +182,27 @@ noChatId = Logger.LogMessage Logger.Error
 noParams :: Logger.LogMessage
 noParams = Logger.LogMessage Logger.Error      
     "No message params"
+
+noImgSize :: Logger.LogMessage
+noImgSize = Logger.LogMessage Logger.Error      
+    "No suitable image size found"
+
+getUploadServerErr :: Logger.LogMessage
+getUploadServerErr = Logger.LogMessage Logger.Error      
+    "Couldn't get upload server url, error code: "
+
+makeVKUploadPhotoServerResponseErr :: Logger.LogMessage
+makeVKUploadPhotoServerResponseErr = Logger.LogMessage Logger.Error      
+    "Couldn't decode bytestring into VKUploadPhotoServerResponse: "
+
+noHostPath :: Logger.LogMessage
+noHostPath = Logger.LogMessage Logger.Error      
+    "HostPath to server is empty"
+
+uplPhotoRespErr :: Logger.LogMessage 
+uplPhotoRespErr = Logger.LogMessage Logger.Error      
+    "Couldn't upload photo to server: "
+
+parseUplPhotoFld :: Logger.LogMessage 
+parseUplPhotoFld = Logger.LogMessage Logger.Error      
+    "Couldn't parse upload photo response: "
