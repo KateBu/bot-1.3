@@ -69,8 +69,8 @@ getNewRep :: T.Text -> Int
 getNewRep txt 
     | txt == rep1 = 1 
     | txt == rep2 = 2 
-    | txt == rep3 = 2 
-    | txt == rep4 = 2 
+    | txt == rep3 = 3 
+    | txt == rep4 = 4 
     | otherwise = 5 
 
 
