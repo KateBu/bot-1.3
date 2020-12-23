@@ -69,7 +69,6 @@ getMessageType vkMsg = case msgType of
             <|> isAttachmentMsg vkMsg
             <|> isGeo vkMsg
             <|> isFwd vkMsg 
-            <|> isAttachmentMsg vkMsg
             <|> isTextMsg vkMsg              
     
 isCallBackMsg, isUserCommand
