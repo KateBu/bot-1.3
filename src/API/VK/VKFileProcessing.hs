@@ -21,8 +21,8 @@ downloadedPhotoToBody sizes = getSmallImageUrl sizes
 
 getSmallImageUrl :: [VKStructs.PhSizes] -> IO (Either Logger.LogMessage T.Text)
 getSmallImageUrl [] = pure $ Left LoggerMsgs.noImgSize 
-getSmallImageUrl (VKStructs.PhSizes url "s" : _) = pure $ Right url 
-getSmallImageUrl (_ : sizes) = getSmallImageUrl sizes 
+getSmallImageUrl (VKStructs.PhSizes url _ : _) = pure $ Right url 
+--getSmallImageUrl (_ : sizes) = getSmallImageUrl sizes 
 
 getImageServerResponse :: Either Logger.LogMessage T.Text -> IO (Either Logger.LogMessage LbsResponse)
 getImageServerResponse (Left err) = pure $ Left err 
@@ -127,7 +127,36 @@ uploadPhotoResponse (Right lbsResp) =
     case responseStatusCode lbsResp of 
         200 -> case eitherDecode (responseBody lbsResp) :: Either String VKStructs.UploadPhotoResponse of 
             Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.parseUplPhotoFld (T.pack err)) 
+            Right (VKStructs.UploadPhotoError _) -> pure $ Left LoggerMsgs.uplPhotoRespErr
+            Right resp -> pure $ Right resp 
         err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.uplPhotoRespErr $ (T.pack . show) err)
 
---savePhoto
+makeSavePhotoParams :: Either Logger.LogMessage VKStructs.UploadPhotoResponse
+    -> IO (Either Logger.LogMessage [PureStructs.Params]) 
+makeSavePhotoParams (Left err) = pure $ Left err 
+makeSavePhotoParams (Right (VKStructs.UploadPhotoResponse serv photo hash)) = pure $ 
+    Right [PureStructs.ParamsNum "server" serv
+        , PureStructs.ParamsText "hash" hash
+        , PureStructs.ParamsText "photo" photo]
+
+savePhotoRequest :: Either Logger.LogMessage [PureStructs.Params] 
+    -> IO (Either Logger.LogMessage BSL.ByteString)
+savePhotoRequest (Left err) = pure $ Left err 
+savePhotoRequest (Right params) = do 
+    response <- runReq defaultHttpConfig $ do 
+        req 
+            POST 
+            (Wrapper.hostPathToUrlScheme VKData.savePhotoServerHostPath)
+            NoReqBody 
+            lbsResponse
+            (mconcat $ Wrapper.paramsToHttps <$> params)
+    case responseStatusCode response of 
+        200 -> (pure . pure) (responseBody response :: BSL.ByteString) 
+        err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.savePhotoRequestErr $ (T.pack . show) err)
+
+makeUploadedPhotoParams :: Either Logger.LogMessage BSL.ByteString 
+    -> IO (Either Logger.LogMessage [PureStructs.Params])
+makeUploadedPhotoParams (Left err) = pure $ Left err 
+makeUploadedPhotoParams (Right lbs) = undefined
+
 
