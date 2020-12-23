@@ -192,9 +192,9 @@ data AObject =
 
 data PhSizes = PhSizes
     {
-        url :: T.Text 
+        phUrl :: T.Text 
         , sType :: T.Text 
-    } deriving Show 
+    } deriving (Show, Eq )
 
 instance FromJSON PhSizes where 
     parseJSON (Object obj) = PhSizes <$> obj .: "url"
@@ -329,3 +329,15 @@ data UploadUrl = UploadUrl Url
 instance FromJSON UploadUrl where 
     parseJSON (Object obj) = UploadUrl <$> obj .: "upload_url"
     parseJSON _ = parseFail parseFailMessage
+
+data UploadPhotoResponse = UploadPhotoResponse 
+    {
+        photoServer :: Int 
+        , photo :: T.Text
+        , hash :: T.Text 
+    } deriving Show 
+
+instance FromJSON UploadPhotoResponse where 
+    parseJSON (Object obj) = UploadPhotoResponse <$> obj .: "server"
+        <*> obj .: "photo" 
+        <*> obj .: "hash"
