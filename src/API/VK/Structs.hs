@@ -335,9 +335,15 @@ data UploadPhotoResponse = UploadPhotoResponse
         photoServer :: Int 
         , photo :: T.Text
         , hash :: T.Text 
-    } deriving Show 
+    } 
+    | UploadPhotoError VKResultError 
+    deriving Show 
 
 instance FromJSON UploadPhotoResponse where 
-    parseJSON (Object obj) = UploadPhotoResponse <$> obj .: "server"
-        <*> obj .: "photo" 
-        <*> obj .: "hash"
+    parseJSON = withObject "UploadPhotoResponse" $ \obj -> do 
+        isError <- obj .:? "error"
+        case isError of 
+            Just val -> pure $ UploadPhotoError val 
+            Nothing -> UploadPhotoResponse <$> obj .: "server"
+                <*> obj .: "photo" 
+                <*> obj .: "hash"
