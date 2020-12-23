@@ -206,3 +206,7 @@ uplPhotoRespErr = Logger.LogMessage Logger.Error
 parseUplPhotoFld :: Logger.LogMessage 
 parseUplPhotoFld = Logger.LogMessage Logger.Error      
     "Couldn't parse upload photo response: "
+
+savePhotoRequestErr :: Logger.LogMessage 
+savePhotoRequestErr = Logger.LogMessage Logger.Error      
+    "Couldn't parse save photo request response: "
