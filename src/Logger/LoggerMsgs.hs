@@ -210,3 +210,7 @@ parseUplPhotoFld = Logger.LogMessage Logger.Error
 savePhotoRequestErr :: Logger.LogMessage 
 savePhotoRequestErr = Logger.LogMessage Logger.Error      
     "Couldn't parse save photo request response: "
+
+noAttachment :: Logger.LogMessage 
+noAttachment = Logger.LogMessage Logger.Error      
+    "No attachments found"
