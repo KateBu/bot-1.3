@@ -1,7 +1,6 @@
 module Logic.PureStructs where
 
 import qualified Data.Text as T 
-import qualified Data.ByteString.Lazy as BSL 
 import Data.Aeson ( object, Value, KeyValue((.=)), ToJSON(toJSON) ) 
 import Logger.Logger ()
 
@@ -13,7 +12,6 @@ data MessageType = MTEmpty
     | MTUserCommand UCommand 
     | MTCallbackQuery T.Text 
     | MTCommon T.Text 
-    | NotImplemented 
 
 data PureMessage = PureMessage 
     {
@@ -31,7 +29,6 @@ data Params = ParamsText T.Text T.Text
         | ParamsDouble T.Text Double
         | ParamsBool T.Text Bool 
         | ParamsJSON T.Text Value 
-        | ParamsFile T.Text BSL.ByteString 
         deriving (Show, Eq)
 
 instance ToJSON Params where 
@@ -40,6 +37,12 @@ instance ToJSON Params where
     toJSON (ParamsNum key val) = object [key .= val]
     toJSON (ParamsBool key val) = object [key .= val]
     toJSON (ParamsJSON key val) = object [key .= val]
+
+data HostPath = HostPath T.Text [T.Text] | HPEmpty 
+    deriving Show 
+
+data PureButtons = PureButtons T.Text T.Text
+    deriving Show   
 
 buttons' :: [[PureButtons]]
 buttons' = [[PureButtons "1" rep1]
@@ -76,17 +79,4 @@ getNewRep txt
     | txt == rep3 = 3 
     | txt == rep4 = 4 
     | otherwise = 5 
-
-
-data HostPath = HostPath T.Text [T.Text] 
-    deriving Show 
-
-data PureButtons = PureButtons 
-    {
-        btnValue :: T.Text 
-        , btnData :: T.Text 
-    }
-    deriving Show 
-
-    
 
