@@ -39,7 +39,6 @@ data VKUpdInfo = VKUpdInfo
     {
         updType :: EventType
         , updObj :: Maybe VKObject
-        , groupId :: Maybe Int
     } deriving Show 
 
 instance FromJSON VKUpdInfo where 
@@ -48,29 +47,14 @@ instance FromJSON VKUpdInfo where
         case (upType :: String) of 
             "message_new" -> VKUpdInfo MsgNew <$>
                 obj .:? "object"
-                <*> obj .:? "group_id"
-            _ -> pure $ VKUpdInfo OtherEvent Nothing Nothing 
+            _ -> pure $ VKUpdInfo OtherEvent Nothing 
 
 data VKObject = VKObject {
     vkMessage :: VKMessage
-    , clientInfo :: ClientInfo
 } deriving Show
 
 instance FromJSON VKObject where 
     parseJSON (Object obj) = VKObject <$> obj .: "message"
-        <*> obj .: "client_info"
-    parseJSON _ = parseFail parseFailMessage
-
-data ClientInfo = ClientInfo {
-    vkButtonActions :: [String]
-    , vkKeyboard :: Bool
-    , vkInlineKeyboard :: Bool
-}deriving Show
-
-instance FromJSON ClientInfo where 
-    parseJSON (Object obj) = ClientInfo <$> obj .: "button_actions" 
-        <*> obj .: "keyboard"
-        <*> obj .: "inline_keyboard"
     parseJSON _ = parseFail parseFailMessage
 
 data EventType = MsgNew | OtherEvent 
@@ -79,26 +63,12 @@ data EventType = MsgNew | OtherEvent
 data VKMessage = VKMessage 
     {
         id :: Int
- --        peer_id :: Int --reciever id 
-        , from_id :: Int --sender id
+        , from_id :: Int
         , msgText :: Maybe T.Text
-        , ref :: Maybe T.Text 
-        , refSource :: Maybe T.Text
         , attachments :: Maybe [Attachment]
-     --   , important :: Maybe Bool
         , geo :: Maybe Geo
         , cbPayload :: Maybe T.Text  
-     --   , keyboard :: Maybe Keyboard 
         , fwdMessages :: Maybe [VKMessage]
-     {-   , reply_message :: Maybe VKMessage
-        , action :: Maybe Action 
-        , admin_author_id ::Maybe Integer -}
-    --    , conversation_message_id :: Integer
-     {-}   , is_cropped :: Maybe Bool
-        , members_count :: Maybe Integer 
-        , update_time :: Maybe Integer 
-        , was_listened :: Maybe Bool 
-        , pinned_at :: Maybe Bool -} 
     } deriving Show 
 
 instance FromJSON VKMessage where 
@@ -106,8 +76,6 @@ instance FromJSON VKMessage where
         VKMessage <$> obj .: "id"
             <*> obj .: "from_id"
             <*> obj .:? "text"
-            <*> obj .:? "ref"
-            <*> obj .:? "ref_source"
             <*> obj .:? "attachments"
             <*> obj .:? "geo"
             <*> obj .:? "payload"
@@ -151,13 +119,6 @@ instance FromJSON Attachment where
                 poll <- obj .: "poll"
                 Attachment attachType <$> (VKPoll <$> poll .: "id"
                     <*> poll .: "owner_id")
-            "photo" -> do
-                photo <- obj .: "photo" 
-                Attachment attachType <$> 
-                    (VKPhoto <$> photo .: "id"
-                    <*> photo .: "owner_id"
-                    <*> photo .: "access_key"
-                    <*> photo .: "sizes")
             _ -> pure $ Attachment attachType VKUnknown
 
 type ItemID = Int 
@@ -173,32 +134,8 @@ data AObject =
     | VKWall ItemID OwnerID 
     | VKMarket ItemID OwnerID 
     | VKPoll ItemID OwnerID 
-    | VKPhoto ItemID OwnerID AccessKey [PhSizes]
     | VKUnknown 
     deriving Show 
---        {
-  --          photoId :: Int
-           -- , albumId :: Integer 
-    --        , photoOwnerId :: Int 
-           -- , userId :: Integer 
-           -- , phText :: T.Text
-      --      , photoAccessKey :: T.Text
-            --, phDate :: Integer 
-           -- , phSizes :: [PhSizes]
-           -- , phWidth :: Integer 
-           -- , phHeight :: Integer 
- --       } deriving Show 
-
-
-data PhSizes = PhSizes
-    {
-        phUrl :: T.Text 
-        , sType :: T.Text 
-    } deriving (Show, Eq )
-
-instance FromJSON PhSizes where 
-    parseJSON (Object obj) = PhSizes <$> obj .: "url"
-        <*> obj .: "type"
 
 data Geo = Geo 
     {
@@ -305,45 +242,3 @@ instance ToJSON VKButtons where
     toJSON (VKButtons btnType pld btnLab) = object ["type" .= btnType
         , "payload" .= pld
         , "label" .= btnLab]
-
-data VKUploadPhotoServerResponse = PhotoServer 
-    {
-        response :: UploadUrl 
-    } 
-    | PhotoServerError 
-    {
-        phsError :: VKResultError 
-    }
-    deriving Show 
-
-instance FromJSON VKUploadPhotoServerResponse where 
-    parseJSON = withObject "VKUploadPhotoServerResponse" $ \obj -> do 
-        isError <- obj .:? "error"
-        case isError of 
-            Just val -> pure $ PhotoServerError val 
-            Nothing -> PhotoServer <$> obj .: "response"
-
-data UploadUrl = UploadUrl Url  
-    deriving Show 
-
-instance FromJSON UploadUrl where 
-    parseJSON (Object obj) = UploadUrl <$> obj .: "upload_url"
-    parseJSON _ = parseFail parseFailMessage
-
-data UploadPhotoResponse = UploadPhotoResponse 
-    {
-        photoServer :: Int 
-        , photo :: T.Text
-        , hash :: T.Text 
-    } 
-    | UploadPhotoError VKResultError 
-    deriving Show 
-
-instance FromJSON UploadPhotoResponse where 
-    parseJSON = withObject "UploadPhotoResponse" $ \obj -> do 
-        isError <- obj .:? "error"
-        case isError of 
-            Just val -> pure $ UploadPhotoError val 
-            Nothing -> UploadPhotoResponse <$> obj .: "server"
-                <*> obj .: "photo" 
-                <*> obj .: "hash"

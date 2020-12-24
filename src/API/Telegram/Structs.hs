@@ -46,12 +46,9 @@ instance FromJSON TelUpdateResult where
         <*> v .:? "callback_query"
     parseJSON _ = parseFail parseFailMessage
 
-data Callback = Callback 
-    {
-        cb_msg :: CBMsg
-        , cb_data :: T.Text
-    } deriving Show 
-
+data Callback = Callback CBMsg T.Text 
+    deriving Show 
+ 
 instance FromJSON Callback where 
     parseJSON (Object v) = 
         Callback <$> v .: "message"
@@ -130,7 +127,7 @@ instance FromJSON TelChat where
             <*> v .: "type"
     parseJSON _ = parseFail parseFailMessage
 
-data TelSticker = TelSticker
+data TelSticker = TelSticker 
     {
         s_file_id :: T.Text
         , s_is_animated :: Bool 
