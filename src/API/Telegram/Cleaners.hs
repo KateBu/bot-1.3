@@ -16,11 +16,12 @@ import qualified Logger.Logger as Logger
 import qualified Config.Config as Config 
 import qualified Logger.LoggerMsgs as LoggerMsgs 
 
-
-telByteStringToPureMessageList :: Config.Config -> Logger.Logger
+telByteStringToPureMessageList :: Config.Config 
+    -> Logger.Logger
     -> Either Logger.LogMessage BSL.ByteString 
     -> IO (Either Logger.LogMessage [PureStructs.PureMessage])
-telByteStringToPureMessageList config logger eiBS = decodeByteString logger eiBS >>= telUpdatesToPureMessageList config 
+telByteStringToPureMessageList config logger eiBS = 
+    decodeByteString logger eiBS >>= telUpdatesToPureMessageList config 
 
 decodeByteString :: Logger.Logger
     -> Either Logger.LogMessage BSL.ByteString     
@@ -242,7 +243,6 @@ mbPoll uid chid mInfo = case TStructs.poll mInfo of
         <> [PureStructs.ParamsText "question" (TStructs.question poll)        
         , PureStructs.ParamsTextList "options" (map TStructs.poll_option (TStructs.poll_options poll))]
         <> makeMaybeBoolParams "is_anonimous" (TStructs.is_anonymous poll)
-    --    <> makeMaybeTextParams "type" (TStructs.poll_type poll)
         <> makeMaybeBoolParams "allows_multiple_answers" (TStructs.allows_multiple_answers poll)
         <> makeMaybeNumParams "correct_option_id" (TStructs.correct_option_id poll)
         <> makeMaybeTextParams "explanation" (TStructs.explanation poll)
