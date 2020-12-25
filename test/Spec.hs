@@ -1,2 +1,8 @@
+import Tests as Tests 
+import Test.HUnit ( runTestTT )
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = do 
+    putStrLn "Running tests..."
+    runTestTT Tests.testRepeatMsg0
+    pure ()
