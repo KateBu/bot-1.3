@@ -1,7 +1,7 @@
 module Logic.PureStructs where
 
 import qualified Data.Text as T 
-import Data.Aeson ( object, Value, KeyValue((.=)), ToJSON(toJSON) ) 
+import Data.Aeson ( Value )
 import Logger.Logger ()
 
 type UpdateID = Int
@@ -31,14 +31,7 @@ data Params = ParamsText T.Text T.Text
         | ParamsJSON T.Text Value 
         deriving (Show, Eq)
 
-instance ToJSON Params where 
-    toJSON (ParamsText key val) = object [key .= val]
-    toJSON (ParamsTextList key val) = object [key .= val]
-    toJSON (ParamsNum key val) = object [key .= val]
-    toJSON (ParamsBool key val) = object [key .= val]
-    toJSON (ParamsJSON key val) = object [key .= val]
-
-data HostPath = HostPath T.Text [T.Text] | HPEmpty 
+data HostPath = HostPath T.Text [T.Text]  
     deriving Show 
 
 data PureButtons = PureButtons T.Text T.Text
