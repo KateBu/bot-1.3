@@ -32,16 +32,16 @@ data Config = Config
         , repetition :: Int 
         , users :: Users 
         , priority :: Logger.Priority
-    } deriving Show 
+    } deriving (Show, Eq) 
 
 data BotType = TBot Telegram | VKBot VK 
-    deriving Show
+    deriving (Show, Eq)
 
 data Telegram = Telegram 
     {
         tToken :: Token
         , tOffset :: Int
-    } deriving Show  
+    } deriving (Show, Eq)  
 
 data VK = VK 
     {
@@ -50,7 +50,7 @@ data VK = VK
         , vkKey :: T.Text 
         , vkServer :: T.Text 
         , vkTs :: Int
-    } deriving Show 
+    } deriving (Show, Eq) 
 
 parseConfig :: String -> IO (Maybe Config)
 parseConfig path = do 

@@ -13,7 +13,7 @@ data LogMessage = LogMessage
     {
         getPriority :: Priority
         , getText :: T.Text
-    } deriving Show 
+    } deriving (Show, Eq )
 
 data Logger = Logger 
     {

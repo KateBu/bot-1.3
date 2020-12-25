@@ -12,6 +12,7 @@ data MessageType = MTEmpty
     | MTUserCommand UCommand 
     | MTCallbackQuery T.Text 
     | MTCommon T.Text 
+    deriving (Show, Eq)
 
 data PureMessage = PureMessage 
     {
@@ -19,9 +20,10 @@ data PureMessage = PureMessage
         , updateID :: UpdateID 
         , mbChatID :: Maybe ChatID
         , mbParams :: Maybe [Params] 
-    }
+    } deriving (Show, Eq)
 
 data UCommand = Help | Repeat 
+    deriving (Show, Eq)
 
 data Params = ParamsText T.Text T.Text
         | ParamsTextList T.Text [T.Text] 
