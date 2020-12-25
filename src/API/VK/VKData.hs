@@ -14,15 +14,15 @@ updateParams (Config.VKBot(Config.VK _ _ key _ ts)) = [PureStructs.ParamsText "a
     ]
 updateParams _ = [] 
 
-updateHostPath :: Config.BotType -> PureStructs.HostPath 
-updateHostPath (Config.VKBot(Config.VK _ _ _ server _)) = 
+updateHostPath :: Config.BotType -> Maybe PureStructs.HostPath 
+updateHostPath (Config.VKBot(Config.VK _ _ _ server _)) = pure $
     let (host,rest) = T.span (/='/') (T.drop 8 server)
         path = filter (/="") (T.splitOn "/" rest) 
     in PureStructs.HostPath host path
-updateHostPath _ = PureStructs.HPEmpty  
+updateHostPath _ = Nothing   
 
-sendHostPath :: PureStructs.HostPath
-sendHostPath = PureStructs.HostPath "api.vk.com" ["method","messages.send"]
+sendHostPath :: Maybe PureStructs.HostPath
+sendHostPath = pure $ PureStructs.HostPath "api.vk.com" ["method","messages.send"]
 
 sendBasicParams :: Config.BotType -> IO [PureStructs.Params]
 sendBasicParams (Config.VKBot (Config.VK tok _ _ _ _)) = do 
@@ -36,4 +36,4 @@ sendBasicParams _ = pure []
 getRandonId :: IO Int
 getRandonId = do 
     gen <- newStdGen 
-    pure $ ( (fst . random) gen :: Int)
+    pure $ ( (fst . random) gen :: Int) 

@@ -1,7 +1,5 @@
 module Handle.Handle where
 
-import Control.Exception ( bracket )
-
 import qualified Config.Config as Config 
 import qualified Logger.Logger as Logger 
 import qualified Logic.PureStructs as PureStructs 
@@ -23,15 +21,3 @@ new config = pure $ Handle
         , hGetUpdates = Wrapper.getPureMessageList  
         , hSendMessage_ = Wrapper.sendM 
     }
-
-close :: Handle m -> IO ()
-close _ = pure ()
-
-withHandleNoParams :: Config.Config -> (Handle IO -> IO a) -> IO a 
-withHandleNoParams config = 
-    bracket (new config) close 
-
-withHandle :: Config.Config -> (Handle IO -> c -> IO a) -> c -> IO a 
-withHandle config func params = 
-    bracket (new config) close (flip func params)
-

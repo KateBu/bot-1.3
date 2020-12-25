@@ -251,7 +251,7 @@ mbPoll uid chid mInfo = case TStructs.poll mInfo of
         <> makeMaybeBoolParams "is_closed" (TStructs.is_closed poll)
         )
     Nothing -> Nothing
-
+ 
 getPhotoParams :: [TStructs.TelPhoto] -> [PureStructs.Params]
 getPhotoParams [] = []
 getPhotoParams (x:_) = [PureStructs.ParamsText "photo" (TStructs.photo_file_id x)]

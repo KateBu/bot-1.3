@@ -36,8 +36,9 @@ import qualified API.Telegram.Cleaners as TelCleaners
 
 data Method = Update | Send deriving Show 
 
-hostPathToUrlScheme :: PureStructs.HostPath -> Url 'Https 
-hostPathToUrlScheme (PureStructs.HostPath hpHost hpPath) = makeUrlScheme (https hpHost) hpPath 
+hostPathToUrlScheme :: Maybe PureStructs.HostPath -> Maybe (Url 'Https) 
+hostPathToUrlScheme (Just (PureStructs.HostPath hpHost hpPath)) = pure $ makeUrlScheme (https hpHost) hpPath 
+hostPathToUrlScheme _ = Nothing 
 
 makeUrlScheme :: Url 'Https -> [T.Text] -> Url 'Https 
 makeUrlScheme acc [] = acc
@@ -85,7 +86,7 @@ updateParam :: Config.BotType -> [PureStructs.Params]
 updateParam vk@(Config.VKBot _) = VKData.updateParams vk     
 updateParam tel@(Config.TBot _) = TelData.updateParams tel 
 
-mkHostPath :: Config.Config -> Method -> Maybe PureStructs.PureMessage-> Url 'Https
+mkHostPath :: Config.Config -> Method -> Maybe PureStructs.PureMessage-> Maybe (Url 'Https)
 mkHostPath config Update _ = 
     case Config.botType config of     
         vk@(Config.VKBot _)-> hostPathToUrlScheme (VKData.updateHostPath vk) 
@@ -94,12 +95,14 @@ mkHostPath config Send (Just msg)=
     case Config.botType config of 
         (Config.VKBot _)-> hostPathToUrlScheme VKData.sendHostPath 
         tel@(Config.TBot _) -> hostPathToUrlScheme $ (TelData.sendHostPath tel (PureStructs.messageType msg)) 
-
-getResponseUrl :: Url 'Https
+mkHostPath _ _ _ = Nothing 
+ 
+getResponseUrl :: Maybe (Url 'Https)
     -> [PureStructs.Params]
     -> Option 'Https  
     -> IO (Either Logger.LogMessage LbsResponse) 
-getResponseUrl ulr params options = runReq defaultHttpConfig $ do     
+getResponseUrl Nothing _ _ = pure $ Left LoggerMsgs.invalidHP 
+getResponseUrl (Just ulr) params options = runReq defaultHttpConfig $ do     
         response <- req 
             POST
             ulr
@@ -108,11 +111,12 @@ getResponseUrl ulr params options = runReq defaultHttpConfig $ do
             options 
         (pure . pure) response
 
-getResponseMultipart :: Url 'Https
+getResponseMultipart :: Maybe (Url 'Https)
     -> [PureStructs.Params]
     -> Option 'Https  
     -> IO (Either Logger.LogMessage LbsResponse) 
-getResponseMultipart url params options = do 
+getResponseMultipart Nothing _ _ = pure $ Left LoggerMsgs.invalidHP 
+getResponseMultipart (Just url) params options = do 
     multipartParams <- paramsToMultipartBody params
     runReq defaultHttpConfig $ do      
         response <- req 
@@ -190,3 +194,4 @@ byteStringToPureMessageList config@(Config.Config (Config.VKBot _)_ _ _ _) logge
     VKCleaners.vkByteStringToPureMessageList config logger eiBS 
 byteStringToPureMessageList config@(Config.Config (Config.TBot _)_ _ _ _) logger eiBS = 
     TelCleaners.telByteStringToPureMessageList config logger eiBS 
+ 

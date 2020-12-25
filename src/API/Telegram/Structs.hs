@@ -12,7 +12,6 @@ import Data.Aeson
       ToJSON(toJSON) ) 
 import Data.Aeson.Types (parseFail)
 
-
 parseFailMessage :: String
 parseFailMessage = "Telegram bot got unexpected imput data type while parsing JSON"
 
@@ -297,4 +296,3 @@ data InlineKeyBoard = InlineKeyBoard [[Button]]
 
 instance ToJSON InlineKeyBoard where 
     toJSON (InlineKeyBoard btns) = object ["inline_keyboard" .= btns]
-

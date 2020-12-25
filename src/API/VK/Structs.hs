@@ -241,4 +241,4 @@ data VKButtons = VKButtons
 instance ToJSON VKButtons where 
     toJSON (VKButtons btnType pld btnLab) = object ["type" .= btnType
         , "payload" .= pld
-        , "label" .= btnLab]
+        , "label" .= btnLab] 

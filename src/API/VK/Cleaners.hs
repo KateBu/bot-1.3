@@ -6,7 +6,6 @@ import Data.Aeson
     ( decode, eitherDecode, encode, object, Value, KeyValue((.=)) )
 import Data.ByteString.Lazy.Char8 as C8 ( unpack )  
 import Control.Applicative ( Alternative((<|>)) ) 
-
 import qualified API.VK.Structs as VKStructs 
 import qualified Logic.PureStructs as PureStructs
 import qualified Logger.Logger as Logger
@@ -16,12 +15,15 @@ import qualified Config.Config as Config
 vkByteStringToPureMessageList :: Config.Config -> Logger.Logger
     -> Either Logger.LogMessage BSL.ByteString 
     -> IO (Either Logger.LogMessage [PureStructs.PureMessage]) 
-vkByteStringToPureMessageList config logger bs = decodeByteString logger bs >>= vkUpdInfoToPureMessageList config 
+vkByteStringToPureMessageList config logger bs = decodeByteString logger bs >>= vkUpdInfoToPureMessageList config  logger 
 
-vkUpdInfoToPureMessageList ::Config.Config ->  Either Logger.LogMessage (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
+vkUpdInfoToPureMessageList ::Config.Config -> Logger.Logger
+    ->  Either Logger.LogMessage (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
     -> IO (Either Logger.LogMessage [PureStructs.PureMessage])
-vkUpdInfoToPureMessageList _ (Left err) = pure $ Left err 
-vkUpdInfoToPureMessageList config (Right (uid, upds)) = pure $ mapM (vkUpdInfoToPureMessage config uid) upds
+vkUpdInfoToPureMessageList _ _ (Left err) = pure $ Left err 
+vkUpdInfoToPureMessageList config logger (Right (uid, upds)) = do 
+    Logger.botLog logger LoggerMsgs.parseVKMsgScs
+    pure $ mapM (vkUpdInfoToPureMessage config uid) upds
 
 vkUpdInfoToPureMessage ::Config.Config -> PureStructs.UpdateID -> VKStructs.VKUpdInfo
     -> Either Logger.LogMessage PureStructs.PureMessage
@@ -58,24 +60,28 @@ makePureMessage config uid vkMsg = case getMessageType vkMsg of
             uid 
             (Just $ VKStructs.from_id vkMsg)
             (makeParams config mType vkMsg)
-        _ -> Left $ LoggerMsgs.notImplemented
+        _ -> Right $ PureStructs.PureMessage 
+            PureStructs.MTEmpty 
+            uid 
+            Nothing 
+            Nothing 
 
 getMessageType :: VKStructs.VKMessage -> Either Logger.LogMessage PureStructs.MessageType
 getMessageType vkMsg = case msgType of 
     Nothing -> Left LoggerMsgs.notImplemented 
     Just mType -> Right mType 
-    where msgType = isCallBackMsg vkMsg
-            <|> isUserCommand vkMsg
-            <|> isAttachmentMsg vkMsg
-            <|> isGeo vkMsg
-            <|> isFwd vkMsg 
-            <|> isTextMsg vkMsg              
+    where msgType = mbCallBackMsg vkMsg
+            <|> mbUserCommand vkMsg
+            <|> mbAttachmentMsg vkMsg
+            <|> mbGeo vkMsg
+            <|> mbFwd vkMsg 
+            <|> mbTextMsg vkMsg              
     
-isCallBackMsg, isUserCommand
-    , isAttachmentMsg, isTextMsg
-    , isGeo, isFwd :: VKStructs.VKMessage -> Maybe PureStructs.MessageType 
+mbCallBackMsg, mbUserCommand
+    , mbAttachmentMsg, mbTextMsg
+    , mbGeo, mbFwd :: VKStructs.VKMessage -> Maybe PureStructs.MessageType 
 
-isCallBackMsg vkMsg = case VKStructs.cbPayload vkMsg of 
+mbCallBackMsg vkMsg = case VKStructs.cbPayload vkMsg of 
     Nothing -> Nothing 
     Just callback -> 
         let result = mbRep1 callback
@@ -87,7 +93,7 @@ isCallBackMsg vkMsg = case VKStructs.cbPayload vkMsg of
                 Nothing -> Nothing 
                 Just val -> Just $ PureStructs.MTCallbackQuery val 
 
-isUserCommand vkMsg = case VKStructs.msgText vkMsg of  
+mbUserCommand vkMsg = case VKStructs.msgText vkMsg of  
     Nothing -> Nothing 
     Just "" -> Nothing 
     Just txt -> case txt of 
@@ -95,20 +101,21 @@ isUserCommand vkMsg = case VKStructs.msgText vkMsg of
         "/repeat"  -> pure $ PureStructs.MTUserCommand PureStructs.Repeat
         _ -> Nothing 
 
-isAttachmentMsg vkMsg = case VKStructs.attachments vkMsg of 
+mbAttachmentMsg vkMsg = case VKStructs.attachments vkMsg of 
     Nothing -> Nothing 
     Just [] -> Nothing 
     _ -> pure $ PureStructs.MTCommon "Attachment"
 
-isTextMsg vkMsg = case VKStructs.msgText vkMsg of 
+mbTextMsg vkMsg = case VKStructs.msgText vkMsg of 
     Nothing -> Nothing 
+    Just "" -> Nothing 
     _ -> pure $ PureStructs.MTCommon "Message"
 
-isGeo vkMsg = case VKStructs.geo vkMsg of 
+mbGeo vkMsg = case VKStructs.geo vkMsg of 
     Nothing -> Nothing 
     _ -> pure $ PureStructs.MTCommon "Geo"
 
-isFwd vkMsg = case VKStructs.fwdMessages vkMsg of 
+mbFwd vkMsg = case VKStructs.fwdMessages vkMsg of 
     Nothing -> Nothing 
     _ -> pure $ PureStructs.MTCommon "Fwd"
 
@@ -162,11 +169,19 @@ makeParams _ (PureStructs.MTCommon "Fwd") vkMsg = do
     pure $ setMessageParam vkMsg  
         <> [PureStructs.ParamsText "forward_messages" msgIds]
         <> baseParams vkMsg
-makeParams _ (PureStructs.MTCommon "Attachment") vkMsg = 
-    pure $ setMessageParam vkMsg  
-        <> baseParams vkMsg  
-        <> attachmentListParams vkMsg (VKStructs.attachments vkMsg)
+makeParams _ (PureStructs.MTCommon "Attachment") vkMsg = do 
+    let attachParams = attachmentListParams vkMsg (VKStructs.attachments vkMsg)
+    case attachParams of 
+        [] -> pure $ setMsgParamNotEmpty vkMsg <> baseParams vkMsg 
+        _ -> pure $ setMessageParam vkMsg  
+            <> baseParams vkMsg  
+            <> attachmentListParams vkMsg (VKStructs.attachments vkMsg)
 makeParams _ _ _ = Nothing 
+
+setMsgParamNotEmpty :: VKStructs.VKMessage -> [PureStructs.Params]
+setMsgParamNotEmpty vkMsg = case setMessageParam vkMsg of 
+    [] -> [PureStructs.ParamsText "message" "The attachment you sent is not supperted by this bot"]
+    params -> params 
 
 attachmentListParams :: VKStructs.VKMessage -> Maybe [VKStructs.Attachment] -> [PureStructs.Params]
 attachmentListParams _ Nothing = [] 
@@ -176,11 +191,9 @@ attachmentListParams vkMsg (Just attachments) =
         links = filter isLink (VKStructs.aObject <$> attachments) 
         stickers = filter isSticker (VKStructs.aObject <$> attachments)  
         media = filter isMedia (VKStructs.aObject <$> attachments)  
-        photos = filter isPhoto (VKStructs.aObject <$> attachments)
     in makeLinkParams vkMsg links 
         <> makeStickerParams stickers 
         <> makeMediaParams media 
-        <> makePhotoParams photos 
 
 makeLinkParams :: VKStructs.VKMessage -> [VKStructs.AObject] -> [PureStructs.Params]
 makeLinkParams _ [] = []
@@ -196,8 +209,8 @@ getLinks (VKStructs.VKLink url : links) =
 getLinks _ = ""
 
 makeStickerParams :: [VKStructs.AObject] -> [PureStructs.Params]
-makeStickerParams [] = [] 
 makeStickerParams (VKStructs.VKSticker sticker : _) = [PureStructs.ParamsText "sticker_id" $ (T.pack . show) sticker]
+makeStickerParams _ = [] 
 
 makeMediaParams :: [VKStructs.AObject] -> [PureStructs.Params]
 makeMediaParams [] = [] 
@@ -220,16 +233,6 @@ makeMediaInfo (VKStructs.VKPoll pollId ownerId) =
     "poll" <> getOwnerIdItemId ownerId pollId 
 makeMediaInfo _ = ""
 
-makePhotoParams :: [VKStructs.AObject] ->  [PureStructs.Params]
-makePhotoParams vkPhotos = case mapM makePhotoParam vkPhotos of 
-    Nothing -> [] 
-    Just params -> params 
-
-makePhotoParam :: VKStructs.AObject -> Maybe PureStructs.Params
-makePhotoParam (VKStructs.VKPhoto _ _ _ []) = Nothing 
-makePhotoParam (VKStructs.VKPhoto _ _ _ (size:_)) =  Just $
-    PureStructs.ParamsText "VKPhotoUrl" (VKStructs.phUrl size)
-
 getOwnerIdItemId :: VKStructs.OwnerID -> VKStructs.ItemID -> T.Text
 getOwnerIdItemId ownerId itemId = (T.pack . show) ownerId 
     <> "_" 
@@ -242,7 +245,7 @@ getOwnerIdItemIdAccessKey ownerId itemId accessKey =
         <> (T.pack . show) itemId <> "_"
         <> accessKey
 
-isLink, isSticker, isMedia, isPhoto :: VKStructs.AObject -> Bool 
+isLink, isSticker, isMedia :: VKStructs.AObject -> Bool 
 isLink (VKStructs.VKLink _) = True 
 isLink _ = False 
 
@@ -256,9 +259,6 @@ isMedia (VKStructs.VKMarket _ _) = True
 isMedia (VKStructs.VKPoll _ _) = True 
 isMedia _ = False 
 
-isPhoto (VKStructs.VKPhoto _ _ _ _) = True 
-isPhoto _ = False 
-
 getFwdMsgIds :: Maybe [VKStructs.VKMessage] -> T.Text
 getFwdMsgIds Nothing = ""
 getFwdMsgIds (Just []) = ""
@@ -269,7 +269,7 @@ getFwdMsgIds (Just (x:xs)) = (T.pack . show $ VKStructs.id x) <> ","
 setMessageParam :: VKStructs.VKMessage -> [PureStructs.Params]
 setMessageParam vkMsg = case VKStructs.msgText vkMsg of 
     Nothing -> []
-    Just "" -> [PureStructs.ParamsText "message" ""]
+    Just "" -> []
     Just msg -> [PureStructs.ParamsText "message" msg]
 
 setMaybeTextParam :: T.Text

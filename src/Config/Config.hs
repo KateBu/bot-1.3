@@ -7,19 +7,20 @@ import qualified Data.Configurator as Configurator
 import System.Directory ( doesFileExist ) 
 import Control.Monad () 
 import Data.Aeson ( eitherDecode )
-import Data.Maybe ( fromJust, isNothing )
 import Network.HTTP.Simple
     ( parseRequest, getResponseBody, httpLBS ) 
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified API.VK.Structs as VKStructs 
 
-
 type Users = Map.Map Int Int 
 type Token = T.Text 
 
 vkApiVersion :: T.Text 
 vkApiVersion = "5.126"
+
+vkLongPollUrl :: String 
+vkLongPollUrl = "https://api.vk.com/method/groups.getLongPollServer?group_id="
 
 timeOut :: T.Text 
 timeOut = "25"
@@ -82,32 +83,30 @@ setBotTypeSettings (Just "VK") mbGroup mbVKToken _ = do
                     <*> Just ts)
             pure $ VKBot <$> vk 
 setBotTypeSettings (Just "Telegram") _ _ mbTToken =
-    pure $ TBot <$> (Telegram <$> mbTToken <*> Just 41076887)
+    pure $ TBot <$> (Telegram <$> mbTToken <*> Just 0)
 setBotTypeSettings _ _ _ _ = pure $ Nothing 
 
 getVKSettings :: Maybe Int -> Maybe T.Text -> IO (Either T.Text (T.Text, T.Text, Int))
-getVKSettings group tok = do 
-    if (isNothing group || isNothing tok) 
-        then pure $ Left LoggerMsgs.vkFatalError
-        else do 
-            http <- parseRequest $ "https://api.vk.com/method/groups.getLongPollServer?group_id="
-                <> (show . fromJust) group
-                <> "&access_token="
-                <> T.unpack (fromJust tok )
-                <> "&v="   
-                <> T.unpack vkApiVersion
-            confSettings <- httpLBS http  
-            let respBody = getResponseBody confSettings 
-            case (eitherDecode respBody :: Either String VKStructs.VKResponse) of 
-                Right val -> case val of 
-                    VKStructs.VKResponse k s t -> pure $ Right (k,s,(read t))
-                    VKStructs.VKError ec em -> pure $ Left 
-                        ("error_code: " 
-                                <> (T.pack . show) ec 
-                                <> "error_message: "
-                                <> em )
-                    VKStructs.VKParseError -> pure $ Left "parse Error "
-                Left err -> pure $ Left (T.pack err) 
+getVKSettings (Just group) (Just tok) = do     
+    http <- parseRequest $ vkLongPollUrl
+        <> show group
+        <> "&access_token="
+        <> T.unpack tok 
+        <> "&v="   
+        <> T.unpack vkApiVersion
+    confSettings <- httpLBS http  
+    let respBody = getResponseBody confSettings 
+    case (eitherDecode respBody :: Either String VKStructs.VKResponse) of 
+        Right val -> case val of 
+            VKStructs.VKResponse k s t -> pure $ Right (k,s,(read t))
+            VKStructs.VKError ec em -> pure $ Left 
+                ("error_code: " 
+                    <> (T.pack . show) ec 
+                    <> "error_message: "
+                    <> em )
+            VKStructs.VKParseError -> pure $ Left "parse Error"
+        Left err -> pure $ Left (T.pack err) 
+getVKSettings _ _ = pure $ Left LoggerMsgs.vkFatalError
 
 initConfig :: Maybe T.Text -> Maybe Int -> Maybe String -> Maybe BotType 
     -> IO (Maybe Config)
@@ -125,18 +124,6 @@ checkRepNumber (Just val)
     | val <= 1      = Just 1 
     | val >= 5      = Just 5 
     | otherwise     = Just val 
-
-getVkGroup :: Config -> Maybe Int
-getVkGroup (Config (VKBot bot) _ _ _ _) = Just $ groupID bot
-getVkGroup _ = Nothing 
-
-getVkTok :: Config -> Maybe T.Text 
-getVkTok (Config (VKBot bot) _ _ _ _) = Just $ vkToken bot  
-getVkTok _ = Nothing 
-
-getUid :: Config -> Int
-getUid (Config (VKBot bot) _ _ _ _) = vkTs bot  
-getUid (Config (TBot bot) _ _ _ _) = tOffset bot 
 
 setUserRepeat :: Config -> Int -> Int -> Config
 setUserRepeat config chid newRep = case Map.lookup chid (users config) of 

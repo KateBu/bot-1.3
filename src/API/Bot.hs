@@ -20,4 +20,4 @@ nextLoop logger (Left err) = do
     Logger.botLog logger (Logger.makeLogMessage err "\nProgram terminated")
 nextLoop logger (Right config) = do 
     Logger.botLog logger LoggerMsgs.nextLoop
-    runBot config 
+    runBot config  
