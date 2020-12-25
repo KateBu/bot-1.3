@@ -59,8 +59,4 @@ makeRepeatMsg msg = PureStructs.PureMessage
     (mconcat [PureStructs.mbParams msg, Just [(PureStructs.ParamsText "text" PureStructs.repeatText)]])
 
 makeCallbackResponse :: PureStructs.PureMessage -> PureStructs.PureMessage  
-makeCallbackResponse msg = PureStructs.PureMessage 
-    (PureStructs.MTCommon "Message")
-    (PureStructs.updateID msg)
-    (PureStructs.mbChatID msg)
-    (PureStructs.mbParams msg)
+makeCallbackResponse msg = msg {PureStructs.messageType = PureStructs.MTCommon "Message"} 
