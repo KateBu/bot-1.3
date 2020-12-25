@@ -86,3 +86,7 @@ badServerResponse = Logger.LogMessage Logger.Error
 parseVKMsgScs :: Logger.LogMessage 
 parseVKMsgScs = Logger.LogMessage Logger.Debug     
     "VK messages were parsed to PureMessages successfully"
+
+testError :: Logger.LogMessage 
+testError = Logger.LogMessage Logger.Debug     
+    "Test error" 
