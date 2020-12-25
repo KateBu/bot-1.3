@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 873f23cf6c0f67baaaa0f57751bb0511f3b3206309bad16896551cccca3e80ce
+-- hash: 5f98cad54372d1423c02b84e5479b8896479ef0a8871f9fcf71675f14902ec91
 
 name:           bot13
 version:        0.1.0.0
@@ -95,13 +95,17 @@ test-suite bot13-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestData
+      Tests
       Paths_bot13
   hs-source-dirs:
       test
   default-extensions: OverloadedStrings DeriveGeneric DataKinds
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      HUnit
+    , QuickCheck
+    , aeson
     , base >=4.7 && <5
     , bot13
     , bytestring
