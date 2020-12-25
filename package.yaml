@@ -66,3 +66,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - bot13
+    - HUnit 
+    - QuickCheck 
