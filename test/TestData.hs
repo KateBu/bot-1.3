@@ -3,9 +3,13 @@ module TestData where
 import qualified Logic.PureStructs as PureStructs 
 import qualified Config.Config as Config 
 import qualified Logger.Logger as Logger 
+import qualified Logger.LoggerMsgs as LoggerMsgs
 import Data.Aeson ( object, KeyValue((.=)) ) 
 import qualified Data.Text as T 
 import qualified Data.Map as Map 
+
+newHelp :: T.Text
+newHelp = "new help message"
 
 allMessages :: [PureStructs.PureMessage]
 allMessages = mconcat [emptyMessages, commandMessages, commonMessages, callbackMessages]
@@ -29,7 +33,7 @@ users = Map.fromList [(11,1), (22,2), (33,3)]
 testConfigVK :: Config.Config 
 testConfigVK = Config.Config  
     (Config.VKBot (Config.VK "token" 11 "key" "server" 0))
-    "help message"
+    "VK help message"
     1 
     users 
     Logger.Debug 
@@ -37,13 +41,15 @@ testConfigVK = Config.Config
 testConfigTelegram :: Config.Config 
 testConfigTelegram = Config.Config 
     (Config.TBot (Config.Telegram "token" 0))
-    "help message"
+    "Telegram help message"
     1 
     users 
     Logger.Error 
 
 testFunction :: Config.Config -> T.Text -> PureStructs.PureMessage 
     -> [(Either Logger.LogMessage Config.Config)] 
+testFunction _ _ (PureStructs.PureMessage PureStructs.MTEmpty _ _ _) = 
+    [Left LoggerMsgs.testError]
 testFunction config newHelpMessage _ = [Right $ config {Config.helpMessage = newHelpMessage}]
 
 emptyMsg1 :: PureStructs.PureMessage 

@@ -3,6 +3,5 @@ import Test.HUnit ( runTestTT )
 
 main :: IO ()
 main = do 
-    putStrLn "Running tests..."
-    runTestTT Tests.testRepeatMsg0
-    pure ()
+    putStrLn " ...Running tests..."
+    mapM_ runTestTT Tests.testsRepeatMsg
