@@ -24,25 +24,3 @@ expectedRepeatMsg0 :: [Either Logger.LogMessage Config.Config]
 expectedRepeatMsg0 = [Right TestData.testConfigVK]
 
 
-
-
-{-
-testMakeCallbackResponse :: Test
-testMakeCallbackResponse = TestCase (assertEqual "Logic.makeCallbackResponse" 
-    expectedMakeCallbackResponse  
-    actualMakeCallbackResponse)
-
-actualMakeCallbackResponse :: [PureStructs.PureMessage]
-actualMakeCallbackResponse = Logic.makeCallbackResponse <$> TestData.allMessages
-
-expectedMakeCallbackResponse :: [PureStructs.PureMessage]
-expectedMakeCallbackResponse = changeMType <$> TestData.allMessages
-
-changeMType :: PureStructs.PureMessage -> PureStructs.PureMessage 
-changeMType msg = PureStructs.PureMessage 
-    (PureStructs.MTCommon "Message")
-    (PureStructs.updateID msg)
-    (PureStructs.mbChatID msg)
-    (PureStructs.mbParams msg)
-
--}
