@@ -5,8 +5,11 @@ import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Config.Config as Config 
 
+type SendFunction a m = 
+    (Config.Config -> a -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config))
+
 processMsgs :: (Monad m) => Config.Config -> a    
-    -> (Config.Config -> a -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config))
+    -> SendFunction a m 
     -> (Either Logger.LogMessage [PureStructs.PureMessage])
     -> m (Either Logger.LogMessage Config.Config)
 processMsgs _ _ _ (Left err)  = pure $ Left err 
@@ -19,7 +22,7 @@ processMsgs config logger sendFunction (Right msgs) = do
             Right conf -> pure $ Right conf   
 
 processMsgs_ :: Monad m => Config.Config -> a
-    -> (Config.Config -> a -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config)) 
+    -> SendFunction a m
     -> PureStructs.PureMessage     
     -> m (Either Logger.LogMessage Config.Config)
 processMsgs_ config logger sendFunction msg = case PureStructs.messageType msg of 
@@ -42,7 +45,7 @@ processMsgs_ config logger sendFunction msg = case PureStructs.messageType msg o
 repeatMsg :: Monad m => Config.Config -> a
     -> PureStructs.PureMessage 
     -> Int
-    -> (Config.Config -> a -> PureStructs.PureMessage -> m (Either Logger.LogMessage Config.Config))
+    -> SendFunction a m
     -> m (Either Logger.LogMessage Config.Config)
 repeatMsg config _ _ 0 _ = pure $ Right config
 repeatMsg config logger msg n function =  do
