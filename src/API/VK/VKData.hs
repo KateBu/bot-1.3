@@ -4,6 +4,7 @@ import qualified Data.Text as T
 import System.Random ( newStdGen, Random(random) )
 import qualified Logic.PureStructs as PureStructs 
 import qualified Config.Config as Config 
+import qualified API.WrapStructs as WrapStructs 
 
 updateParams :: Config.BotType -> [PureStructs.Params]
 updateParams (Config.VKBot(Config.VK _ _ key _ ts)) = [PureStructs.ParamsText "act" "a_check"
@@ -14,15 +15,15 @@ updateParams (Config.VKBot(Config.VK _ _ key _ ts)) = [PureStructs.ParamsText "a
     ]
 updateParams _ = [] 
 
-updateHostPath :: Config.BotType -> Maybe PureStructs.HostPath 
+updateHostPath :: Config.BotType -> Maybe WrapStructs.HostPath 
 updateHostPath (Config.VKBot(Config.VK _ _ _ server _)) = pure $
     let (host,rest) = T.span (/='/') (T.drop 8 server)
         path = filter (/="") (T.splitOn "/" rest) 
-    in PureStructs.HostPath host path
+    in WrapStructs.HostPath host path
 updateHostPath _ = Nothing   
 
-sendHostPath :: Maybe PureStructs.HostPath
-sendHostPath = pure $ PureStructs.HostPath "api.vk.com" ["method","messages.send"]
+sendHostPath :: Maybe WrapStructs.HostPath
+sendHostPath = pure $ WrapStructs.HostPath "api.vk.com" ["method","messages.send"]
 
 sendBasicParams :: Config.BotType -> IO [PureStructs.Params]
 sendBasicParams (Config.VKBot (Config.VK tok _ _ _ _)) = do 
