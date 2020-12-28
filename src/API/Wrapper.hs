@@ -33,11 +33,10 @@ import qualified API.VK.Cleaners as VKCleaners
 import qualified API.VK.VKData as VKData  
 import qualified API.Telegram.TelData as TelData 
 import qualified API.Telegram.Cleaners as TelCleaners 
+import qualified API.WrapStructs as WrapStructs 
 
-data Method = Update | Send deriving Show 
-
-hostPathToUrlScheme :: Maybe PureStructs.HostPath -> Maybe (Url 'Https) 
-hostPathToUrlScheme (Just (PureStructs.HostPath hpHost hpPath)) = pure $ makeUrlScheme (https hpHost) hpPath 
+hostPathToUrlScheme :: Maybe WrapStructs.HostPath -> Maybe (Url 'Https) 
+hostPathToUrlScheme (Just (WrapStructs.HostPath hpHost hpPath)) = pure $ makeUrlScheme (https hpHost) hpPath 
 hostPathToUrlScheme _ = Nothing 
 
 makeUrlScheme :: Url 'Https -> [T.Text] -> Url 'Https 
@@ -86,12 +85,12 @@ updateParam :: Config.BotType -> [PureStructs.Params]
 updateParam vk@(Config.VKBot _) = VKData.updateParams vk     
 updateParam tel@(Config.TBot _) = TelData.updateParams tel 
 
-mkHostPath :: Config.Config -> Method -> Maybe PureStructs.PureMessage-> Maybe (Url 'Https)
-mkHostPath config Update _ = 
+mkHostPath :: Config.Config -> WrapStructs.Method -> Maybe PureStructs.PureMessage-> Maybe (Url 'Https)
+mkHostPath config WrapStructs.Update _ = 
     case Config.botType config of     
         vk@(Config.VKBot _)-> hostPathToUrlScheme (VKData.updateHostPath vk) 
         tel@(Config.TBot _) -> hostPathToUrlScheme (TelData.updateHostPath tel) 
-mkHostPath config Send (Just msg)= 
+mkHostPath config WrapStructs.Send (Just msg)= 
     case Config.botType config of 
         (Config.VKBot _)-> hostPathToUrlScheme VKData.sendHostPath 
         tel@(Config.TBot _) -> hostPathToUrlScheme $ (TelData.sendHostPath tel (PureStructs.messageType msg)) 
@@ -140,7 +139,7 @@ getPureMessageList config logger = getU config >>= byteStringToPureMessageList c
 getU :: Config.Config ->  IO (Either Logger.LogMessage BSL.ByteString) 
 getU config = do
     let params = (updateParam (Config.botType config)) 
-    let url = mkHostPath config Update Nothing 
+    let url = mkHostPath config WrapStructs.Update Nothing 
     if any isMultipart params 
         then getResponseMultipart url params mempty 
             >>= responseToLbsByteString 
@@ -160,7 +159,7 @@ getApiResponse :: Config.Config
     -> PureStructs.PureMessage 
     -> IO (Either Logger.LogMessage LbsResponse)  
 getApiResponse config basicParams params msg = do 
-    let hostPath = mkHostPath config Send (Just msg) 
+    let hostPath = mkHostPath config WrapStructs.Send (Just msg) 
     if any isMultipart params 
     then getResponseMultipart hostPath params basicParams  
     else getResponseUrl hostPath params basicParams         
