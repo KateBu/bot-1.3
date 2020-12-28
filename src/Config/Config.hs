@@ -93,8 +93,8 @@ getVKSettings (Just group) (Just tok) = do
     let respBody = getResponseBody confSettings 
     case (eitherDecode respBody :: Either String VKStructs.VKResponse) of 
         Right val -> case val of 
-            VKStructs.VKResponse k s t -> pure $ Right (k,s,(read t))
-            VKStructs.VKError ec em -> pure $ Left 
+            VKStructs.VKResponse (VKStructs.LongPollResponse k s t) -> pure $ Right (k,s,(read t))
+            VKStructs.VKError (VKStructs.ResponseError ec em) -> pure $ Left 
                 ("error_code: " 
                     <> (T.pack . show) ec 
                     <> "error_message: "

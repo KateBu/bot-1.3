@@ -176,7 +176,7 @@ checkApiResponse config logger msg (Right lbsResp) = case responseStatusCode lbs
             let sndMsgResult = eitherDecode (responseBody lbsResp) :: Either String VKStructs.VKResult 
             case sndMsgResult of 
                 Left err -> pure $ Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (T.pack err))
-                Right (VKStructs.SendMsgError err) -> pure $ 
+                Right (VKStructs.SendMsgError (VKStructs.SendError err)) -> pure $ 
                     Left (Logger.makeLogMessage LoggerMsgs.sndMsgFld (VKStructs.errMsg err))
                 Right (VKStructs.SendMsgScs _) -> do 
                     liftIO $ Logger.botLog logger LoggerMsgs.sndMsgScsVK

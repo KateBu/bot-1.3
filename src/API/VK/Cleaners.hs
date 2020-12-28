@@ -313,10 +313,10 @@ decodeByteString logger eiJson = case eiJson of
         Logger.botLog logger LoggerMsgs.getVKUpdScs
         case (eitherDecode json :: Either String VKStructs.VKUpdates) of 
             Left err -> pure $ Left (Logger.LogMessage Logger.Error ("decode vk update failed: " <> (T.pack err)))
-            Right (VKStructs.VKUpdateError errCode _) -> case errCode of 
+            Right (VKStructs.VKUpdateError (VKStructs.UpdateErr errCode _)) -> case errCode of 
                 1 -> pure $ Left LoggerMsgs.vkUpdatesFailed1  
                 2 -> pure $ Left LoggerMsgs.vkUpdatesFailed2
                 3 -> pure $ Left LoggerMsgs.vkUpdatesFailed3
                 _ -> pure $ Left LoggerMsgs.vkUpdatesFailed4 
-            Right upd -> pure $ Right (read (VKStructs.ts upd), (VKStructs.updates upd)) 
+            Right (VKStructs.VKUpdates upd) -> pure $ Right (read (VKStructs.ts upd), (VKStructs.updates upd)) 
     
