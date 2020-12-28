@@ -88,12 +88,7 @@ setBotTypeSettings _ _ _ _ = pure $ Nothing
 
 getVKSettings :: Maybe Int -> Maybe T.Text -> IO (Either T.Text (T.Text, T.Text, Int))
 getVKSettings (Just group) (Just tok) = do     
-    http <- parseRequest $ vkLongPollUrl
-        <> show group
-        <> "&access_token="
-        <> T.unpack tok 
-        <> "&v="   
-        <> T.unpack vkApiVersion
+    http <- parseRequest $ makeVkLonpPollUrl group tok 
     confSettings <- httpLBS http  
     let respBody = getResponseBody confSettings 
     case (eitherDecode respBody :: Either String VKStructs.VKResponse) of 
@@ -107,6 +102,14 @@ getVKSettings (Just group) (Just tok) = do
             VKStructs.VKParseError -> pure $ Left "parse Error"
         Left err -> pure $ Left (T.pack err) 
 getVKSettings _ _ = pure $ Left LoggerMsgs.vkFatalError
+
+makeVkLonpPollUrl :: Int -> T.Text -> String 
+makeVkLonpPollUrl group tok = vkLongPollUrl  
+    <> show group
+    <> "&access_token="
+    <> T.unpack tok 
+    <> "&v="   
+    <> T.unpack vkApiVersion
 
 initConfig :: Maybe T.Text -> Maybe Int -> Maybe String -> Maybe BotType 
     -> IO (Maybe Config)
@@ -150,3 +153,7 @@ configSetOffset (Config bt hm rep uss prior) newOffset =
             Config (TBot $ Telegram tok newOffset) hm rep uss prior
         VKBot (VK tok group key serv _) -> 
             Config (VKBot $ VK tok group key serv newOffset) hm rep uss prior
+
+configGetUid :: Config -> Int 
+configGetUid (Config (VKBot (VK _ _ _ _ uid)) _ _ _ _ ) = uid 
+configGetUid (Config (TBot (Telegram _ uid)) _ _ _ _) = uid 
