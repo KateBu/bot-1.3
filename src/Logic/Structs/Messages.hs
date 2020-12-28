@@ -1,4 +1,4 @@
-module Logic.Messages where
+module Logic.Structs.Messages where
 
 import qualified Data.Text as T 
 import Data.Aeson ( Value ) 

@@ -1,4 +1,4 @@
-module Logic.Buttons where
+module Logic.Structs.Buttons where
 
 import qualified Data.Text as T 
 
