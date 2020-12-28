@@ -1,6 +1,6 @@
 module Logic.PureStructs (module PureStructs) where
 
-import Logic.Messages as PureStructs
+import Logic.Structs.Messages as PureStructs
     ( Params(..),
       UCommand(..),
       PureMessage(..),
@@ -8,7 +8,7 @@ import Logic.Messages as PureStructs
       MbCaption,
       ChatID,
       UpdateID )
-import Logic.Buttons as PureStructs
+import Logic.Structs.Buttons as PureStructs
     ( PureButtons(..),
       buttons',
       rep1,
