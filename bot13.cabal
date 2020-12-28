@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5f98cad54372d1423c02b84e5479b8896479ef0a8871f9fcf71675f14902ec91
+-- hash: 5525ecc3a9eadb2c3657f60a8f14469f180a83a463dcfa683f3890a5fe0869df
 
 name:           bot13
 version:        0.1.0.0
@@ -28,19 +28,41 @@ source-repository head
 library
   exposed-modules:
       API.Bot
+      API.Messages
       API.Telegram.Cleaners
       API.Telegram.Structs
       API.Telegram.TelData
+      API.Telegram.TStructs.Animation
+      API.Telegram.TStructs.Audio
+      API.Telegram.TStructs.Buttons
+      API.Telegram.TStructs.Callback
+      API.Telegram.TStructs.Chat
+      API.Telegram.TStructs.Contact
+      API.Telegram.TStructs.Document
+      API.Telegram.TStructs.Location
+      API.Telegram.TStructs.MessageInfo
+      API.Telegram.TStructs.Photo
+      API.Telegram.TStructs.Poll
+      API.Telegram.TStructs.Sticker
+      API.Telegram.TStructs.UpdateErr
+      API.Telegram.TStructs.Updates
+      API.Telegram.TStructs.Venue
+      API.Telegram.TStructs.Video
+      API.Telegram.TStructs.Voice
       API.VK.Cleaners
       API.VK.Structs
       API.VK.VKData
       API.Wrapper
+      API.WrapStructs
       Config.Config
       Handle.Handle
       Logger.Logger
       Logger.LoggerMsgs
+      Logic.Buttons
       Logic.Logic
+      Logic.Messages
       Logic.PureStructs
+      Logic.TextData
   other-modules:
       Paths_bot13
   hs-source-dirs:
