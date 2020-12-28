@@ -2,10 +2,11 @@ module API.Telegram.TelData where
 
 import qualified Logic.PureStructs as PureStructs 
 import qualified Config.Config as Config 
+import qualified API.WrapStructs as WrapStructs 
 
-updateHostPath :: Config.BotType -> Maybe PureStructs.HostPath
+updateHostPath :: Config.BotType -> Maybe WrapStructs.HostPath
 updateHostPath (Config.TBot (Config.Telegram tok _)) = pure $ 
-    PureStructs.HostPath "api.telegram.org" ["bot" <> tok,"getUpdates"]
+    WrapStructs.HostPath "api.telegram.org" ["bot" <> tok,"getUpdates"]
 updateHostPath _ = Nothing 
 
 updateParams :: Config.BotType -> [PureStructs.Params]
@@ -13,19 +14,19 @@ updateParams (Config.TBot (Config.Telegram _ offset)) = [PureStructs.ParamsNum "
     , PureStructs.ParamsText "timeout" Config.timeOut]
 updateParams _ = []
 
-sendHostPath :: Config.BotType -> PureStructs.MessageType -> Maybe PureStructs.HostPath 
+sendHostPath :: Config.BotType -> PureStructs.MessageType -> Maybe WrapStructs.HostPath 
 sendHostPath (Config.TBot (Config.Telegram tok _)) (PureStructs.MTUserCommand PureStructs.Help) = 
-    pure $ PureStructs.HostPath "api.telegram.org" [
+    pure $ WrapStructs.HostPath "api.telegram.org" [
         "bot"<> tok 
         , "sendMessage"
         ]
 sendHostPath (Config.TBot (Config.Telegram tok _)) (PureStructs.MTUserCommand PureStructs.Repeat) =
-    pure $ PureStructs.HostPath "api.telegram.org" [
+    pure $ WrapStructs.HostPath "api.telegram.org" [
         "bot"<> tok 
         , "sendMessage"
         ]
 sendHostPath (Config.TBot (Config.Telegram tok _)) (PureStructs.MTCommon mType) = 
-    pure $ PureStructs.HostPath "api.telegram.org" [
+    pure $ WrapStructs.HostPath "api.telegram.org" [
         "bot"<> tok 
         , "send" <> mType
         ]
