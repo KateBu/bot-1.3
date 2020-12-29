@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 39e0564d8109430e2b2f2e3e517eb94b6a3bcf8067efe35294e00b9198fa414e
+-- hash: 42961176d8e5e3a5cbe286516a44dc25ea138a5969abc7c662abbd96ec632a48
 
 name:           bot13
 version:        0.1.0.0
@@ -30,10 +30,23 @@ library
       API.Bot
       API.Messages
       API.Telegram.Cleaners
+      API.Telegram.Cleaners.GetParams
       API.Telegram.Cleaners.Keyboard
       API.Telegram.Cleaners.MakeMbParams
       API.Telegram.Cleaners.MakePureMessage
+      API.Telegram.Cleaners.MbAnimation
+      API.Telegram.Cleaners.MbAudio
+      API.Telegram.Cleaners.MbContact
+      API.Telegram.Cleaners.MbDoc
+      API.Telegram.Cleaners.MbLocation
       API.Telegram.Cleaners.MbMsgType
+      API.Telegram.Cleaners.MbPhoto
+      API.Telegram.Cleaners.MbPoll
+      API.Telegram.Cleaners.MbSticker
+      API.Telegram.Cleaners.MbTxt
+      API.Telegram.Cleaners.MbVenue
+      API.Telegram.Cleaners.MbVideo
+      API.Telegram.Cleaners.MbVoice
       API.Telegram.Structs
       API.Telegram.TelData
       API.Telegram.TStructs.Animation
