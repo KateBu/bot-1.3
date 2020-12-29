@@ -1,5 +1,6 @@
 module Logic.Logic where
 
+import qualified Data.Text as T 
 import qualified Logic.PureStructs as PureStructs 
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs
@@ -15,11 +16,13 @@ processMsgs :: (Monad m) => Config.Config -> a
 processMsgs _ _ _ (Left err)  = pure $ Left err 
 processMsgs config logger sendFunction (Right msgs) = do 
     eiConfs <- mapM (processMsgs_ config logger sendFunction) msgs 
-    case eiConfs of 
-        [] -> pure $ Right config 
-        _ -> case last eiConfs of 
-            Left err -> pure $ Left err
-            Right conf -> pure $ Right conf   
+    getLastConf config eiConfs  
+
+getLastConf :: Monad m => Config.Config 
+    -> [Either Logger.LogMessage Config.Config] 
+    -> m (Either Logger.LogMessage Config.Config)
+getLastConf config [] = pure $ Right config  
+getLastConf _ eiConfs = either (pure . Left) (pure . Right) (last eiConfs)
 
 processMsgs_ :: Monad m => Config.Config -> a
     -> SendFunction a m
@@ -31,16 +34,33 @@ processMsgs_ config logger sendFunction msg = case PureStructs.messageType msg o
     PureStructs.MTUserCommand PureStructs.Repeat -> sendFunction config logger (makeRepeatMsg msg) 
     PureStructs.MTCallbackQuery callbackData -> do 
         let mbChid = PureStructs.mbChatID msg
-        case mbChid of 
-            Nothing -> pure $ Left LoggerMsgs.chidNotFound
-            Just chid -> do 
-                let newRep = PureStructs.getNewRep callbackData
-                let newConfig = Config.setUserRepeat config chid newRep
-                sendFunction newConfig logger (makeCallbackResponse msg)
+        maybe processMsgsErr (processMsgsCallback config logger sendFunction msg callbackData) mbChid 
     PureStructs.MTCommon _ -> do 
-        case PureStructs.mbChatID msg of 
-            Nothing -> pure $ Left LoggerMsgs.noChatId
-            Just chid -> repeatMsg config logger msg (Config.findUserRepeat config chid) sendFunction
+        let mbChid = PureStructs.mbChatID msg
+        maybe processMsgsErr (processMsgsCommon config logger sendFunction msg) mbChid
+
+processMsgsErr :: Monad m => m (Either Logger.LogMessage Config.Config)
+processMsgsErr = pure $ Left LoggerMsgs.chidNotFound
+
+processMsgsCallback :: Monad m => Config.Config -> a
+    -> SendFunction a m
+    -> PureStructs.PureMessage   
+    -> T.Text
+    -> PureStructs.ChatID   
+    -> m (Either Logger.LogMessage Config.Config)
+processMsgsCallback config logger function msg callbackData chid = do 
+    let newRep = PureStructs.getNewRep callbackData
+    let newConfig = Config.setUserRepeat config chid newRep
+    function newConfig logger (makeCallbackResponse msg)
+
+processMsgsCommon :: Monad m => Config.Config -> a
+    -> SendFunction a m
+    -> PureStructs.PureMessage   
+    -> PureStructs.ChatID   
+    -> m (Either Logger.LogMessage Config.Config)
+processMsgsCommon config logger function msg chid = do 
+    let newRepeat = Config.findUserRepeat config chid 
+    repeatMsg config logger msg newRepeat function
 
 repeatMsg :: Monad m => Config.Config -> a
     -> PureStructs.PureMessage 
@@ -50,9 +70,16 @@ repeatMsg :: Monad m => Config.Config -> a
 repeatMsg config _ _ 0 _ = pure $ Right config
 repeatMsg config logger msg n function =  do
     eiConfig <- function config logger msg 
-    case eiConfig of 
-        Left err -> pure $ Left err  
-        Right newConfig -> repeatMsg newConfig logger msg (n-1) function
+    either (pure . Left) (repeatMsgScs logger msg n function) eiConfig 
+
+repeatMsgScs :: Monad m => a 
+    -> PureStructs.PureMessage  
+    -> Int
+    -> SendFunction a m
+    -> Config.Config
+    -> m (Either Logger.LogMessage Config.Config) 
+repeatMsgScs logger msg n function config = 
+    repeatMsg config logger msg (n-1) function
 
 makeRepeatMsg :: PureStructs.PureMessage -> PureStructs.PureMessage 
 makeRepeatMsg msg = PureStructs.PureMessage 
