@@ -67,11 +67,11 @@ makeVkLonpPollUrl group tok = vkLongPollUrl
     <> show group
     <> "&access_token="
     <> T.unpack tok 
-    <> "&v="   
+    <> "&v="    
     <> T.unpack vkApiVersion
 
 makeVKConfigError :: String -> IO (Either T.Text (T.Text, T.Text, Int))
-makeVKConfigError error = pure $ Left (T.pack error)
+makeVKConfigError err = pure $ Left (T.pack err)
 
 tryMakeVKSettings :: VKStructs.VKResponse -> IO (Either T.Text (T.Text, T.Text, Int)) 
 tryMakeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse k s t)) = pure $ Right (k,s,(read t))
@@ -80,6 +80,8 @@ tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError ec em)) = pure $ L
         <> (T.pack . show) ec 
         <> "error_message: "
         <> em )
+tryMakeVKSettings VKStructs.VKParseError = pure $ Left "VK Parse error"
+
 
 initConfig :: Maybe T.Text -> Maybe Int -> Maybe String -> Maybe BotType 
     -> IO (Maybe Config)
