@@ -2,15 +2,14 @@ module API.VK.Cleaners.MessageTypes where
 
 import qualified Data.Text as T 
 import Control.Applicative ( Alternative((<|>)) ) 
+import Data.Maybe ( fromMaybe ) 
 import qualified API.VK.Structs as VKStructs 
 import qualified Logic.PureStructs as PureStructs
 import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 
 getMessageType :: VKStructs.VKMessage -> Either Logger.LogMessage PureStructs.MessageType
-getMessageType vkMsg = case msgType of 
-    Nothing -> Left LoggerMsgs.notImplemented 
-    Just mType -> Right mType 
+getMessageType vkMsg = maybe (Left LoggerMsgs.notImplemented) Right msgType 
     where msgType = mbCallBackMsg vkMsg
             <|> mbUserCommand vkMsg
             <|> mbAttachmentMsg vkMsg
@@ -22,30 +21,26 @@ mbCallBackMsg, mbUserCommand
     , mbAttachmentMsg, mbTextMsg
     , mbGeo, mbFwd :: VKStructs.VKMessage -> Maybe PureStructs.MessageType 
 
-mbCallBackMsg vkMsg = case VKStructs.cbPayload vkMsg of 
-    Nothing -> Nothing 
-    Just callback -> 
-        let result = mbRep1 callback
-                <|> mbRep2 callback 
-                <|> mbRep3 callback
-                <|> mbRep4 callback 
-                <|> mbRep5 callback
-        in case result of 
-                Nothing -> Nothing 
-                Just val -> Just $ PureStructs.MTCallbackQuery val 
+mbCallBackMsg vkMsg = 
+    PureStructs.MTCallbackQuery <$> mbNewRep (fromMaybe "" $ VKStructs.cbPayload vkMsg)
 
-mbUserCommand vkMsg = case VKStructs.msgText vkMsg of  
-    Nothing -> Nothing 
-    Just "" -> Nothing 
-    Just txt -> case txt of 
-        "/help" -> pure $ PureStructs.MTUserCommand PureStructs.Help
-        "/repeat"  -> pure $ PureStructs.MTUserCommand PureStructs.Repeat
-        _ -> Nothing 
+mbNewRep :: T.Text -> Maybe T.Text 
+mbNewRep callback = mbRep1 callback
+    <|> mbRep2 callback 
+    <|> mbRep3 callback
+    <|> mbRep4 callback 
+    <|> mbRep5 callback
 
-mbAttachmentMsg vkMsg = case VKStructs.attachments vkMsg of 
-    Nothing -> Nothing 
-    Just [] -> Nothing 
-    _ -> pure $ PureStructs.MTCommon "Attachment"
+mbUserCommand vkMsg = maybe Nothing mbUserCommand' $ VKStructs.msgText vkMsg
+
+mbUserCommand' :: T.Text -> Maybe PureStructs.MessageType
+mbUserCommand' "/help" = pure $ PureStructs.MTUserCommand PureStructs.Help
+mbUserCommand' "/repeat"  = pure $ PureStructs.MTUserCommand PureStructs.Repeat
+mbUserCommand' _ = Nothing 
+
+mbAttachmentMsg vkMsg = maybe Nothing mbAttachmentMsg' $ VKStructs.attachments vkMsg where 
+        mbAttachmentMsg' [] = Nothing 
+        mbAttachmentMsg' _ = pure $ PureStructs.MTCommon "Attachment"
 
 mbTextMsg vkMsg = case VKStructs.msgText vkMsg of 
     Nothing -> Nothing 
