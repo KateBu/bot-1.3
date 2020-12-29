@@ -10,7 +10,3 @@ mbCaption :: TStructs.MessageInfo -> [PureStructs.Params]
 mbCaption mInfo = 
     let mbCap = TStructs.caption mInfo
     in maybe [] (pure . PureStructs.ParamsText "caption") mbCap 
-
-getPhotoParams :: [TStructs.TelPhoto] -> [PureStructs.Params]
-getPhotoParams [] = []
-getPhotoParams (x:_) = [PureStructs.ParamsText "photo" (TStructs.photo_file_id x)]
