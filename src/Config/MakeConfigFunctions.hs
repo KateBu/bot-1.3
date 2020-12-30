@@ -1,6 +1,6 @@
 module Config.MakeConfigFunctions where
 
-import  Control.Exception 
+import Control.Exception ( try, IOException ) 
 import qualified Data.Text as T 
 import qualified Data.Text.IO as TIO 
 import qualified Data.Map as Map 
@@ -18,7 +18,7 @@ import Config.ConfigData as Config ( vkApiVersion, vkLongPollUrl )
 import qualified Exceptions.Exceptions as BotEx 
 
 parseConfig :: String -> IO (Either BotEx.BotException Config.Config)
-parseConfig path = do 
+parseConfig path = do  
     getConfigFile path >>= parseConfigFile 
 
 getConfigFile :: String -> IO (Either BotEx.BotException Configurator.Config) 
