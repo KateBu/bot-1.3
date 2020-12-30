@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 42961176d8e5e3a5cbe286516a44dc25ea138a5969abc7c662abbd96ec632a48
+-- hash: 91c2aeb3a188c9bc8378d073add323afadf05f9beee6e5ceb56bb8132f78624f
 
 name:           bot13
 version:        0.1.0.0
@@ -90,6 +90,7 @@ library
       Config.ConfigFunctions
       Config.ConfigStructs
       Config.MakeConfigFunctions
+      Exceptions.Exceptions
       Handle.Handle
       Logger.Logger
       Logger.LoggerMsgs
