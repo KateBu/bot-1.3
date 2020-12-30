@@ -90,3 +90,8 @@ parseVKMsgScs = Logger.LogMessage Logger.Debug
 testError :: Logger.LogMessage 
 testError = Logger.LogMessage Logger.Debug     
     "Test error" 
+
+initConfigExcept :: Logger.LogMessage
+initConfigExcept = Logger.LogMessage Logger.Error 
+    ("Couldn't find or read the config file," 
+            <> " check the path to the file and the information inside it")
