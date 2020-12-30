@@ -13,7 +13,10 @@ data LogMessage = LogMessage
     {
         getPriority :: Priority
         , getText :: T.Text
-    } deriving (Show, Eq )
+    } deriving (Eq )
+
+instance Show LogMessage where 
+    show (LogMessage prior txt) = T.unpack $ startText prior <> txt 
 
 data Logger = Logger 
     {
