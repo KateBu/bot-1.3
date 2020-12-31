@@ -1,13 +1,15 @@
 module API.Bot where
 
+import qualified Exceptions.Exceptions as BotEx 
 import qualified Config.Config as Config 
 import qualified Handle.Handle as Handle 
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs 
 import qualified Logic.Logic as Logic 
 
-runBot :: Config.Config -> IO ()
-runBot config = do 
+runBot :: Either BotEx.BotException Config.Config -> IO ()
+runBot (Left err) = BotEx.handleBotException err
+runBot (Right config) = do 
     handle <- Handle.new config  
     logger <- Handle.hLogger handle 
     conf <- Handle.hConfig handle 
@@ -20,4 +22,4 @@ nextLoop logger (Left err) = do
     Logger.botLog logger (Logger.makeLogMessage err "\nProgram terminated")
 nextLoop logger (Right config) = do 
     Logger.botLog logger LoggerMsgs.nextLoop
-    runBot config  
+    runBot $ Right config  
