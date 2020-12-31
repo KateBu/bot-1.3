@@ -60,7 +60,7 @@ vkSettingsScs ::   Maybe Int -> Maybe Config.Token -> (T.Text, T.Text, Int)
 vkSettingsScs (Just group) (Just vKToken) (key,serv,ts) = do 
     let vk = Config.VK vKToken group key serv ts
     pure $ Config.VKBot <$> Right vk 
-vkSettingsScs _ _ _ = BotEx.throwBotExcept $ BotEx.InitConfigExcept LoggerMsgs.initConfigExcept
+vkSettingsScs _ _ _ = BotEx.throwInitConfigExcept
 
 getVKSettings :: Maybe Int -> Maybe T.Text -> IO (Either BotEx.BotException (T.Text, T.Text, Int))
 getVKSettings (Just group) (Just tok) = do    
