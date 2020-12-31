@@ -7,6 +7,7 @@ import qualified Data.Map as Map
 import qualified Data.Configurator as Configurator 
 import qualified Data.Configurator.Types as Configurator 
 import Control.Monad () 
+import qualified Data.ByteString.Lazy as BSL 
 import Data.Aeson ( eitherDecode )
 import Network.HTTP.Simple
     ( parseRequest, getResponseBody, httpLBS ) 
@@ -16,6 +17,7 @@ import qualified Config.ConfigStructs as Config
     ( Token, VK(VK), Telegram(Telegram), BotType(..), Config(Config) )
 import Config.ConfigData as Config ( vkApiVersion, vkLongPollUrl )
 import qualified Exceptions.Exceptions as BotEx 
+import qualified Logger.Logger as Logger 
 
 parseConfig :: String -> IO (Either BotEx.BotException Config.Config)
 parseConfig path = do  
@@ -24,7 +26,7 @@ parseConfig path = do
 getConfigFile :: String -> IO (Either BotEx.BotException Configurator.Config) 
 getConfigFile path = do 
     config <- try $ Configurator.load [Configurator.Required path] :: IO (Either IOException Configurator.Config) 
-    either (pure . Left . BotEx.IOExept) (pure . Right) config 
+    either (BotEx.throwBotExcept . BotEx.IOExept) (pure . Right) config 
 
 parseConfigFile :: Either BotEx.BotException Configurator.Config -> 
     IO (Either BotEx.BotException Config.Config) 
@@ -39,36 +41,31 @@ parseConfigFile (Right conf) = do
     vkGroup <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Int)
     setBotTypeSettings botT vkGroup vkTok tTok >>= initConfig msg rep prior
 
-setBotTypeSettings :: Maybe T.Text -> Maybe Int -> Maybe Config.Token -> Maybe Config.Token -> IO (Maybe Config.BotType)
+setBotTypeSettings :: Maybe T.Text -> Maybe Int -> Maybe Config.Token -> Maybe Config.Token 
+    -> IO (Either BotEx.BotException Config.BotType)
 setBotTypeSettings (Just "VK") mbGroup mbVKToken _ = do 
     vkSettings <- getVKSettings mbGroup mbVKToken 
-    either vkSettingsError (vkSettingsScs mbGroup mbVKToken) vkSettings
-setBotTypeSettings (Just "Telegram") _ _ mbTToken =
-    pure $ Config.TBot <$> (Config.Telegram <$> mbTToken <*> Just 0)
-setBotTypeSettings _ _ _ _ = pure $ Nothing 
+    either BotEx.throwBotExcept (vkSettingsScs mbGroup mbVKToken) vkSettings
+setBotTypeSettings (Just "Telegram") _ _ (Just tToken) =
+    pure $ Config.TBot <$> Right (Config.Telegram tToken 0)
+setBotTypeSettings _ _ _ _ = BotEx.throwInitConfigExcept 
 
 vkSettingsError :: T.Text -> IO (Maybe Config.BotType) 
 vkSettingsError err = do 
     TIO.putStrLn err 
     pure Nothing 
 
-vkSettingsScs ::   Maybe Int -> Maybe Config.Token -> (T.Text, T.Text, Int) -> IO (Maybe Config.BotType)  
-vkSettingsScs mbGroup mbVKToken (key,serv,ts) = do 
-    let vk = (Config.VK <$> mbVKToken 
-            <*> mbGroup 
-            <*> Just key
-            <*> Just serv
-            <*> Just ts)
-    pure $ Config.VKBot <$> vk 
+vkSettingsScs ::   Maybe Int -> Maybe Config.Token -> (T.Text, T.Text, Int) 
+    -> IO (Either BotEx.BotException Config.BotType)  
+vkSettingsScs (Just group) (Just vKToken) (key,serv,ts) = do 
+    let vk = Config.VK vKToken group key serv ts
+    pure $ Config.VKBot <$> Right vk 
+vkSettingsScs _ _ _ = BotEx.throwBotExcept $ BotEx.InitConfigExcept LoggerMsgs.initConfigExcept
 
-getVKSettings :: Maybe Int -> Maybe T.Text -> IO (Either T.Text (T.Text, T.Text, Int))
-getVKSettings (Just group) (Just tok) = do     
-    http <- parseRequest $ makeVkLonpPollUrl group tok 
-    confSettings <- httpLBS http  
-    let respBody = getResponseBody confSettings 
-    let eiResponse  = eitherDecode respBody :: Either String VKStructs.VKResponse
-    either makeVKConfigError tryMakeVKSettings eiResponse 
-getVKSettings _ _ = pure $ Left LoggerMsgs.vkFatalError
+getVKSettings :: Maybe Int -> Maybe T.Text -> IO (Either BotEx.BotException (T.Text, T.Text, Int))
+getVKSettings (Just group) (Just tok) = do    
+    getLongPollReqBody group tok >>= getLongPollInfo
+getVKSettings _ _ = BotEx.throwInitConfigExcept
 
 makeVkLonpPollUrl :: Int -> T.Text -> String 
 makeVkLonpPollUrl group tok = vkLongPollUrl  
@@ -78,32 +75,40 @@ makeVkLonpPollUrl group tok = vkLongPollUrl
     <> "&v="    
     <> T.unpack vkApiVersion
 
-makeVKConfigError :: String -> IO (Either T.Text (T.Text, T.Text, Int))
-makeVKConfigError err = pure $ Left (T.pack err)
+getLongPollReqBody :: Int -> T.Text -> IO (Either BotEx.BotException BSL.ByteString)
+getLongPollReqBody group tok = do 
+    resBody <- try $ 
+            (parseRequest $ makeVkLonpPollUrl group tok) >>=
+                httpLBS >>= pure . getResponseBody :: IO (Either IOException BSL.ByteString) 
+    pure $ either (Left . BotEx.IOExept) Right resBody 
 
-tryMakeVKSettings :: VKStructs.VKResponse -> IO (Either T.Text (T.Text, T.Text, Int)) 
+getLongPollInfo :: Either BotEx.BotException BSL.ByteString 
+    -> IO (Either BotEx.BotException (T.Text, T.Text, Int))
+getLongPollInfo (Left err) = pure $ Left err 
+getLongPollInfo (Right respBody) = do 
+    let eiResponse  = eitherDecode respBody :: Either String VKStructs.VKResponse
+    either BotEx.throwParseExcept tryMakeVKSettings eiResponse 
+
+tryMakeVKSettings :: VKStructs.VKResponse -> IO (Either BotEx.BotException (T.Text, T.Text, Int)) 
 tryMakeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse k s t)) = pure $ Right (k,s,(read t))
-tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError ec em)) = pure $ Left 
-    ("error_code: " 
-        <> (T.pack . show) ec 
-        <> "error_message: "
-        <> em )
-tryMakeVKSettings VKStructs.VKParseError = pure $ Left "VK Parse error"
+tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError ec em)) = pure $ 
+    Left $ BotEx.InitConfigExcept (Logger.makeLogMessage LoggerMsgs.initConfigExcept 
+        ("error_code: " 
+            <> (T.pack . show) ec 
+            <> "error_message: "
+            <> em ))
+tryMakeVKSettings _ = BotEx.throwParseExcept ""
 
-initConfig :: Maybe T.Text -> Maybe Int -> Maybe String -> Maybe Config.BotType 
+initConfig :: Maybe T.Text -> Maybe Int -> Maybe String -> Either BotEx.BotException Config.BotType 
     -> IO (Either BotEx.BotException Config.Config)
-initConfig mbHelpMsg mbRep mbPrior mbBotType = do 
-    let config = Config.Config <$> mbBotType 
-            <*> mbHelpMsg
-            <*> checkRepNumber mbRep 
-            <*> Just Map.empty 
-            <*> (read <$> mbPrior)
-    let eiConf = maybe (Left $ BotEx.InitConfigException LoggerMsgs.initConfigExcept) Right config 
-    pure eiConf 
+initConfig (Just helpMsg) (Just rep) (Just prior) (Right botType) = do 
+    let config = Config.Config botType helpMsg (checkRepNumber rep) Map.empty (read prior)
+    pure $ Right config 
+initConfig _ _ _ (Left err) = pure $ Left err 
+initConfig _ _ _ _ = BotEx.throwInitConfigExcept    
 
-checkRepNumber :: Maybe Int -> Maybe Int 
-checkRepNumber Nothing = Nothing 
-checkRepNumber (Just val) 
-    | val <= 1      = Just 1 
-    | val >= 5      = Just 5 
-    | otherwise     = Just val 
+checkRepNumber :: Int -> Int 
+checkRepNumber val
+    | val <= 1      = 1 
+    | val >= 5      = 5 
+    | otherwise     = val 
