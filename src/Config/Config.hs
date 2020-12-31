@@ -11,7 +11,6 @@ import Config.MakeConfigFunctions as Config
       setBotTypeSettings,
       getVKSettings,
       makeVkLonpPollUrl,
-      makeVKConfigError,
       tryMakeVKSettings,
       initConfig,
       checkRepNumber ) 
