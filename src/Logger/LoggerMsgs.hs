@@ -8,8 +8,9 @@ fatalConfig :: T.Text
 fatalConfig = "FATAL ERROR: couldn't find or read the config file," 
             <> " check the path to the file and the information inside it"
 
-vkFatalError ::T.Text
-vkFatalError = "FATAL ERROR: VK Config parsing error. Couldn't find group id or token"
+vkFatalError :: Logger.LogMessage
+vkFatalError = Logger.LogMessage Logger.Error 
+    "FATAL ERROR: VK Config parsing error. Couldn't find group id or token"
 
 getTelUpdScs :: Logger.LogMessage
 getTelUpdScs = Logger.LogMessage Logger.Debug 
@@ -95,3 +96,6 @@ initConfigExcept :: Logger.LogMessage
 initConfigExcept = Logger.LogMessage Logger.Error 
     ("Couldn't find or read the config file," 
             <> " check the path to the file and the information inside it")
+
+parseErr :: Logger.LogMessage
+parseErr = Logger.LogMessage Logger.Error "Parsing bytestring into struct failed: "
