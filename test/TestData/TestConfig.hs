@@ -11,7 +11,7 @@ testConfigVK :: Config.Config
 testConfigVK = Config.Config  
     (Config.VKBot (Config.VK "token" 11 "key" "server" 0))
     "VK help message"
-    1 
+    3 
     users 
     Logger.Debug 
 
