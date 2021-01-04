@@ -21,7 +21,7 @@ callbackMessages :: [PureStructs.PureMessage]
 callbackMessages = [cbMsg1, cbMsg2, cbMsg3, cbMsg4, cbMsg5, cbMsg6]
 
 commonMessages :: [PureStructs.PureMessage]
-commonMessages = [cmnMsg1, cmnMsg2, cmnMsg3, cmnMsg4]
+commonMessages = [cmnMsg1, cmnMsg2, cmnMsg3, cmnMsg4, cmnMsg5]
 
 emptyMsg1 :: PureStructs.PureMessage 
 emptyMsg1 = PureStructs.PureMessage 
@@ -201,7 +201,17 @@ cmnMsg4 :: PureStructs.PureMessage
 cmnMsg4 = PureStructs.PureMessage   
     (PureStructs.MTCommon "Message")
     2
-    (Just 11)
+    (Just 33)
+    (Just [PureStructs.ParamsBool "bool" True, PureStructs.ParamsText "text" "some text", 
+        PureStructs.ParamsDouble "double" 3.14, PureStructs.ParamsNum "num" 1024, 
+        PureStructs.ParamsTextList "textList" ["one","two","three"],
+        PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)]) ]) 
+
+cmnMsg5 :: PureStructs.PureMessage 
+cmnMsg5 = PureStructs.PureMessage   
+    (PureStructs.MTCommon "Message")
+    2
+    (Just 42)
     (Just [PureStructs.ParamsBool "bool" True, PureStructs.ParamsText "text" "some text", 
         PureStructs.ParamsDouble "double" 3.14, PureStructs.ParamsNum "num" 1024, 
         PureStructs.ParamsTextList "textList" ["one","two","three"],
