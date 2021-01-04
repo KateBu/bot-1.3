@@ -60,26 +60,18 @@ processMsgsCommon :: Monad m => Config.Config -> a
     -> m (Either Logger.LogMessage Config.Config)
 processMsgsCommon config logger function msg chid = do 
     let newRepeat = Config.findUserRepeat config chid 
-    repeatMsg config logger msg newRepeat function
+    repeatMsg logger msg newRepeat function config
 
-repeatMsg :: Monad m => Config.Config -> a
+repeatMsg :: Monad m => a
     -> PureStructs.PureMessage 
     -> Int
     -> SendFunction a m
-    -> m (Either Logger.LogMessage Config.Config)
-repeatMsg config _ _ 0 _ = pure $ Right config
-repeatMsg config logger msg n function =  do
-    eiConfig <- function config logger msg 
-    either (pure . Left) (repeatMsgScs logger msg n function) eiConfig 
-
-repeatMsgScs :: Monad m => a 
-    -> PureStructs.PureMessage  
-    -> Int
-    -> SendFunction a m
     -> Config.Config
-    -> m (Either Logger.LogMessage Config.Config) 
-repeatMsgScs logger msg n function config = 
-    repeatMsg config logger msg (n-1) function
+    -> m (Either Logger.LogMessage Config.Config)
+repeatMsg _ _ 0 _ config = pure $ Right config
+repeatMsg logger msg n function config =  do
+    eiConfig <- function config logger msg 
+    either (pure . Left) (repeatMsg logger msg (n-1) function) eiConfig 
 
 makeRepeatMsg :: PureStructs.PureMessage -> PureStructs.PureMessage 
 makeRepeatMsg msg = PureStructs.PureMessage 
