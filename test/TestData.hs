@@ -30,7 +30,8 @@ import TestData.TestMessages as Tests
       cmnMsg1,
       cmnMsg2,
       cmnMsg3,
-      cmnMsg4 ) 
+      cmnMsg4,
+      cmnMsg5 ) 
 import TestData.TestFunctions as Tests
     ( testFunction0, testFunction1 ) 
 
