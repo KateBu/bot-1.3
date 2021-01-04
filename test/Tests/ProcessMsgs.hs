@@ -1,6 +1,6 @@
 module Tests.ProcessMsgs where
 
-import Data.Maybe
+import Data.Maybe ( isJust )
 import Test.HUnit ( assertEqual, Test(TestCase) ) 
 import qualified Logic.Logic as Logic 
 import qualified TestData as TestData
