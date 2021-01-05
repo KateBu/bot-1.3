@@ -11,7 +11,8 @@ data BotException = InitConfigExcept Logger.LogMessage
     | UpdateExcept Logger.LogMessage
     | SendExcept Logger.LogMessage 
     | OtherExcept Logger.LogMessage 
-
+    deriving Eq 
+    
 instance Show BotException where 
     show (InitConfigExcept logMsg) = 
         "InitConfigException occured -- " <> show logMsg

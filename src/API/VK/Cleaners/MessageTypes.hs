@@ -5,19 +5,9 @@ import Control.Applicative ( Alternative((<|>)) )
 import Data.Maybe ( fromMaybe ) 
 import qualified API.VK.Structs as VKStructs 
 import qualified Logic.PureStructs as PureStructs
-import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Exceptions.Exceptions as BotEx 
-{-
-getMessageType :: VKStructs.VKMessage -> Either Logger.LogMessage PureStructs.MessageType
-getMessageType vkMsg = maybe (Left LoggerMsgs.notImplemented) Right msgType 
-    where msgType = mbCallBackMsg vkMsg
-            <|> mbUserCommand vkMsg
-            <|> mbAttachmentMsg vkMsg
-            <|> mbGeo vkMsg
-            <|> mbFwd vkMsg 
-            <|> mbTextMsg vkMsg              
--}
+
 mbCallBackMsg, mbUserCommand
     , mbAttachmentMsg, mbTextMsg
     , mbGeo, mbFwd :: VKStructs.VKMessage -> Maybe PureStructs.MessageType 
@@ -81,8 +71,8 @@ mbRep5 txt = if T.isInfixOf PureStructs.rep5 txt
     then pure PureStructs.rep5 
     else Nothing 
 
-getMessageType' :: VKStructs.VKMessage -> Either BotEx.BotException PureStructs.MessageType
-getMessageType' vkMsg = maybe (BotEx.throwOtherException LoggerMsgs.notImplemented) Right msgType 
+getMessageType :: VKStructs.VKMessage -> Either BotEx.BotException PureStructs.MessageType
+getMessageType vkMsg = maybe (BotEx.throwOtherException LoggerMsgs.notImplemented) Right msgType 
     where msgType = mbCallBackMsg vkMsg
             <|> mbUserCommand vkMsg
             <|> mbAttachmentMsg vkMsg

@@ -21,11 +21,11 @@ runBot (Right config) = do
 runBot' :: Either BotEx.BotException Config.Config -> IO ()
 runBot' (Left err) = BotEx.handleBotException err
 runBot' (Right config) = do 
-    handle <- Handle.new' config  
-    logger <- Handle.hLogger' handle 
-    conf <- Handle.hConfig' handle 
-    Handle.hGetUpdates' handle conf logger 
-        >>= Logic.processMsgs' config logger (Handle.hSendMessage' handle)
+    handle <- Handle.new config  
+    logger <- Handle.hLogger handle 
+    conf <- Handle.hConfig handle 
+    Handle.hGetUpdates handle conf logger 
+        >>= Logic.processMsgs config logger (Handle.hSendMessage handle)
         >>= nextLoop' logger 
 {-
 nextLoop :: Logger.Logger -> (Either Logger.LogMessage Config.Config) -> IO ()
