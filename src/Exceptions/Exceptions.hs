@@ -1,7 +1,7 @@
 module Exceptions.Exceptions where
 
 import qualified Data.Text as T
-import Control.Exception ( SomeException, Exception, IOException ) 
+import Control.Exception ( Exception, IOException ) 
 import qualified Logger.Logger as Logger 
 import qualified Logger.LoggerMsgs as LoggerMsgs
 
@@ -10,7 +10,7 @@ data BotException = InitConfigExcept Logger.LogMessage
     | ParseExcept Logger.LogMessage
     | UpdateExcept Logger.LogMessage
     | SendExcept Logger.LogMessage 
-    | OtherExcept SomeException 
+    | OtherExcept Logger.LogMessage 
 
 instance Show BotException where 
     show (InitConfigExcept logMsg) = 
@@ -42,8 +42,17 @@ throwInitConfigExcept = throwBotExcept $ InitConfigExcept LoggerMsgs.initConfigE
 throwParseExcept :: Monad m => String -> m (Either BotException a)
 throwParseExcept err = throwBotExcept $ ParseExcept (Logger.makeLogMessage LoggerMsgs.parseErr (T.pack err))
 
-throwUpdateExcept :: Monad m => Logger.LogMessage -> m (Either BotException a)
-throwUpdateExcept = pure . Left . UpdateExcept  
+throwUpdateExcept :: Logger.LogMessage -> Either BotException a
+throwUpdateExcept = Left . UpdateExcept  
+
+throwSendExcept :: Logger.LogMessage -> Either BotException a
+throwSendExcept = Left . SendExcept  
+
+throwIOException :: Monad m => IOException -> m (Either BotException a)
+throwIOException = pure . Left . IOExept 
+
+throwOtherException :: Logger.LogMessage -> Either BotException a
+throwOtherException = Left . OtherExcept 
 
 catchBotExcept :: Monad m => (BotException -> Either BotException a)
     -> Either BotException a 

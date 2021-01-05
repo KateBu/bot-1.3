@@ -2,7 +2,6 @@ module Config.MakeConfigFunctions where
 
 import Control.Exception ( try, IOException ) 
 import qualified Data.Text as T 
-import qualified Data.Text.IO as TIO 
 import qualified Data.Map as Map 
 import qualified Data.Configurator as Configurator 
 import qualified Data.Configurator.Types as Configurator 
@@ -26,7 +25,7 @@ parseConfig path = do
 getConfigFile :: String -> IO (Either BotEx.BotException Configurator.Config) 
 getConfigFile path = do 
     config <- try $ Configurator.load [Configurator.Required path] :: IO (Either IOException Configurator.Config) 
-    either (BotEx.throwBotExcept . BotEx.IOExept) (pure . Right) config 
+    either BotEx.throwIOException (pure . Right) config 
 
 parseConfigFile :: Either BotEx.BotException Configurator.Config -> 
     IO (Either BotEx.BotException Config.Config) 
@@ -50,16 +49,11 @@ setBotTypeSettings (Just "Telegram") _ _ (Just tToken) =
     pure $ Config.TBot <$> Right (Config.Telegram tToken 0)
 setBotTypeSettings _ _ _ _ = BotEx.throwInitConfigExcept 
 
-vkSettingsError :: T.Text -> IO (Maybe Config.BotType) 
-vkSettingsError err = do 
-    TIO.putStrLn err 
-    pure Nothing 
-
 vkSettingsScs ::   Maybe Int -> Maybe Config.Token -> (T.Text, T.Text, Int) 
     -> IO (Either BotEx.BotException Config.BotType)  
 vkSettingsScs (Just group) (Just vKToken) (key,serv,ts) = do 
     let vk = Config.VK vKToken group key serv ts
-    pure $ Config.VKBot <$> Right vk 
+    pure . pure $ Config.VKBot vk 
 vkSettingsScs _ _ _ = BotEx.throwInitConfigExcept
 
 getVKSettings :: Maybe Int -> Maybe T.Text -> IO (Either BotEx.BotException (T.Text, T.Text, Int))
@@ -80,7 +74,7 @@ getLongPollReqBody group tok = do
     resBody <- try $ 
             (parseRequest $ makeVkLonpPollUrl group tok) >>=
                 httpLBS >>= pure . getResponseBody :: IO (Either IOException BSL.ByteString) 
-    pure $ either (Left . BotEx.IOExept) Right resBody 
+    either BotEx.throwIOException (pure . Right) resBody 
 
 getLongPollInfo :: Either BotEx.BotException BSL.ByteString 
     -> IO (Either BotEx.BotException (T.Text, T.Text, Int))
@@ -90,7 +84,7 @@ getLongPollInfo (Right respBody) = do
     either BotEx.throwParseExcept tryMakeVKSettings eiResponse 
 
 tryMakeVKSettings :: VKStructs.VKResponse -> IO (Either BotEx.BotException (T.Text, T.Text, Int)) 
-tryMakeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse k s t)) = pure $ Right (k,s,(read t))
+tryMakeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse k s t)) = pure . pure $ (k,s,(read t))
 tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError ec em)) = pure $ 
     Left $ BotEx.InitConfigExcept (Logger.makeLogMessage LoggerMsgs.initConfigExcept 
         ("error_code: " 

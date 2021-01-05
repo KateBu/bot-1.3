@@ -8,6 +8,6 @@ configPath = "config.config"
 
 main :: IO ()
 main = 
-    Config.parseConfig configPath >>= Bot.runBot  
+    Config.parseConfig configPath >>= Bot.runBot'  
     
  

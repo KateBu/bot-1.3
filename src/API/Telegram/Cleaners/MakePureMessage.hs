@@ -19,8 +19,17 @@ import API.Telegram.Cleaners.MbMsgType
       mbPoll,
       mbDoc,
       mbVideo )
+import qualified Exceptions.Exceptions as BotEx 
 
-
+telUpdateToPureMessage' :: Config.Config -> TStructs.TelUpdateResult 
+    -> Either BotEx.BotException PureStructs.PureMessage
+telUpdateToPureMessage' config res = do 
+    let uid = TStructs.update_id res 
+    let mbPureMessage = mbMakeCallbackPureMessage res uid <|> mbMakePureMessage config res uid 
+    case mbPureMessage of 
+        Just msg -> pure msg 
+        Nothing -> BotEx.throwUpdateExcept LoggerMsgs.noUpd 
+{-
 telUpdateToPureMessage :: Config.Config -> TStructs.TelUpdateResult 
     -> Either Logger.LogMessage PureStructs.PureMessage
 telUpdateToPureMessage config res = do 
@@ -29,7 +38,7 @@ telUpdateToPureMessage config res = do
     case mbPureMessage of 
         Just msg -> pure msg 
         Nothing -> Left LoggerMsgs.noUpd 
-    
+    -}
 mbMakeCallbackPureMessage :: TStructs.TelUpdateResult 
     -> PureStructs.UpdateID
     -> Maybe PureStructs.PureMessage
