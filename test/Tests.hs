@@ -16,6 +16,18 @@ import Tests.ProcessMsgs as Tests
     ( testProcessMsgs) 
 import Tests.GetLastConf as Tests
     ( testGetLastConf) 
+import Tests.ConfigSetOffset as Tests
+    ( testConfigSetOffset ) 
+import Tests.AddUser as Tests
+    ( testAddUser) 
+import Tests.DeleteUser as Tests
+    ( testDeleteUser) 
+import Tests.FindUserRepeat as Tests
+    ( testFindUserRepeat) 
+import Tests.ReWriteUserRepeat as Tests
+    ( testReWriteUserRepeat) 
+import Tests.SetUserRepeat as Tests
+    ( testSetUserRepeat) 
 
 
 
