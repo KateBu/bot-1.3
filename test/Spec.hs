@@ -3,6 +3,18 @@ import Test.HUnit ( runTestTT )
 
 main :: IO ()
 main = do 
+    putStrLn "Config.setUserRepeat function tests:"
+    mapM_ runTestTT Tests.testSetUserRepeat
+    putStrLn "Config.reWriteUserRepeat function tests:"
+    mapM_ runTestTT Tests.testReWriteUserRepeat
+    putStrLn "Config.findUserRepeat function tests:"
+    mapM_ runTestTT Tests.testFindUserRepeat
+    putStrLn "Config.deleteUser function tests:"
+    mapM_ runTestTT Tests.testDeleteUser
+    putStrLn "Config.addUser function tests:"
+    mapM_ runTestTT Tests.testAddUser
+    putStrLn "Config.configSetOffset function tests:"
+    mapM_ runTestTT Tests.testConfigSetOffset
     putStrLn "Logic.getLastConf function tests:"
     mapM_ runTestTT Tests.testGetLastConf
     putStrLn "Logic.processMsgs function tests:"
