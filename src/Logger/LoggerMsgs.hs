@@ -144,3 +144,6 @@ initConfigExcept =
 
 parseErr :: Logger.LogMessage
 parseErr = Logger.LogMessage Logger.Error "Parsing bytestring into struct failed: "
+
+httpEx :: Logger.LogMessage
+httpEx = Logger.LogMessage Logger.Error "Http exception: "
