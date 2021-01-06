@@ -1,6 +1,6 @@
 module API.Telegram.Cleaners.GetParams where
 
-import qualified API.Telegram.Structs as TStructs 
+import qualified API.Telegram.TStructs.MessageInfo as TStructs 
 import qualified Logic.PureStructs as PureStructs 
 
 basicParams :: PureStructs.ChatID -> TStructs.MessageInfo -> [PureStructs.Params] 
