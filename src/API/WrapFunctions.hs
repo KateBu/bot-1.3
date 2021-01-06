@@ -6,6 +6,8 @@ import qualified API.WrapStructs as WrapStructs
 import qualified Config.Config as Config
 import Data.Aeson (encode)
 import qualified Data.Text as T
+import qualified Data.Text.Lazy as TL
+import qualified Data.Text.Lazy.Encoding as TE
 import qualified Logic.PureStructs as PureStructs
 import qualified Network.HTTP.Client.MultipartFormData as LM
 import Network.HTTP.Req
@@ -38,7 +40,7 @@ paramToUrl (PureStructs.ParamsTextList _ _) = mempty
 paramToUrl (PureStructs.ParamsJSON _ _) = mempty
 
 paramToMultipart :: PureStructs.Params -> [LM.Part]
-paramToMultipart (PureStructs.ParamsText key val) = [LM.partLBS key (encode val)]
+paramToMultipart (PureStructs.ParamsText key val) = [LM.partLBS key (TE.encodeUtf8 $ TL.fromStrict val)]
 paramToMultipart (PureStructs.ParamsNum key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsDouble key val) = [LM.partLBS key (encode val)]
 paramToMultipart (PureStructs.ParamsBool key val) = [LM.partLBS key (encode val)]
