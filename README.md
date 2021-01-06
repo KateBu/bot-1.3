@@ -38,3 +38,12 @@
 <p> <img src="https://user-images.githubusercontent.com/30144022/103772254-4623ab00-503a-11eb-9f2f-17c23e2790e1.png">
 </p>
 
+### VK bot 
+<p> Usual text message (default number of repetition is 2) and /help command response </p>
+<p> <img src="https://user-images.githubusercontent.com/30144022/103773538-46bd4100-503c-11eb-806f-f7ff7d75f1ed.png">
+</p>
+
+<p> /repeat command response and text message (number of repetition is 5) </p>
+<p> <img src="https://user-images.githubusercontent.com/30144022/103773589-59377a80-503c-11eb-956a-4b563f3929e4.png">
+</p>
+
