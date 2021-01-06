@@ -4,10 +4,11 @@ import Control.Exception (Exception, IOException)
 import qualified Data.Text as T
 import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
+import Network.HTTP.Req (HttpException)
 
 data BotException
   = InitConfigExcept Logger.LogMessage
-  | IOExept IOException
+  | IOExcept IOException
   | ParseExcept Logger.LogMessage
   | UpdateExcept Logger.LogMessage
   | SendExcept Logger.LogMessage
@@ -17,7 +18,7 @@ data BotException
 instance Show BotException where
   show (InitConfigExcept logMsg) =
     "InitConfigException occured -- " <> show logMsg
-  show (IOExept ioEx) =
+  show (IOExcept ioEx) =
     "IO exception occured -- " <> show ioEx
   show (ParseExcept logMsg) =
     "Parsing exception occured -- " <> show logMsg
@@ -51,7 +52,10 @@ throwSendExcept :: Logger.LogMessage -> Either BotException a
 throwSendExcept = Left . SendExcept
 
 throwIOException :: Monad m => IOException -> m (Either BotException a)
-throwIOException = pure . Left . IOExept
+throwIOException = pure . Left . IOExcept
 
 throwOtherException :: Logger.LogMessage -> Either BotException a
 throwOtherException = Left . OtherExcept
+
+throwHttpException :: Monad m => HttpException -> m (Either BotException a)
+throwHttpException err = pure . Left . OtherExcept $ Logger.makeLogMessage LoggerMsgs.httpEx (T.pack . show $ err)
