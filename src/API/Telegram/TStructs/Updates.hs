@@ -10,6 +10,8 @@ import Data.Aeson.Types ( parseFail )
 import API.Messages ( parseFailMessage ) 
 import API.Telegram.TStructs.Callback as Structs
     ( CBChat(..), CBMsg(..), Callback(..) ) 
+import API.Telegram.TStructs.UpdateErr as Structs
+    ( TelegramUpdatesError(..) )
 import API.Telegram.TStructs.MessageInfo as Structs
     ( MessageInfo(..),
       TelChat(..),
