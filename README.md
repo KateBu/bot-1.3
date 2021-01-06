@@ -33,7 +33,8 @@
 <p> Usual text message (default number of repetition is 2) and /help command response </p>
 <p> <img src="https://user-images.githubusercontent.com/30144022/103772217-30ae8100-503a-11eb-9e66-017d6053ddae.png">
 </p>
-![tel5] (https://user-images.githubusercontent.com/30144022/103772217-30ae8100-503a-11eb-9e66-017d6053ddae.png)
 
 <p> /repeat command response and text message (number of repetition is 3) </p>
-![tel4] (https://user-images.githubusercontent.com/30144022/103772254-4623ab00-503a-11eb-9f2f-17c23e2790e1.png)
+<p> <img src="https://user-images.githubusercontent.com/30144022/103772254-4623ab00-503a-11eb-9f2f-17c23e2790e1.png">
+</p>
+
