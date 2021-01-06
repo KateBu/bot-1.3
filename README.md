@@ -1,11 +1,8 @@
-# Update info
-## Telegram bot works properly and supports any types of messages (with or without attachments). 
-## VK bot can process text messages, /repeat and /help commands, map coordinates, links, stickers, audio, video attachments. If there is an attachment the VK bot cannot process, the attachment will be ignored. 
-
 
 # Echo bot for Telegram and VK 
 
-<p> The bot is not completed yet, it doesn't have any unit-tests. </p>
+<p> Telegram bot works properly and supports any types of messages (with or without attachments).  </p>
+<p> VK bot can process text messages, /repeat and /help commands, map coordinates, links, stickers, audio, video attachments. If there is an attachment the VK bot cannot process, the attachment will be ignored.   </p>
 
 ## What the bot can do 
 
@@ -29,5 +26,12 @@
 <p><b>logPriority</b>: use "Debug", "Info", "Warning" or "Error" (quotes are required).</p>
 
 
+## How it works
+<p> You can see some screenshots below. </p>
 
+### Telegram bot 
+<p> Usual text message (default number of repetition is 2) and /help command response </p>
+![tel5](https://user-images.githubusercontent.com/30144022/103772217-30ae8100-503a-11eb-9e66-017d6053ddae.png)
 
+<p> /repeat command response and text message (number of repetition is 3) </p>
+![tel4](https://user-images.githubusercontent.com/30144022/103772254-4623ab00-503a-11eb-9f2f-17c23e2790e1.png)
