@@ -1,7 +1,7 @@
 module API.Telegram.Cleaners.MakePureMessage where
 
 import Control.Applicative ( Alternative((<|>)) )
-import qualified API.Telegram.Structs as TStructs 
+import qualified API.Telegram.TStructs.Updates as TStructs 
 import qualified Logic.PureStructs as PureStructs 
 import qualified Config.Config as Config 
 import qualified Logger.LoggerMsgs as LoggerMsgs 
