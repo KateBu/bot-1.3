@@ -54,15 +54,3 @@ throwIOException = pure . Left . IOExept
 
 throwOtherException :: Logger.LogMessage -> Either BotException a
 throwOtherException = Left . OtherExcept 
-
-catchBotExcept :: Monad m => (BotException -> Either BotException a)
-    -> Either BotException a 
-    -> m (Either BotException a) 
-catchBotExcept _ (Right smth) = pure $ Right smth 
-catchBotExcept handler (Left exception) = 
-    pure $ handler exception 
-
-
-
-
-
