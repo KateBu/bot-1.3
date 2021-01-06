@@ -1,27 +1,27 @@
 module Config.Config (module Config) where
 
-import Config.ConfigStructs as Config
-    ( Token, Users, VK(..), Telegram(..), BotType(..), Config(..) )
 import Config.ConfigData as Config
-    ( timeOut, vkApiVersion, vkLongPollUrl )
-import Config.MakeConfigFunctions as Config
-    ( parseConfig )   
+  ( timeOut,
+    vkApiVersion,
+    vkLongPollUrl,
+  )
 import Config.ConfigFunctions as Config
-    ( addUser,
-      configGetUid,
-      configSetOffset,
-      deleteUser,
-      findUserRepeat,
-      reWriteUserRepeat,
-      setUserRepeat )
-    
-    
-
-
-
-
-
-
-
-
-
+  ( addUser,
+    configGetUid,
+    configSetOffset,
+    deleteUser,
+    findUserRepeat,
+    reWriteUserRepeat,
+    setUserRepeat,
+  )
+import Config.ConfigStructs as Config
+  ( BotType (..),
+    Config (..),
+    Telegram (..),
+    Token,
+    Users,
+    VK (..),
+  )
+import Config.MakeConfigFunctions as Config
+  ( parseConfig,
+  )

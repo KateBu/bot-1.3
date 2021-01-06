@@ -1,13 +1,18 @@
 module Tests.MakeCallbackResponse where
 
-import Test.HUnit ( assertBool, Test(TestCase) ) 
-import qualified Logic.Logic as Logic 
+import qualified Logic.Logic as Logic
+import qualified Logic.PureStructs as PureStructs
+import Test.HUnit (Test (TestCase), assertBool)
 import qualified TestData as TestData
-import qualified Logic.PureStructs as PureStructs 
 
-testMakeCallbackResponse :: Test 
+testMakeCallbackResponse :: Test
 testMakeCallbackResponse = TestCase (assertBool "Message type should be MTCommon Message" testMakeCallbackResponse')
 
 testMakeCallbackResponse' :: Bool
-testMakeCallbackResponse' = all (== PureStructs.MTCommon "Message") (PureStructs.messageType .
-    Logic.makeCallbackResponse <$> TestData.allMessages) 
+testMakeCallbackResponse' =
+  all
+    (== PureStructs.MTCommon "Message")
+    ( PureStructs.messageType
+        . Logic.makeCallbackResponse
+        <$> TestData.allMessages
+    )

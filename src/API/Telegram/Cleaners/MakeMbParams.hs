@@ -1,10 +1,10 @@
 module API.Telegram.Cleaners.MakeMbParams where
 
 import qualified Data.Text as T
-import qualified Logic.PureStructs as PureStructs 
+import qualified Logic.PureStructs as PureStructs
 
-makeMaybeTextParams ::  T.Text -> Maybe T.Text -> [PureStructs.Params]
-makeMaybeTextParams _ Nothing = [] 
+makeMaybeTextParams :: T.Text -> Maybe T.Text -> [PureStructs.Params]
+makeMaybeTextParams _ Nothing = []
 makeMaybeTextParams key (Just val) = pure $ PureStructs.ParamsText key val
 
 makeMaybeBoolParams :: T.Text -> Maybe Bool -> [PureStructs.Params]

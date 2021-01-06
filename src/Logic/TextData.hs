@@ -1,6 +1,6 @@
 module Logic.TextData where
 
-import qualified Data.Text as T 
+import qualified Data.Text as T
 
 repeatText :: T.Text
 repeatText = "Выберите количество повторов: "
