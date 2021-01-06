@@ -1,6 +1,6 @@
 module API.Telegram.Cleaners.MbVoice where
 
-import qualified API.Telegram.Structs as TStructs 
+import qualified API.Telegram.TStructs.MessageInfo as TStructs 
 import qualified Logic.PureStructs as PureStructs 
 import API.Telegram.Cleaners.GetParams ( basicParams )
 

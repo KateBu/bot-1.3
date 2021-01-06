@@ -1,7 +1,7 @@
 module API.Telegram.Cleaners.MbTxt where
 
 import qualified Data.Text as T 
-import qualified API.Telegram.Structs as TStructs 
+import qualified API.Telegram.TStructs.MessageInfo as TStructs 
 import qualified Logic.PureStructs as PureStructs 
 import qualified Config.Config as Config 
 import API.Telegram.Cleaners.GetParams ( basicParams )
