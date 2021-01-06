@@ -6,7 +6,7 @@ import qualified API.VK.Structs as VKStructs
 import qualified API.WrapFunctions as WrapFunctions
 import qualified API.WrapStructs as WrapStructs
 import qualified Config.Config as Config
-import Control.Exception (IOException, catch)
+import Control.Exception (catch)
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
@@ -16,7 +16,8 @@ import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.PureStructs as PureStructs
 import Network.HTTP.Req
-  ( LbsResponse,
+  ( HttpException,
+    LbsResponse,
     Option,
     POST (POST),
     Scheme (Https),
@@ -61,7 +62,7 @@ getResponseMultipart (Just url) params options = do
             options
         (pure . pure) response
     )
-    (\ex -> BotEx.throwIOException (ex :: IOException))
+    (\ex -> BotEx.throwHttpException (ex :: HttpException))
 
 getResponseUrl ::
   Maybe (Url 'Https) ->
@@ -81,7 +82,7 @@ getResponseUrl (Just ulr) params options =
             options
         (pure . pure) response
     )
-    (\ex -> BotEx.throwIOException (ex :: IOException))
+    (\ex -> BotEx.throwHttpException (ex :: HttpException))
 
 responseToLbsByteString ::
   Either BotEx.BotException LbsResponse ->
