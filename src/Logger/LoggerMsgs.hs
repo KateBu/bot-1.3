@@ -1,12 +1,6 @@
 module Logger.LoggerMsgs where
 
-import qualified Data.Text as T
 import qualified Logger.Logger as Logger
-
-fatalConfig :: T.Text
-fatalConfig =
-  "FATAL ERROR: couldn't find or read the config file,"
-    <> " check the path to the file and the information inside it"
 
 vkFatalError :: Logger.LogMessage
 vkFatalError =
@@ -59,7 +53,7 @@ chidNotFound =
 nextLoop :: Logger.LogMessage
 nextLoop =
   Logger.LogMessage
-    Logger.Debug
+    Logger.Info
     "Go to the next loop"
 
 vkUpdatesFailed1 :: Logger.LogMessage
