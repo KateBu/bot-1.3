@@ -60,6 +60,10 @@ vkUpdatesFailed4 :: Logger.LogMessage
 vkUpdatesFailed4 = Logger.LogMessage Logger.Error  
     "VKUpdate failed: Unexpected error code"
 
+vkDecUpdatesFailed :: Logger.LogMessage
+vkDecUpdatesFailed = Logger.LogMessage Logger.Error 
+    "Decode vk update failed: "
+
 notImplemented :: Logger.LogMessage
 notImplemented = Logger.LogMessage Logger.Error      
     "Pattern is not implemented yet"
@@ -99,3 +103,4 @@ initConfigExcept = Logger.LogMessage Logger.Error
 
 parseErr :: Logger.LogMessage
 parseErr = Logger.LogMessage Logger.Error "Parsing bytestring into struct failed: "
+
