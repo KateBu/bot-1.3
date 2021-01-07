@@ -35,7 +35,7 @@
 </p>
 
 <p> /repeat command response and text message (number of repetition is 3) </p>
-<p> <img src="https://user-images.githubusercontent.com/30144022/103772254-4623ab00-503a-11eb-9f2f-17c23e2790e1.png">
+<p> <img src="https://user-images.githubusercontent.com/30144022/103865354-1fff1900-50d5-11eb-8fc8-e904bf8b7c40.png">
 </p>
 
 ### VK bot 
@@ -44,6 +44,6 @@
 </p>
 
 <p> /repeat command response and text message (number of repetition is 5) </p>
-<p> <img src="https://user-images.githubusercontent.com/30144022/103773589-59377a80-503c-11eb-956a-4b563f3929e4.png">
+<p> <img src="https://user-images.githubusercontent.com/30144022/103865404-360cd980-50d5-11eb-98b7-14634ea570d5.png">
 </p>
 
