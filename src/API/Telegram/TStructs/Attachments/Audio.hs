@@ -1,4 +1,4 @@
-module API.Telegram.TStructs.Audio where
+module API.Telegram.TStructs.Attachments.Audio where
 
 import API.Messages (parseFailMessage)
 import Data.Aeson

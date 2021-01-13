@@ -1,4 +1,4 @@
-module API.Telegram.TStructs.Contact where
+module API.Telegram.TStructs.Attachments.Contact where
 
 import API.Messages (parseFailMessage)
 import Data.Aeson

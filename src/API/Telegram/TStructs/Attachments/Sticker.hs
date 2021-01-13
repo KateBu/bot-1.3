@@ -1,16 +1,18 @@
-module API.Telegram.TStructs.Document where
+module API.Telegram.TStructs.Attachments.Sticker where
 
 import API.Messages (parseFailMessage)
 import Data.Aeson (FromJSON (parseJSON), Value (Object), (.:))
 import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 
-data TelDocument = TelDocument
-  { doc_file_id :: T.Text
+data TelSticker = TelSticker
+  { s_file_id :: T.Text,
+    s_is_animated :: Bool
   }
   deriving (Show)
 
-instance FromJSON TelDocument where
+instance FromJSON TelSticker where
   parseJSON (Object v) =
-    TelDocument <$> v .: "file_id"
+    TelSticker <$> v .: "file_id"
+      <*> v .: "is_animated"
   parseJSON _ = parseFail parseFailMessage

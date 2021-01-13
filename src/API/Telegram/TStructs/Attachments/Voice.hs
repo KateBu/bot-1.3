@@ -1,16 +1,16 @@
-module API.Telegram.TStructs.Photo where
+module API.Telegram.TStructs.Attachments.Voice where
 
 import API.Messages (parseFailMessage)
 import Data.Aeson (FromJSON (parseJSON), Value (Object), (.:))
 import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 
-data TelPhoto = TelPhoto
-  { photo_file_id :: T.Text
+data TelVoice = TelVoice
+  { voice_file_id :: T.Text
   }
   deriving (Show)
 
-instance FromJSON TelPhoto where
+instance FromJSON TelVoice where
   parseJSON (Object v) =
-    TelPhoto <$> v .: "file_id"
+    TelVoice <$> v .: "file_id"
   parseJSON _ = parseFail parseFailMessage

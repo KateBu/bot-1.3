@@ -1,4 +1,4 @@
-module API.Telegram.TStructs.Venue where
+module API.Telegram.TStructs.Attachments.Venue where
 
 import API.Messages (parseFailMessage)
 import Data.Aeson (FromJSON (parseJSON), Value (Object), (.:))

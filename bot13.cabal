@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7355485d913edfb18598630e1a932b89f151419a9e073511d62cbf9be4da400c
+-- hash: 3d72166c0872dd3c0c349e0603a23d0e4fc222e26832ad0173114b3ee0ba4e81
 
 name:           bot13
 version:        0.1.0.0
@@ -48,23 +48,23 @@ library
       API.Telegram.Cleaners.MakePureMessage
       API.Telegram.Cleaners.MbMsgType
       API.Telegram.TelData
-      API.Telegram.TStructs.Animation
-      API.Telegram.TStructs.Audio
+      API.Telegram.TStructs.Attachments.Animation
+      API.Telegram.TStructs.Attachments.Audio
+      API.Telegram.TStructs.Attachments.Contact
+      API.Telegram.TStructs.Attachments.Document
+      API.Telegram.TStructs.Attachments.Location
+      API.Telegram.TStructs.Attachments.Photo
+      API.Telegram.TStructs.Attachments.Poll
+      API.Telegram.TStructs.Attachments.Sticker
+      API.Telegram.TStructs.Attachments.Venue
+      API.Telegram.TStructs.Attachments.Video
+      API.Telegram.TStructs.Attachments.Voice
       API.Telegram.TStructs.Buttons
       API.Telegram.TStructs.Callback
       API.Telegram.TStructs.Chat
-      API.Telegram.TStructs.Contact
-      API.Telegram.TStructs.Document
-      API.Telegram.TStructs.Location
       API.Telegram.TStructs.MessageInfo
-      API.Telegram.TStructs.Photo
-      API.Telegram.TStructs.Poll
-      API.Telegram.TStructs.Sticker
       API.Telegram.TStructs.UpdateErr
       API.Telegram.TStructs.Updates
-      API.Telegram.TStructs.Venue
-      API.Telegram.TStructs.Video
-      API.Telegram.TStructs.Voice
       API.VK.Cleaners.IsObjFunctions
       API.VK.Cleaners.Keyboard
       API.VK.Cleaners.MessageTypes

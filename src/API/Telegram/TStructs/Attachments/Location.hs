@@ -1,4 +1,4 @@
-module API.Telegram.TStructs.Location where
+module API.Telegram.TStructs.Attachments.Location where
 
 import Data.Aeson (FromJSON)
 import GHC.Generics (Generic)

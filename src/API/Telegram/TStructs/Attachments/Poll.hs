@@ -1,4 +1,4 @@
-module API.Telegram.TStructs.Poll where
+module API.Telegram.TStructs.Attachments.Poll where
 
 import API.Messages (parseFailMessage)
 import Data.Aeson
