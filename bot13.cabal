@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5aafcef52f82c02b3507870593e47a942aeabeeac178306fdd1863346669569f
+-- hash: 7355485d913edfb18598630e1a932b89f151419a9e073511d62cbf9be4da400c
 
 name:           bot13
 version:        0.1.0.0
@@ -30,23 +30,23 @@ library
       API.Bot
       API.Messages
       API.Telegram.Cleaners
+      API.Telegram.Cleaners.Attachments.MbAnimation
+      API.Telegram.Cleaners.Attachments.MbAudio
+      API.Telegram.Cleaners.Attachments.MbContact
+      API.Telegram.Cleaners.Attachments.MbDoc
+      API.Telegram.Cleaners.Attachments.MbLocation
+      API.Telegram.Cleaners.Attachments.MbPhoto
+      API.Telegram.Cleaners.Attachments.MbPoll
+      API.Telegram.Cleaners.Attachments.MbSticker
+      API.Telegram.Cleaners.Attachments.MbTxt
+      API.Telegram.Cleaners.Attachments.MbVenue
+      API.Telegram.Cleaners.Attachments.MbVideo
+      API.Telegram.Cleaners.Attachments.MbVoice
       API.Telegram.Cleaners.GetParams
       API.Telegram.Cleaners.Keyboard
       API.Telegram.Cleaners.MakeMbParams
       API.Telegram.Cleaners.MakePureMessage
-      API.Telegram.Cleaners.MbAnimation
-      API.Telegram.Cleaners.MbAudio
-      API.Telegram.Cleaners.MbContact
-      API.Telegram.Cleaners.MbDoc
-      API.Telegram.Cleaners.MbLocation
       API.Telegram.Cleaners.MbMsgType
-      API.Telegram.Cleaners.MbPhoto
-      API.Telegram.Cleaners.MbPoll
-      API.Telegram.Cleaners.MbSticker
-      API.Telegram.Cleaners.MbTxt
-      API.Telegram.Cleaners.MbVenue
-      API.Telegram.Cleaners.MbVideo
-      API.Telegram.Cleaners.MbVoice
       API.Telegram.TelData
       API.Telegram.TStructs.Animation
       API.Telegram.TStructs.Audio
