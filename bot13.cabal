@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1afae161cd9751940827ac4a496afbb10b43307ded4ffc3ce5ee12a702e9a145
+-- hash: 5aafcef52f82c02b3507870593e47a942aeabeeac178306fdd1863346669569f
 
 name:           bot13
 version:        0.1.0.0
@@ -80,9 +80,12 @@ library
       API.VK.VKStructs.SendResult
       API.VK.VKStructs.UpdateInfo
       API.VK.VKStructs.Updates
-      API.WrapFunctions
       API.Wrapper
-      API.WrapStructs
+      API.Wrapper.GetResponseFunctions
+      API.Wrapper.GetUpdate
+      API.Wrapper.SendMessage
+      API.Wrapper.WrapFunctions
+      API.Wrapper.WrapStructs
       Config.Config
       Config.ConfigData
       Config.ConfigFunctions
