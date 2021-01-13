@@ -1,4 +1,4 @@
-module API.WrapStructs where
+module API.Wrapper.WrapStructs where
 
 import qualified Data.Text as T
 

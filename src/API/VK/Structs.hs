@@ -1,6 +1,5 @@
 module API.VK.Structs
-  ( module Structs,
-    module API.VK.Structs,
+  ( module Structs
   )
 where
 

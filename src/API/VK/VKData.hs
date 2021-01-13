@@ -1,6 +1,6 @@
 module API.VK.VKData where
 
-import qualified API.WrapStructs as WrapStructs
+import qualified API.Wrapper.WrapStructs as WrapStructs
 import qualified Config.Config as Config
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs

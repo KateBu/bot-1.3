@@ -1,8 +1,8 @@
-module API.WrapFunctions where
+module API.Wrapper.WrapFunctions where
 
 import qualified API.Telegram.TelData as TelData
 import qualified API.VK.VKData as VKData
-import qualified API.WrapStructs as WrapStructs
+import qualified API.Wrapper.WrapStructs as WrapStructs
 import qualified Config.Config as Config
 import Data.Aeson (encode)
 import qualified Data.Text as T
