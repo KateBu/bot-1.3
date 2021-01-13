@@ -1,4 +1,4 @@
-module API.Telegram.Cleaners.MbTxt where
+module API.Telegram.Cleaners.Attachments.MbTxt where
 
 import API.Telegram.Cleaners.GetParams (basicParams)
 import API.Telegram.Cleaners.Keyboard

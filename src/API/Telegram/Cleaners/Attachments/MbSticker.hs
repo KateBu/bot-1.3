@@ -1,4 +1,4 @@
-module API.Telegram.Cleaners.MbSticker where
+module API.Telegram.Cleaners.Attachments.MbSticker where
 
 import API.Telegram.Cleaners.GetParams (basicParams)
 import qualified API.Telegram.TStructs.MessageInfo as TStructs

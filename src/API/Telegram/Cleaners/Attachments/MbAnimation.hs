@@ -1,31 +1,31 @@
-module API.Telegram.Cleaners.MbDoc where
+module API.Telegram.Cleaners.Attachments.MbAnimation where
 
 import API.Telegram.Cleaners.GetParams (basicParams)
 import qualified API.Telegram.TStructs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
-mbDoc ::
+mbAnimation ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbDoc uid chid mInfo =
-  let mbDocument = TStructs.document mInfo
-   in maybe Nothing (mbDoc' uid chid mInfo) mbDocument
+mbAnimation uid chid mInfo =
+  let mbAnim = TStructs.animation mInfo
+   in maybe Nothing (mbAnimation' uid chid mInfo) mbAnim
 
-mbDoc' ::
+mbAnimation' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
-  TStructs.TelDocument ->
+  TStructs.TelAmination ->
   Maybe PureStructs.PureMessage
-mbDoc' uid chid mInfo doc =
+mbAnimation' uid chid mInfo anim =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Document")
+      (PureStructs.MTCommon "Animation")
       uid
       (Just chid)
       ( Just $
           basicParams chid mInfo
-            <> [PureStructs.ParamsText "document" (TStructs.doc_file_id doc)]
+            <> [PureStructs.ParamsText "animation" (TStructs.animation_file_id anim)]
       )

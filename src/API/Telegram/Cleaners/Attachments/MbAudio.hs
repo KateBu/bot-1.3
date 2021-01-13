@@ -1,4 +1,4 @@
-module API.Telegram.Cleaners.MbAudio where
+module API.Telegram.Cleaners.Attachments.MbAudio where
 
 import API.Telegram.Cleaners.GetParams (basicParams)
 import qualified API.Telegram.TStructs.MessageInfo as TStructs

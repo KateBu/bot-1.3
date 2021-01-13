@@ -1,4 +1,4 @@
-module API.Telegram.Cleaners.MbVenue where
+module API.Telegram.Cleaners.Attachments.MbVenue where
 
 import API.Telegram.Cleaners.GetParams (basicParams)
 import qualified API.Telegram.TStructs.MessageInfo as TStructs

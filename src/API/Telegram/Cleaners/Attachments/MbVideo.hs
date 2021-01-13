@@ -1,35 +1,31 @@
-module API.Telegram.Cleaners.MbPhoto where
+module API.Telegram.Cleaners.Attachments.MbVideo where
 
 import API.Telegram.Cleaners.GetParams (basicParams)
 import qualified API.Telegram.TStructs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
-mbPhoto ::
+mbVideo ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbPhoto uid chid mInfo =
-  let mbPh = TStructs.photo mInfo
-   in maybe Nothing (mbPhoto' uid chid mInfo) mbPh
+mbVideo uid chid mInfo =
+  let mbVid = TStructs.video mInfo
+   in maybe Nothing (mbVideo' uid chid mInfo) mbVid
 
-mbPhoto' ::
+mbVideo' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
-  [TStructs.TelPhoto] ->
+  TStructs.TelVideo ->
   Maybe PureStructs.PureMessage
-mbPhoto' uid chid mInfo photo =
+mbVideo' uid chid mInfo video =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Photo")
+      (PureStructs.MTCommon "Video")
       uid
       (Just chid)
       ( Just $
           basicParams chid mInfo
-            <> getPhotoParams photo
+            <> [PureStructs.ParamsText "video" (TStructs.video_file_id video)]
       )
-
-getPhotoParams :: [TStructs.TelPhoto] -> [PureStructs.Params]
-getPhotoParams [] = []
-getPhotoParams (x : _) = [PureStructs.ParamsText "photo" (TStructs.photo_file_id x)]

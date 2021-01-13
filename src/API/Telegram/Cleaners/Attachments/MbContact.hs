@@ -1,4 +1,4 @@
-module API.Telegram.Cleaners.MbContact where
+module API.Telegram.Cleaners.Attachments.MbContact where
 
 import API.Telegram.Cleaners.GetParams (basicParams)
 import API.Telegram.Cleaners.MakeMbParams (makeMaybeTextParams)
