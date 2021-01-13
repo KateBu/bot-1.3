@@ -9,7 +9,6 @@ import API.Telegram.TStructs.Attachments.Animation as Structs
   ( TelAmination (..),
   )
 import API.Telegram.TStructs.Attachments.Audio as Structs (TelAudio (..))
-import API.Telegram.TStructs.Chat as Structs (TelChat (..))
 import API.Telegram.TStructs.Attachments.Contact as Structs (TelContact (..))
 import API.Telegram.TStructs.Attachments.Document as Structs
   ( TelDocument (..),
@@ -26,6 +25,7 @@ import API.Telegram.TStructs.Attachments.Sticker as Structs (TelSticker (..))
 import API.Telegram.TStructs.Attachments.Venue as Structs (TelVenue (..))
 import API.Telegram.TStructs.Attachments.Video as Structs (TelVideo (..))
 import API.Telegram.TStructs.Attachments.Voice as Structs (TelVoice (..))
+import API.Telegram.TStructs.Chat as Structs (TelChat (..))
 import Data.Aeson
   ( FromJSON (parseJSON),
     Value (Object),
