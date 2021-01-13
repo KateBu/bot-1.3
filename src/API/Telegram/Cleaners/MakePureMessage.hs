@@ -17,6 +17,7 @@ import API.Telegram.Cleaners.MbMsgType
 import qualified API.Telegram.TStructs.Updates as TStructs
 import qualified Config.Config as Config
 import Control.Applicative (Alternative ((<|>)))
+import Data.Maybe (fromMaybe)
 import qualified Exceptions.Exceptions as BotEx
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.PureStructs as PureStructs
@@ -24,13 +25,11 @@ import qualified Logic.PureStructs as PureStructs
 telUpdateToPureMessage ::
   Config.Config ->
   TStructs.TelUpdateResult ->
-  Either BotEx.BotException PureStructs.PureMessage
+  PureStructs.PureMessage
 telUpdateToPureMessage config res = do
   let uid = TStructs.update_id res
   let mbPureMessage = mbMakeCallbackPureMessage res uid <|> mbMakePureMessage config res uid
-  case mbPureMessage of
-    Just msg -> pure msg
-    Nothing -> BotEx.throwUpdateExcept LoggerMsgs.noUpd
+  fromMaybe (BotEx.throwPureUpdateExcept LoggerMsgs.noUpd) mbPureMessage
 
 mbMakeCallbackPureMessage ::
   TStructs.TelUpdateResult ->

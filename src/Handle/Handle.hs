@@ -2,7 +2,6 @@ module Handle.Handle where
 
 import qualified API.Wrapper as Wrapper
 import qualified Config.Config as Config
-import qualified Exceptions.Exceptions as BotEx
 import qualified Logger.Logger as Logger
 import qualified Logic.PureStructs as PureStructs
 
@@ -12,12 +11,12 @@ data Handle m = Handle
     hGetUpdates ::
       Config.Config ->
       Logger.Logger ->
-      m (Either BotEx.BotException [PureStructs.PureMessage]),
+      m [PureStructs.PureMessage],
     hSendMessage ::
       Config.Config ->
       Logger.Logger ->
       PureStructs.PureMessage ->
-      m (Either BotEx.BotException Config.Config)
+      m Config.Config
   }
 
 new :: Config.Config -> IO (Handle IO)

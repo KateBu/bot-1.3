@@ -1,6 +1,6 @@
 module Exceptions.Exceptions where
 
-import Control.Exception (Exception, IOException)
+import Control.Exception (Exception, IOException, throw)
 import qualified Data.Text as T
 import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
@@ -12,6 +12,7 @@ data BotException
   | ParseExcept Logger.LogMessage
   | UpdateExcept Logger.LogMessage
   | SendExcept Logger.LogMessage
+  | HttpExcept Logger.LogMessage
   | OtherExcept Logger.LogMessage
   deriving (Eq)
 
@@ -26,6 +27,8 @@ instance Show BotException where
     "Update exception occured -- " <> show logMsg
   show (SendExcept logMsg) =
     "Send exception occured -- " <> show logMsg
+  show (HttpExcept logMsg) =
+    "Http exception occured -- " <> show logMsg
   show (OtherExcept oEx) =
     "Other exception occured -- " <> show oEx
 
@@ -36,26 +39,32 @@ handleBotException ex = do
   print ex
   putStrLn "Program terminated"
 
-throwBotExcept :: Monad m => BotException -> m (Either BotException a)
-throwBotExcept err = pure $ Left err
+throwBotExcept :: Monad m => BotException -> m a
+throwBotExcept = pure . throw
 
-throwInitConfigExcept :: Monad m => m (Either BotException a)
-throwInitConfigExcept = throwBotExcept $ InitConfigExcept LoggerMsgs.initConfigExcept
+throwInitConfigExcept :: Monad m => m a
+throwInitConfigExcept = pure . throw $ InitConfigExcept LoggerMsgs.initConfigExcept
 
-throwParseExcept :: Monad m => String -> m (Either BotException a)
+throwParseExcept :: Monad m => String -> m a
 throwParseExcept err = throwBotExcept $ ParseExcept (Logger.makeLogMessage LoggerMsgs.parseErr (T.pack err))
 
-throwUpdateExcept :: Logger.LogMessage -> Either BotException a
-throwUpdateExcept = Left . UpdateExcept
+throwUpdateExcept :: Monad m => Logger.LogMessage -> m a
+throwUpdateExcept = pure . throw . UpdateExcept
 
-throwSendExcept :: Logger.LogMessage -> Either BotException a
-throwSendExcept = Left . SendExcept
+throwPureUpdateExcept :: Logger.LogMessage -> a
+throwPureUpdateExcept = throw . UpdateExcept
 
-throwIOException :: Monad m => IOException -> m (Either BotException a)
-throwIOException = pure . Left . IOExcept
+throwSendExcept :: Monad m => Logger.LogMessage -> m a
+throwSendExcept = pure . throw . SendExcept
 
-throwOtherException :: Logger.LogMessage -> Either BotException a
-throwOtherException = Left . OtherExcept
+throwIOException :: Monad m => IOException -> m a
+throwIOException = pure . throw . IOExcept
 
-throwHttpException :: Monad m => HttpException -> m (Either BotException a)
-throwHttpException err = pure . Left . OtherExcept $ Logger.makeLogMessage LoggerMsgs.httpEx (T.pack . show $ err)
+throwOtherException :: Monad m => Logger.LogMessage -> m a
+throwOtherException = pure . throw . OtherExcept
+
+throwPureOtherException :: Logger.LogMessage -> a
+throwPureOtherException = throw . OtherExcept
+
+throwHttpException :: Monad m => HttpException -> m a
+throwHttpException err = pure . throw . HttpExcept $ Logger.makeLogMessage LoggerMsgs.httpEx (T.pack . show $ err)

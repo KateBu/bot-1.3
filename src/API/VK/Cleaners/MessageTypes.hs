@@ -81,8 +81,8 @@ mbRep5 txt =
     then pure PureStructs.rep5
     else Nothing
 
-getMessageType :: VKStructs.VKMessage -> Either BotEx.BotException PureStructs.MessageType
-getMessageType vkMsg = maybe (BotEx.throwOtherException LoggerMsgs.notImplemented) Right msgType
+getMessageType :: VKStructs.VKMessage -> PureStructs.MessageType
+getMessageType vkMsg = fromMaybe (BotEx.throwPureOtherException LoggerMsgs.notImplemented) msgType
   where
     msgType =
       mbCallBackMsg vkMsg
