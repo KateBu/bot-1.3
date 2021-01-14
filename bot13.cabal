@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3d72166c0872dd3c0c349e0603a23d0e4fc222e26832ad0173114b3ee0ba4e81
+-- hash: 004505cd6bfbe48b5ce720c8fc4e9d0844d1031a9debca2ca56e6d760b9ca38e
 
 name:           bot13
 version:        0.1.0.0
@@ -91,7 +91,12 @@ library
       Config.ConfigFunctions
       Config.ConfigStructs
       Config.MakeConfigFunctions
+      Environment.EnvFunctions
+      Environment.Environment
+      Environment.EnvStructs
       Exceptions.Exceptions
+      Exceptions.ExFunctions
+      Exceptions.ExStructs
       Handle.Handle
       Logger.Logger
       Logger.LoggerMsgs
@@ -117,6 +122,7 @@ library
     , http-conduit
     , http-types
     , modern-uri
+    , mtl
     , random
     , req
     , split
@@ -144,6 +150,7 @@ executable bot13-exe
     , http-conduit
     , http-types
     , modern-uri
+    , mtl
     , random
     , req
     , split
@@ -193,6 +200,7 @@ test-suite bot13-test
     , http-conduit
     , http-types
     , modern-uri
+    , mtl
     , random
     , req
     , split

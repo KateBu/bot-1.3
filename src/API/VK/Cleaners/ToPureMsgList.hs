@@ -1,31 +1,32 @@
-module API.VK.Cleaners.ToPureMsgList (vkByteStringToPureMessageList) where
+module API.VK.Cleaners.ToPureMsgList (vkByteStringToPureMessageList, vkByteStringToPureMessageList') where
 
-import API.VK.Cleaners.ToPureMessages (mkPureMessage)
-import qualified API.VK.Structs as VKStructs
-import qualified Config.Config as Config
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
+import Control.Monad.Reader ( ReaderT(runReaderT) )
+import API.VK.Cleaners.ToPureMessages (mkPureMessage)
+import qualified API.VK.Structs as VKStructs
+import qualified Config.Config as Config
 import qualified Exceptions.Exceptions as BotEx
 import qualified Logger.Logger as Logger
 import qualified Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.PureStructs as PureStructs
+import qualified Environment.Environment as Env 
 
-vkByteStringToPureMessageList ::
-  Config.Config ->
-  Logger.Logger ->
+vkByteStringToPureMessageList' ::
+  Env.Env IO ->
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
-vkByteStringToPureMessageList config logger bs =
-  decByteString logger bs
-    >>= vkUpdInfoToPureMessageList config logger
+vkByteStringToPureMessageList' env bs =
+  decByteString' env bs
+    >>= vkUpdInfoToPureMessageList' env
 
-decByteString ::
-  Logger.Logger ->
+decByteString' ::
+  Env.Env IO ->
   BSL.ByteString ->
   IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
-decByteString logger json = do
-  Logger.botLog logger LoggerMsgs.getVKUpdScs
+decByteString' env json = do
+  runReaderT (Env.eLog LoggerMsgs.vkDecBS) env
   let eiUpdates = eitherDecode json :: Either String VKStructs.VKUpdates
   either decodeUpdErr decodeUpdScs eiUpdates
 
@@ -47,13 +48,13 @@ decodeUpdScs (VKStructs.VKUpdates upd) =
   pure $
     (read (VKStructs.ts upd), (VKStructs.updates upd))
 
-vkUpdInfoToPureMessageList ::
-  Config.Config ->
-  Logger.Logger ->
+vkUpdInfoToPureMessageList' ::
+  Env.Env IO ->
   (PureStructs.UpdateID, [VKStructs.VKUpdInfo]) ->
   IO [PureStructs.PureMessage]
-vkUpdInfoToPureMessageList config logger (uid, upds) = do
-  Logger.botLog logger LoggerMsgs.parseVKMsgScs
+vkUpdInfoToPureMessageList' env (uid, upds) = do
+  runReaderT (Env.eLog LoggerMsgs.parseVKMsgScs) env
+  config <- runReaderT Env.eGetConfig env 
   pure $ (vkUpdInfoToPureMessage config uid) <$> upds
 
 vkUpdInfoToPureMessage ::
@@ -78,3 +79,41 @@ justUpdObj ::
 justUpdObj config uid obj = do
   let vkMessage = VKStructs.vkMessage obj
   mkPureMessage config uid vkMessage
+
+
+
+
+
+
+
+
+vkByteStringToPureMessageList ::
+  Config.Config ->
+  Logger.Logger IO ->
+  BSL.ByteString ->
+  IO [PureStructs.PureMessage]
+vkByteStringToPureMessageList config logger bs =
+  decByteString logger bs
+    >>= vkUpdInfoToPureMessageList config logger
+
+decByteString ::
+  Logger.Logger IO ->
+  BSL.ByteString ->
+  IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
+decByteString logger json = do
+  Logger.botLog logger LoggerMsgs.getVKUpdScs
+  let eiUpdates = eitherDecode json :: Either String VKStructs.VKUpdates
+  either decodeUpdErr decodeUpdScs eiUpdates
+
+
+
+vkUpdInfoToPureMessageList ::
+  Config.Config ->
+  Logger.Logger IO ->
+  (PureStructs.UpdateID, [VKStructs.VKUpdInfo]) ->
+  IO [PureStructs.PureMessage]
+vkUpdInfoToPureMessageList config logger (uid, upds) = do
+  Logger.botLog logger LoggerMsgs.parseVKMsgScs
+  pure $ (vkUpdInfoToPureMessage config uid) <$> upds
+
+
