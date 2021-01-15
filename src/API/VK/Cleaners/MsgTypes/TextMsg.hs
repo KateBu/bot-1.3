@@ -1,0 +1,10 @@
+module API.VK.Cleaners.MsgTypes.TextMsg where
+
+import qualified Logic.PureStructs as PureStructs
+import qualified API.VK.Structs as VKStructs 
+
+mbTextMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType 
+mbTextMsg vkMsg = case VKStructs.msgText vkMsg of
+  Nothing -> Nothing
+  Just "" -> Nothing
+  _ -> pure $ PureStructs.MTCommon "Message" 
