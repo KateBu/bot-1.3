@@ -1,15 +1,15 @@
 module API.VK.Cleaners.Params.AttachParams where
 
+import API.VK.Cleaners.Params.BaseParams (baseParams)
 import API.VK.Cleaners.Params.IsObjFunctions
   ( isLink,
     isMedia,
     isSticker,
   )
-import API.VK.Cleaners.Params.SharedFunctions ( setMessageParam )
+import API.VK.Cleaners.Params.SharedFunctions (setMessageParam)
 import qualified API.VK.Structs as VKStructs
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
-import API.VK.Cleaners.Params.BaseParams ( baseParams ) 
 
 makeAttachParams ::
   VKStructs.VKMessage ->
@@ -92,6 +92,3 @@ getOwnerIdItemIdAccessKey ownerId itemId accessKey =
     <> (T.pack . show) itemId
     <> "_"
     <> accessKey
-
-
-

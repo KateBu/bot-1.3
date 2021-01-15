@@ -1,15 +1,19 @@
 module API.VK.Cleaners.Params (makeParams, baseParams) where
 
 import API.VK.Cleaners.Keyboard (keyboard)
+import API.VK.Cleaners.Params.AttachParams
+  ( attachmentListParams,
+    makeAttachParams,
+  )
+import API.VK.Cleaners.Params.BaseParams (baseParams)
+import API.VK.Cleaners.Params.Fwd (getFwdMsgIds)
+import API.VK.Cleaners.Params.SharedFunctions
+  ( setMaybeDoubleParam,
+    setMessageParam,
+  )
 import qualified API.VK.Structs as VKStructs
 import qualified Config.Config as Config
 import qualified Logic.PureStructs as PureStructs
-import API.VK.Cleaners.Params.BaseParams ( baseParams ) 
-import API.VK.Cleaners.Params.Fwd ( getFwdMsgIds ) 
-import API.VK.Cleaners.Params.SharedFunctions
-    ( setMessageParam, setMaybeDoubleParam )
-import API.VK.Cleaners.Params.AttachParams
-    ( makeAttachParams, attachmentListParams )
 
 makeParams ::
   Config.Config ->
@@ -44,4 +48,3 @@ makeParams _ (PureStructs.MTCommon "Attachment") vkMsg = do
   let attachParams = attachmentListParams vkMsg (VKStructs.attachments vkMsg)
   makeAttachParams vkMsg attachParams
 makeParams _ _ _ = Nothing
-

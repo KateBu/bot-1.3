@@ -1,7 +1,7 @@
 module API.VK.Cleaners.MsgTypes.Attachment where
 
+import qualified API.VK.Structs as VKStructs
 import qualified Logic.PureStructs as PureStructs
-import qualified API.VK.Structs as VKStructs 
 
 mbAttachmentMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
 mbAttachmentMsg vkMsg = VKStructs.attachments vkMsg >>= mbAttachmentMsg'
