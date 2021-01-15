@@ -11,7 +11,7 @@ keyboard :: Value
 keyboard =
   object
     [ "inline" .= True,
-      "buttons" .= (((fmap . fmap) pureBtnToVKBtnAct PureStructs.buttons'))
+      "buttons" .= (fmap . fmap) pureBtnToVKBtnAct PureStructs.buttons'
     ]
 
 pureBtnToVKBtnAct :: PureStructs.PureButtons -> VKStructs.BtnAction

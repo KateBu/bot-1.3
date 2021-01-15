@@ -26,14 +26,14 @@ mbNewRep callback =
     <|> mbRep4 callback
     <|> mbRep5 callback
 
-mbUserCommand vkMsg = maybe Nothing mbUserCommand' $ VKStructs.msgText vkMsg
+mbUserCommand vkMsg = VKStructs.msgText vkMsg >>= mbUserCommand'
 
 mbUserCommand' :: T.Text -> Maybe PureStructs.MessageType
 mbUserCommand' "/help" = pure $ PureStructs.MTUserCommand PureStructs.Help
 mbUserCommand' "/repeat" = pure $ PureStructs.MTUserCommand PureStructs.Repeat
 mbUserCommand' _ = Nothing
 
-mbAttachmentMsg vkMsg = maybe Nothing mbAttachmentMsg' $ VKStructs.attachments vkMsg
+mbAttachmentMsg vkMsg = VKStructs.attachments vkMsg >>= mbAttachmentMsg'
   where
     mbAttachmentMsg' [] = Nothing
     mbAttachmentMsg' _ = pure $ PureStructs.MTCommon "Attachment"

@@ -21,7 +21,7 @@ makeParams ::
   Maybe [PureStructs.Params]
 makeParams config (PureStructs.MTUserCommand PureStructs.Help) vkMsg =
   pure $
-    (PureStructs.ParamsText "message" (Config.helpMessage config)) : baseParams vkMsg
+    PureStructs.ParamsText "message" (Config.helpMessage config) : baseParams vkMsg
 makeParams _ (PureStructs.MTUserCommand PureStructs.Repeat) vkMsg =
   pure $
     baseParams vkMsg
@@ -30,12 +30,12 @@ makeParams _ (PureStructs.MTUserCommand PureStructs.Repeat) vkMsg =
          ]
 makeParams _ (PureStructs.MTCommon "Message") vkMsg = do
   txt <- VKStructs.msgText vkMsg
-  pure $ (PureStructs.ParamsText "message" txt) : baseParams vkMsg
+  pure $ PureStructs.ParamsText "message" txt : baseParams vkMsg
 makeParams _ (PureStructs.MTCommon "Geo") vkMsg =
   pure $
     setMessageParam (VKStructs.msgText vkMsg)
-      <> setMaybeDoubleParam "lat" ((fmap VKStructs.latitude) . (fmap VKStructs.gCoordinates) . VKStructs.geo) vkMsg
-      <> setMaybeDoubleParam "long" ((fmap VKStructs.longitude) . (fmap VKStructs.gCoordinates) . VKStructs.geo) vkMsg
+      <> setMaybeDoubleParam "lat" (fmap (VKStructs.latitude . VKStructs.gCoordinates) . VKStructs.geo) vkMsg
+      <> setMaybeDoubleParam "long" (fmap (VKStructs.longitude . VKStructs.gCoordinates) . VKStructs.geo) vkMsg
       <> baseParams vkMsg
 makeParams _ (PureStructs.MTCommon "Fwd") vkMsg = do
   let msgIds = getFwdMsgIds (VKStructs.fwdMessages vkMsg)
