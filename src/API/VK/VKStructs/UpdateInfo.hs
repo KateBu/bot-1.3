@@ -43,7 +43,7 @@ instance FromJSON VKUpdInfo where
           <$> obj .:? "object"
       _ -> pure $ VKUpdInfo OtherEvent Nothing
 
-data VKObject = VKObject
+newtype VKObject = VKObject
   { vkMessage :: VKMessage
   }
   deriving (Show)

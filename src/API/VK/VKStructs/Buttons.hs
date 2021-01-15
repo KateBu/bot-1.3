@@ -12,7 +12,7 @@ data VKKeyBoard = VKKeyBoard
 
 instance ToJSON VKKeyBoard
 
-data BtnAction = BtnAction VKButtons
+newtype BtnAction = BtnAction VKButtons
   deriving (Show)
 
 instance ToJSON BtnAction where

@@ -16,12 +16,12 @@ data VKResult
   | SendMsgError SendError
   deriving (Show)
 
-data SendSuccess = SendSuccess
+newtype SendSuccess = SendSuccess
   { newTs :: Int
   }
   deriving (Show)
 
-data SendError = SendError
+newtype SendError = SendError
   { resError :: VKResultError
   }
   deriving (Show)
