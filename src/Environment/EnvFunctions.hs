@@ -2,7 +2,7 @@ module Environment.EnvFunctions where
 
 import Control.Monad.State
     ( MonadTrans(lift),
-      StateT(runStateT),
+      StateT,
       MonadState(put, get),
       gets,
       evalStateT,
@@ -11,7 +11,7 @@ import Environment.EnvStructs (Env (..))
 import qualified Logger.Logger as Logger
 import qualified Config.Config as Config
 
-type STEmvM m = StateT (Env m) m (Env m)
+type STEmvM m = StateT (Env m) m (Env m) 
 
 eInitEnv :: Config.Config -> IO (Env IO)
 eInitEnv config =
@@ -23,9 +23,7 @@ stLog msg = do
   lift $ Logger.botLog (eLogger state) msg
 
 eLog :: Monad m => Logger.LogMessage -> Env m -> m ()
-eLog msg env = do
-  runStateT (stLog msg) env
-  pure ()
+eLog msg = evalStateT (stLog msg)
 
 stSetOffset :: (Monad m) => Int -> STEmvM m
 stSetOffset newOffset = do
