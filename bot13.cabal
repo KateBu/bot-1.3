@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 004505cd6bfbe48b5ce720c8fc4e9d0844d1031a9debca2ca56e6d760b9ca38e
+-- hash: 0425e6c2233c82515003048409b2269ec5d5d2d33fe0cd36c9baca32535fed08
 
 name:           bot13
 version:        0.1.0.0
@@ -65,10 +65,20 @@ library
       API.Telegram.TStructs.MessageInfo
       API.Telegram.TStructs.UpdateErr
       API.Telegram.TStructs.Updates
-      API.VK.Cleaners.IsObjFunctions
       API.VK.Cleaners.Keyboard
       API.VK.Cleaners.MessageTypes
+      API.VK.Cleaners.MsgTypes.Attachment
+      API.VK.Cleaners.MsgTypes.Callback
+      API.VK.Cleaners.MsgTypes.Fwd
+      API.VK.Cleaners.MsgTypes.Geo
+      API.VK.Cleaners.MsgTypes.TextMsg
+      API.VK.Cleaners.MsgTypes.UserCommand
       API.VK.Cleaners.Params
+      API.VK.Cleaners.Params.AttachParams
+      API.VK.Cleaners.Params.BaseParams
+      API.VK.Cleaners.Params.Fwd
+      API.VK.Cleaners.Params.IsObjFunctions
+      API.VK.Cleaners.Params.SharedFunctions
       API.VK.Cleaners.ToPureMessages
       API.VK.Cleaners.ToPureMsgList
       API.VK.Structs

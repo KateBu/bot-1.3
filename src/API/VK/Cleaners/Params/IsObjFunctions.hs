@@ -1,4 +1,4 @@
-module API.VK.Cleaners.IsObjFunctions where
+module API.VK.Cleaners.Params.IsObjFunctions where
 
 import qualified API.VK.Structs as VKStructs
 
