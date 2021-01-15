@@ -19,7 +19,7 @@ reWriteUserRepeat config chid newRep _ =
   (addUser chid newRep . deleteUser chid) config
 
 findUserRepeat :: Config -> Int -> Int
-findUserRepeat config chid = fromMaybe (repetition config) (Map.lookup chid (users config))
+findUserRepeat config chid = fromMaybe (repetition config) $ Map.lookup chid (users config)
 
 deleteUser :: Int -> Config -> Config
 deleteUser chid (Config bt hm rep uss prior) =

@@ -69,10 +69,8 @@ getVKSettings _ _ = BotEx.throwInitConfigExcept
 getLongPollReqBody :: Int -> T.Text -> IO BSL.ByteString
 getLongPollReqBody group tok = do
   resBody <-
-    try $
-      (parseRequest $ makeVkLonpPollUrl group tok)
-        >>= httpLBS
-        >>= pure . getResponseBody ::
+    try
+      (getResponseBody <$> (parseRequest (makeVkLonpPollUrl group tok) >>= httpLBS)) ::
       IO (Either IOException BSL.ByteString)
   either BotEx.throwIOException pure resBody
 
@@ -84,7 +82,7 @@ getLongPollInfo respBody = do
   either BotEx.throwParseExcept tryMakeVKSettings eiResponse
 
 tryMakeVKSettings :: VKStructs.VKResponse -> IO (T.Text, T.Text, Int)
-tryMakeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse k s t)) = pure (k, s, (read t))
+tryMakeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse k s t)) = pure (k, s, read t)
 tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError ec em)) =
   BotEx.throwBotExcept $
     BotEx.InitConfigExcept

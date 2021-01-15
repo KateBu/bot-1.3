@@ -86,4 +86,4 @@ mkSndHostPath :: Config.BotType -> PureStructs.PureMessage -> Maybe (Url 'Https)
 mkSndHostPath (Config.VKBot _) _ = hostPathToUrlScheme VKData.sendHostPath
 mkSndHostPath tel@(Config.TBot _) msg =
   hostPathToUrlScheme $
-    (TelData.sendHostPath tel (PureStructs.messageType msg))
+    TelData.sendHostPath tel (PureStructs.messageType msg)
