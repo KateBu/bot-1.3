@@ -10,6 +10,7 @@ import Logic.Structs.Buttons as PureStructs
     rep4,
     rep5,
   )
+import Logic.Structs.Functions as PureStructs (SendFunction)
 import Logic.Structs.Messages as PureStructs
   ( ChatID,
     MbCaption,

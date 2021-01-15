@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 05df54b3a41c362eaab2c629f336268bfd471b7df4bcb7ac1f71818d4d96abbd
+-- hash: 83a7bd0cbb05e9dfad7ba93f5e7c559deb665e4cd37db6918a3f4002388f3b74
 
 name:           bot13
 version:        0.1.0.0
@@ -113,8 +113,11 @@ library
       Logger.Logger
       Logger.LoggerMsgs
       Logic.Logic
+      Logic.ProcMsgs.Callback
+      Logic.ProcMsgs.Common
       Logic.PureStructs
       Logic.Structs.Buttons
+      Logic.Structs.Functions
       Logic.Structs.Messages
       Logic.TextData
   other-modules:
