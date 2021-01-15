@@ -10,8 +10,7 @@ mbVoice ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbVoice uid chid mInfo =
-  let mbV = TStructs.voice mInfo
-   in maybe Nothing (mbVoice' uid chid mInfo) mbV
+  TStructs.voice mInfo >>= mbVoice' uid chid mInfo
 
 mbVoice' ::
   PureStructs.UpdateID ->

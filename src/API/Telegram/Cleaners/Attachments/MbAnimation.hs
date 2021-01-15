@@ -10,8 +10,7 @@ mbAnimation ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbAnimation uid chid mInfo =
-  let mbAnim = TStructs.animation mInfo
-   in maybe Nothing (mbAnimation' uid chid mInfo) mbAnim
+  TStructs.animation mInfo >>= mbAnimation' uid chid mInfo
 
 mbAnimation' ::
   PureStructs.UpdateID ->

@@ -10,8 +10,7 @@ mbDoc ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbDoc uid chid mInfo =
-  let mbDocument = TStructs.document mInfo
-   in maybe Nothing (mbDoc' uid chid mInfo) mbDocument
+  TStructs.document mInfo >>= mbDoc' uid chid mInfo
 
 mbDoc' ::
   PureStructs.UpdateID ->

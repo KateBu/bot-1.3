@@ -10,8 +10,7 @@ mbPhoto ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbPhoto uid chid mInfo =
-  let mbPh = TStructs.photo mInfo
-   in maybe Nothing (mbPhoto' uid chid mInfo) mbPh
+  TStructs.photo mInfo >>= mbPhoto' uid chid mInfo
 
 mbPhoto' ::
   PureStructs.UpdateID ->

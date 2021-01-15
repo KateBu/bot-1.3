@@ -15,8 +15,7 @@ mbPoll ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbPoll uid chid mInfo =
-  let mbP = TStructs.poll mInfo
-   in maybe Nothing (mbPoll' uid chid mInfo) mbP
+  TStructs.poll mInfo >>= mbPoll' uid chid mInfo
 
 mbPoll' ::
   PureStructs.UpdateID ->

@@ -11,8 +11,7 @@ mbContact ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbContact uid chid mInfo =
-  let mbCon = TStructs.contact mInfo
-   in maybe Nothing (mbContact' uid chid mInfo) mbCon
+  TStructs.contact mInfo >>= mbContact' uid chid mInfo
 
 mbContact' ::
   PureStructs.UpdateID ->

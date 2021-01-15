@@ -17,8 +17,7 @@ mbTextMessage ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbTextMessage config uid chid mInfo =
-  let mbTxt = TStructs.txt mInfo
-   in maybe Nothing (mkTxtMsg config uid chid mInfo) mbTxt
+  TStructs.txt mInfo >>= mkTxtMsg config uid chid mInfo
 
 mkTxtMsg ::
   Config.Config ->

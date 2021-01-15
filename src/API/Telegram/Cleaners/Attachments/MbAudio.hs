@@ -10,8 +10,7 @@ mbAudio ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbAudio uid chid mInfo =
-  let mbAud = TStructs.audio mInfo
-   in maybe Nothing (mbAudio' uid chid mInfo) mbAud
+  TStructs.audio mInfo >>= mbAudio' uid chid mInfo
 
 mbAudio' ::
   PureStructs.UpdateID ->

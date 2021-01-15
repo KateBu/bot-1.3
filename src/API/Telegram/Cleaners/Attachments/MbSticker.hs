@@ -10,8 +10,7 @@ mbSticker ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbSticker uid chid mInfo =
-  let mbSt = TStructs.sticker mInfo
-   in maybe Nothing (mbSticker' uid chid mInfo) mbSt
+  TStructs.sticker mInfo >>= mbSticker' uid chid mInfo
 
 mbSticker' ::
   PureStructs.UpdateID ->

@@ -10,8 +10,7 @@ mbVideo ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbVideo uid chid mInfo =
-  let mbVid = TStructs.video mInfo
-   in maybe Nothing (mbVideo' uid chid mInfo) mbVid
+  TStructs.video mInfo >>= mbVideo' uid chid mInfo
 
 mbVideo' ::
   PureStructs.UpdateID ->

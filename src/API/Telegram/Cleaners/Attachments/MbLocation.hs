@@ -11,8 +11,7 @@ mbLocation ::
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
 mbLocation uid chid mInfo =
-  let mbLoc = TStructs.location mInfo
-   in maybe Nothing (mbLocation' uid chid mInfo) mbLoc
+  TStructs.location mInfo >>= mbLocation' uid chid mInfo
 
 mbLocation' ::
   PureStructs.UpdateID ->
