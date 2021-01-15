@@ -9,38 +9,34 @@ vkFatalError =
     "FATAL ERROR: VK Config parsing error. Couldn't find group id or token"
 
 runBot :: Logger.LogMessage
-runBot = 
-  Logger.LogMessage 
-    Logger.Info 
-    "Bot is running"
+runBot =
+  Logger.LogMessage
+    Logger.Info
+    "Bot is running..."
 
 getRespMulti :: Logger.LogMessage
-getRespMulti = 
-  Logger.LogMessage 
-    Logger.Debug 
-    "Got response with multipart body"
+getRespMulti =
+  Logger.LogMessage
+    Logger.Debug
+    "Trying to get response with multipart body..."
 
 getRespUrl :: Logger.LogMessage
-getRespUrl = 
-  Logger.LogMessage 
-    Logger.Debug 
-    "Got response with url-encoded body"
+getRespUrl =
+  Logger.LogMessage
+    Logger.Debug
+    "Trying to get response with url-encoded body..."
 
 tDecBS :: Logger.LogMessage
-tDecBS = 
-  Logger.LogMessage 
-    Logger.Debug 
-    "The Telegram bot decoded bytestring into TelegramUpdates successfully"
+tDecBS =
+  Logger.LogMessage
+    Logger.Debug
+    "Telegram bot is trying to decode bytestring into TelegramUpdates..."
 
 vkDecBS :: Logger.LogMessage
-vkDecBS = 
-  Logger.LogMessage 
-    Logger.Debug 
-    "The vk bot decoded bytestring into VKUpdates successfully"
-
-
-
-
+vkDecBS =
+  Logger.LogMessage
+    Logger.Debug
+    "VK bot is trying to decode bytestring into VKUpdates..."
 
 getTelUpdScs :: Logger.LogMessage
 getTelUpdScs =
