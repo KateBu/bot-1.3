@@ -1,17 +1,18 @@
 module Environment.EnvFunctions where
 
+import qualified Config.Config as Config
 import Control.Monad.State
-    ( MonadTrans(lift),
-      StateT,
-      MonadState(put, get),
-      gets,
-      evalStateT,
-      execStateT )
+  ( MonadState (get, put),
+    MonadTrans (lift),
+    StateT,
+    evalStateT,
+    execStateT,
+    gets,
+  )
 import Environment.EnvStructs (Env (..))
 import qualified Logger.Logger as Logger
-import qualified Config.Config as Config
 
-type STEmvM m = StateT (Env m) m (Env m) 
+type STEmvM m = StateT (Env m) m (Env m)
 
 eInitEnv :: Config.Config -> IO (Env IO)
 eInitEnv config =
