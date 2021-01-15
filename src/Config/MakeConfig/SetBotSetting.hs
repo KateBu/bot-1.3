@@ -1,21 +1,12 @@
-module Config.MakeConfigFunctions where
+module Config.MakeConfig.SetBotSetting where
 
 import qualified API.VK.Structs as VKStructs
 import Config.ConfigData as Config (vkApiVersion, vkLongPollUrl)
 import qualified Config.ConfigStructs as Config
-  ( BotType (..),
-    Config (Config),
-    Telegram (Telegram),
-    Token,
-    VK (VK),
-  )
 import Control.Exception (IOException, try)
 import Control.Monad ()
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
-import qualified Data.Configurator as Configurator
-import qualified Data.Configurator.Types as Configurator
-import qualified Data.Map as Map
 import qualified Data.Text as T
 import qualified Exceptions.Exceptions as BotEx
 import qualified Logger.Logger as Logger
@@ -25,28 +16,6 @@ import Network.HTTP.Simple
     httpLBS,
     parseRequest,
   )
-
-parseConfig :: String -> IO Config.Config
-parseConfig path = do
-  getConfigFile path >>= parseConfigFile
-
-getConfigFile :: String -> IO Configurator.Config
-getConfigFile path = do
-  config <- try $ Configurator.load [Configurator.Required path] :: IO (Either IOException Configurator.Config)
-  either BotEx.throwIOException pure config
-
-parseConfigFile ::
-  Configurator.Config ->
-  IO Config.Config
-parseConfigFile conf = do
-  botT <- Configurator.lookup conf (T.pack "bot.botType") :: IO (Maybe T.Text)
-  rep <- Configurator.lookup conf (T.pack "bot.repetition") :: IO (Maybe Int)
-  msg <- Configurator.lookup conf (T.pack "bot.helpMessage") :: IO (Maybe T.Text)
-  prior <- Configurator.lookup conf (T.pack "bot.logPriority") :: IO (Maybe String)
-  tTok <- Configurator.lookup conf (T.pack "bot.telegramToken") :: IO (Maybe Config.Token)
-  vkTok <- Configurator.lookup conf (T.pack "bot.VKToken") :: IO (Maybe Config.Token)
-  vkGroup <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Int)
-  setBotTypeSettings botT vkGroup vkTok tTok >>= initConfig msg rep prior
 
 setBotTypeSettings ::
   Maybe T.Text ->
@@ -106,16 +75,6 @@ vkSettingsScs (Just group) (Just vKToken) (key, serv, ts) = do
   pure $ Config.VKBot vk
 vkSettingsScs _ _ _ = BotEx.throwInitConfigExcept
 
-initConfig ::
-  Maybe T.Text ->
-  Maybe Int ->
-  Maybe String ->
-  Config.BotType ->
-  IO Config.Config
-initConfig (Just helpMsg) (Just rep) (Just prior) botType = do
-  pure $ Config.Config botType helpMsg (checkRepNumber rep) Map.empty (read prior)
-initConfig _ _ _ _ = BotEx.throwInitConfigExcept
-
 makeVkLonpPollUrl :: Int -> T.Text -> String
 makeVkLonpPollUrl group tok =
   vkLongPollUrl
@@ -124,9 +83,3 @@ makeVkLonpPollUrl group tok =
     <> T.unpack tok
     <> "&v="
     <> T.unpack vkApiVersion
-
-checkRepNumber :: Int -> Int
-checkRepNumber val
-  | val <= 1 = 1
-  | val >= 5 = 5
-  | otherwise = val

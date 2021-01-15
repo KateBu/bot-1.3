@@ -22,6 +22,6 @@ import Config.ConfigStructs as Config
     Users,
     VK (..),
   )
-import Config.MakeConfigFunctions as Config
+import Config.MakeConfig.MakeConfigFunctions as Config
   ( parseConfig,
   )
