@@ -36,6 +36,7 @@ dependencies:
 - modern-uri
 - split 
 - mtl
+- postgresql-simple
 
 
 default-extensions:
