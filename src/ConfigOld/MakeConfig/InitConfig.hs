@@ -1,6 +1,6 @@
-module Config.MakeConfig.InitConfig where
+module ConfigOld.MakeConfig.InitConfig where
 
-import qualified Config.ConfigStructs as Config
+import qualified ConfigOld.ConfigStructs as Config
 import Control.Monad ()
 import qualified Data.Map as Map
 import qualified Data.Text as T

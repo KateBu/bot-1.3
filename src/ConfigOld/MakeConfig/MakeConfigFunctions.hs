@@ -1,8 +1,8 @@
-module Config.MakeConfig.MakeConfigFunctions where
+module ConfigOld.MakeConfig.MakeConfigFunctions where
 
-import qualified Config.ConfigStructs as Config
-import Config.MakeConfig.InitConfig (initConfig)
-import Config.MakeConfig.SetBotSetting (setBotTypeSettings)
+import qualified ConfigOld.ConfigStructs as Config
+import ConfigOld.MakeConfig.InitConfig (initConfig)
+import ConfigOld.MakeConfig.SetBotSetting (setBotTypeSettings)
 import Control.Exception (IOException, try)
 import Control.Monad ()
 import qualified Data.Configurator as Configurator

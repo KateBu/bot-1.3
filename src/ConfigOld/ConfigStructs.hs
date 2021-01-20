@@ -1,9 +1,9 @@
-module Config.ConfigStructs where
+module ConfigOld.ConfigStructs where
 
 import Control.Monad ()
 import qualified Data.Map as Map
 import qualified Data.Text as T
-import qualified Logger.Logger as Logger
+import qualified Environment.Logger.Logger as Logger
 
 type Users = Map.Map Int Int
 

@@ -1,16 +1,16 @@
-module Config.MakeConfig.SetBotSetting where
+module ConfigOld.MakeConfig.SetBotSetting where
 
 import qualified API.VK.Structs as VKStructs
-import Config.ConfigData as Config (vkApiVersion, vkLongPollUrl)
-import qualified Config.ConfigStructs as Config
+import ConfigOld.ConfigData as Config (vkApiVersion, vkLongPollUrl)
+import qualified ConfigOld.ConfigStructs as Config
 import Control.Exception (IOException, try)
 import Control.Monad ()
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import qualified Exceptions.Exceptions as BotEx
-import qualified Logger.Logger as Logger
-import qualified Logger.LoggerMsgs as LoggerMsgs
+import qualified Environment.Logger.Logger as Logger
+import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
 import Network.HTTP.Simple
   ( getResponseBody,
     httpLBS,
