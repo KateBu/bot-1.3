@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 83a7bd0cbb05e9dfad7ba93f5e7c559deb665e4cd37db6918a3f4002388f3b74
+-- hash: 299109a606851375e6644a24f9c464e9bfebf028838cfd0be199976b880f0710
 
 name:           bot13
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
   exposed-modules:
       API.Bot
       API.Messages
+      API.ParseConfig.ParseConfigFile
       API.Telegram.Cleaners
       API.Telegram.Cleaners.Attachments.MbAnimation
       API.Telegram.Cleaners.Attachments.MbAudio
@@ -99,19 +100,27 @@ library
       Config.Config
       Config.ConfigData
       Config.ConfigFunctions
-      Config.ConfigStructs
-      Config.MakeConfig.InitConfig
-      Config.MakeConfig.MakeConfigFunctions
-      Config.MakeConfig.SetBotSetting
+      Config.ConfigStruct
+      ConfigOld.Config
+      ConfigOld.ConfigData
+      ConfigOld.ConfigFunctions
+      ConfigOld.ConfigStructs
+      ConfigOld.MakeConfig.InitConfig
+      ConfigOld.MakeConfig.MakeConfigFunctions
+      ConfigOld.MakeConfig.SetBotSetting
       Environment.EnvFunctions
       Environment.Environment
       Environment.EnvStructs
+      Environment.InitEnvironment
+      Environment.InitEnvironment.InitEnvironment
+      Environment.InitEnvironment.SetBotSettings
+      Environment.Logger.Logger
+      Environment.Logger.LoggerFunctions
+      Environment.Logger.LoggerMsgs
+      Environment.Logger.LoggerStructs
       Exceptions.Exceptions
       Exceptions.ExFunctions
       Exceptions.ExStructs
-      Handle.Handle
-      Logger.Logger
-      Logger.LoggerMsgs
       Logic.Logic
       Logic.ProcMsgs.Callback
       Logic.ProcMsgs.Common
@@ -120,6 +129,11 @@ library
       Logic.Structs.Functions
       Logic.Structs.Messages
       Logic.TextData
+      Services.APIHandle.APIHandle
+      Services.DBHandle.Database.Database
+      Services.DBHandle.Database.Queries
+      Services.DBHandle.DBHandle
+      Services.Services
   other-modules:
       Paths_bot13
   hs-source-dirs:
@@ -138,6 +152,7 @@ library
     , http-types
     , modern-uri
     , mtl
+    , postgresql-simple
     , random
     , req
     , split
@@ -166,6 +181,7 @@ executable bot13-exe
     , http-types
     , modern-uri
     , mtl
+    , postgresql-simple
     , random
     , req
     , split
@@ -216,6 +232,7 @@ test-suite bot13-test
     , http-types
     , modern-uri
     , mtl
+    , postgresql-simple
     , random
     , req
     , split
