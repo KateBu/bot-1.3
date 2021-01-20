@@ -1,7 +1,9 @@
 module Exceptions.ExStructs where
 
-import Control.Exception (Exception, IOException)
-import qualified Logger.Logger as Logger
+import Control.Exception 
+import Database.PostgreSQL.Simple
+    ( ResultError, FormatError, QueryError, SqlError ) 
+import qualified Environment.Logger.Logger as Logger
 
 data BotException
   = InitConfigExcept Logger.LogMessage
@@ -10,6 +12,10 @@ data BotException
   | UpdateExcept Logger.LogMessage
   | SendExcept Logger.LogMessage
   | HttpExcept Logger.LogMessage
+  | DBFormatError FormatError  
+  | DBQueryError QueryError 
+  | DBResultError ResultError 
+  | DBSqlError SqlError  
   | OtherExcept Logger.LogMessage
   deriving (Eq)
 
@@ -26,7 +32,18 @@ instance Show BotException where
     "Send exception occured -- " <> show logMsg
   show (HttpExcept logMsg) =
     "Http exception occured -- " <> show logMsg
+  show (DBFormatError fErr) = 
+    "Database format error occured -- " <> show fErr 
+  show (DBQueryError qErr) = 
+    "Database query error occured -- " <> show qErr 
+  show (DBResultError rErr) = 
+    "Database result error occured -- " <> show rErr 
+  show (DBSqlError sqlErr) = 
+    "Database sql error occured -- " <> show sqlErr 
   show (OtherExcept oEx) =
     "Other exception occured -- " <> show oEx
 
 instance Exception BotException
+
+
+
