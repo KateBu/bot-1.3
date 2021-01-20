@@ -1,67 +1,29 @@
 module Environment.EnvFunctions where
 
-import qualified Config.Config as Config
-import Control.Monad.State
-  ( MonadState (get, put),
-    MonadTrans (lift),
-    StateT,
-    evalStateT,
-    execStateT,
-    gets,
-  )
-import Environment.EnvStructs (Env (..))
-import qualified Logger.Logger as Logger
+import Control.Monad.Reader ( ReaderT, asks ) 
+import qualified Data.Text as T 
+import qualified Config.Config as Config 
+import qualified Environment.Logger.Logger as Logger
+import Environment.EnvStructs ( Environment(..) ) 
 
-type STEmvM m = StateT (Env m) m (Env m)
+type RMA m a = ReaderT (Environment m) m a 
 
-eInitEnv :: Config.Config -> IO (Env IO)
-eInitEnv config =
-  Env config <$> Logger.createLogger (Config.priority config)
+eConfig :: Monad m => RMA m Config.Config 
+eConfig = asks config 
 
-stLog :: Monad m => Logger.LogMessage -> StateT (Env m) m ()
-stLog msg = do
-  state <- get
-  lift $ Logger.botLog (eLogger state) msg
+eRep :: Monad m => RMA m Int 
+eRep = asks repetition
 
-eLog :: Monad m => Logger.LogMessage -> Env m -> m ()
-eLog msg = evalStateT (stLog msg)
+eHelpMsg :: Monad m => RMA m T.Text  
+eHelpMsg = asks helpMsg
 
-stSetOffset :: (Monad m) => Int -> STEmvM m
-stSetOffset newOffset = do
-  state <- get
-  let newConfig = Config.configSetOffset (eConfig state) newOffset
-  put $ state {eConfig = newConfig}
-  pure state
+eGetLogger :: Monad m => RMA m (Logger.Logger m)
+eGetLogger = asks logger 
 
-eSetOffset :: (Monad m) => Int -> Env m -> m (Env m)
-eSetOffset newOffset = execStateT $ stSetOffset newOffset
+eGetUid :: Monad m => RMA m Int 
+eGetUid = asks $ Config.configGetUid . config     
 
-stFindUserRepeat :: (Monad m) => Int -> StateT (Env m) m Int
-stFindUserRepeat chid = do
-  state <- get
-  pure $ Config.findUserRepeat (eConfig state) chid
+updateConfig :: Environment m -> Config.Config -> Environment m
+updateConfig (Environment _ rep hm logger) newConfig= 
+    Environment newConfig rep hm logger
 
-eFindUserRepeat :: (Monad m) => Int -> Env m -> m Int
-eFindUserRepeat chid = evalStateT $ stFindUserRepeat chid
-
-stSetUserRepeat :: (Monad m) => Int -> Int -> STEmvM m
-stSetUserRepeat chid newRep = do
-  state <- get
-  put $ state {eConfig = Config.setUserRepeat (eConfig state) chid newRep}
-  pure state
-
-eSetUserRepeat :: Monad m => Int -> Int -> Env m -> m (Env m)
-eSetUserRepeat chid newRep = execStateT (stSetUserRepeat chid newRep)
-
-stGetConfig :: Monad m => StateT (Env m) m Config.Config
-stGetConfig = gets eConfig
-
-eGetConfig :: Monad m => Env m -> m Config.Config
-eGetConfig = evalStateT stGetConfig
-
-stGetBotType :: Monad m => StateT (Env m) m Config.BotType
-stGetBotType =
-  gets $ Config.botType . eConfig
-
-eGetBotType :: Monad m => Env m -> m Config.BotType
-eGetBotType = evalStateT stGetBotType
