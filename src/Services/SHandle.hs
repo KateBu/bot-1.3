@@ -1,6 +1,6 @@
-module Services.Services where
+module Services.SHandle where
 
-import Environment.Environment as Env 
+import Environment.Environment as Env ( Environment ) 
 import qualified Services.APIHandle.APIHandle as APIHandle 
 import qualified Services.DBHandle.DBHandle  as DBHandle 
 
