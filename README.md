@@ -1,3 +1,8 @@
+# Update Info
+
+The bot doesn't work now.
+Tests don't work now
+
 
 # Echo bot for Telegram and VK 
 
