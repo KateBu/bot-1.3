@@ -3,13 +3,13 @@ module API.Bot where
 import Control.Exception (catch)
 import qualified Environment.Environment as Env
 import qualified Exceptions.Exceptions as BotEx
-import qualified Handle.Handle as Handle
-import qualified Logger.LoggerMsgs as LoggerMsgs
+--import qualified Handle.Handle as Handle
+import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.Logic as Logic
 
-runBot :: Env.Env IO -> IO ()
-runBot env =
-  catch
+runBot :: Env.Environment IO -> IO ()
+runBot env = undefined 
+ {- catch
     ( do
         currentConf <- Env.eGetConfig env
         handle <- Handle.new currentConf
@@ -17,8 +17,10 @@ runBot env =
           >>= Logic.processMsgs env (Handle.hSendMessage handle)
           >>= nextLoop
     )
-    BotEx.handleBotException
+    BotEx.handleBotException-}
 
-nextLoop :: Env.Env IO -> IO ()
-nextLoop env = do
+nextLoop :: Env.Environment IO -> IO ()
+nextLoop env = undefined
+{- do
   Env.eLog LoggerMsgs.nextLoop env >> runBot env
+-}
