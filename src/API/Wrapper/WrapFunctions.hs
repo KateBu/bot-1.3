@@ -63,26 +63,26 @@ paramsToHttps (PureStructs.ParamsText key val) = key =: val
 paramsToHttps (PureStructs.ParamsNum key val) = key =: val
 paramsToHttps _ = mempty
 
-mbSendOption :: Config.BotType -> IO (Option 'Https)
+mbSendOption :: Config.Config -> IO (Option 'Https)
 mbSendOption vk@(Config.VKBot _) = do
   params <- VKData.sendBasicParams vk
   pure $ (mconcat (paramsToHttps <$> params))
 mbSendOption _ = mempty
 
-updateParam :: Config.BotType -> [PureStructs.Params]
+updateParam :: Config.Config -> [PureStructs.Params]
 updateParam vk@(Config.VKBot _) = VKData.updateParams vk
 updateParam tel@(Config.TBot _) = TelData.updateParams tel
 
 mkHostPath :: Config.Config -> WrapStructs.Method -> Maybe PureStructs.PureMessage -> Maybe (Url 'Https)
-mkHostPath config WrapStructs.Update _ = mkUpdHostPath (Config.botType config)
-mkHostPath config WrapStructs.Send (Just msg) = mkSndHostPath (Config.botType config) msg
+mkHostPath config WrapStructs.Update _ = mkUpdHostPath config
+mkHostPath config WrapStructs.Send (Just msg) = mkSndHostPath config msg
 mkHostPath _ _ _ = Nothing
 
-mkUpdHostPath :: Config.BotType -> Maybe (Url 'Https)
+mkUpdHostPath :: Config.Config -> Maybe (Url 'Https)
 mkUpdHostPath vk@(Config.VKBot _) = hostPathToUrlScheme (VKData.updateHostPath vk)
 mkUpdHostPath tel@(Config.TBot _) = hostPathToUrlScheme (TelData.updateHostPath tel)
 
-mkSndHostPath :: Config.BotType -> PureStructs.PureMessage -> Maybe (Url 'Https)
+mkSndHostPath :: Config.Config -> PureStructs.PureMessage -> Maybe (Url 'Https)
 mkSndHostPath (Config.VKBot _) _ = hostPathToUrlScheme VKData.sendHostPath
 mkSndHostPath tel@(Config.TBot _) msg =
   hostPathToUrlScheme $

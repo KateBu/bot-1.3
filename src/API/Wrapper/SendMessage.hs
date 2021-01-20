@@ -12,8 +12,8 @@ import Data.Aeson (eitherDecode)
 import qualified Data.Text as T
 import qualified Environment.Environment as Env
 import qualified Exceptions.Exceptions as BotEx
-import qualified Logger.Logger as Logger
-import qualified Logger.LoggerMsgs as LoggerMsgs
+import qualified Environment.Logger.Logger as Logger
+import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.PureStructs as PureStructs
 import Network.HTTP.Req
   ( LbsResponse,
@@ -23,6 +23,9 @@ import Network.HTTP.Req
     responseStatusCode,
   )
 
+sendM = undefined
+
+{-
 sendM ::
   Env.Env IO ->
   PureStructs.PureMessage ->
@@ -89,3 +92,4 @@ checkResult _ _ (Right (VKStructs.SendMsgError (VKStructs.SendError err))) =
 checkResult env msg (Right (VKStructs.SendMsgScs _)) = do
   Env.eLog LoggerMsgs.sndMsgScsVK env
   Env.eSetOffset (PureStructs.updateID msg) env
+-}

@@ -3,7 +3,7 @@ module API.Wrapper.GetResponseFunctions where
 import qualified API.Wrapper.WrapFunctions as WrapFunctions
 import Control.Exception (catch)
 import qualified Exceptions.Exceptions as BotEx
-import qualified Logger.LoggerMsgs as LoggerMsgs
+import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.PureStructs as PureStructs
 import Network.HTTP.Req
   ( HttpException,

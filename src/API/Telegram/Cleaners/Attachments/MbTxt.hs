@@ -26,8 +26,8 @@ mkTxtMsg ::
   TStructs.MessageInfo ->
   T.Text ->
   Maybe PureStructs.PureMessage
-mkTxtMsg config uid chid mInfo "/help" =
-  pure $
+mkTxtMsg config uid chid mInfo "/help" = undefined 
+ {- pure $
     PureStructs.PureMessage
       (PureStructs.MTUserCommand PureStructs.Help)
       uid
@@ -35,7 +35,7 @@ mkTxtMsg config uid chid mInfo "/help" =
       ( Just $
           basicParams chid mInfo
             <> [PureStructs.ParamsText "text" (Config.helpMessage config)]
-      )
+      )-}
 mkTxtMsg _ uid chid mInfo "/repeat" =
   pure $
     PureStructs.PureMessage

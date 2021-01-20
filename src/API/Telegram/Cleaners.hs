@@ -9,34 +9,36 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import qualified Environment.Environment as Env
 import qualified Exceptions.Exceptions as BotEx
-import qualified Logger.Logger as Logger
-import qualified Logger.LoggerMsgs as LoggerMsgs
+import qualified Environment.Logger.Logger as Logger
+import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.PureStructs as PureStructs
 
 telByteStringToPureMessageList ::
-  Env.Env IO ->
+  Env.Environment IO ->
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
 telByteStringToPureMessageList env eiBS =
   decodeByteString env eiBS >>= telUpdatesToPureMessageList env
 
 decodeByteString ::
-  Env.Env IO ->
+  Env.Environment IO ->
   BSL.ByteString ->
   IO TStructs.TelegramUpdates
-decodeByteString env json = do
+decodeByteString env json = undefined
+{-  do
   Env.eLog LoggerMsgs.tDecBS env
   let mbTelegramUpdates = decode json :: Maybe TStructs.TelegramUpdates
-  maybe (getUpdErr json) pure mbTelegramUpdates
+  maybe (getUpdErr json) pure mbTelegramUpdates -}
 
 telUpdatesToPureMessageList ::
-  Env.Env IO ->
+  Env.Environment IO ->
   TStructs.TelegramUpdates ->
   IO [PureStructs.PureMessage]
-telUpdatesToPureMessageList env tUpd = do
+telUpdatesToPureMessageList env tUpd = undefined
+  {-do
   config <- Env.eGetConfig env
   pure $ telUpdateToPureMessage config <$> TStructs.result tUpd
-
+-} 
 getUpdErr :: BSL.ByteString -> IO TStructs.TelegramUpdates
 getUpdErr json = do
   let eiTelegramErr = eitherDecode json :: Either String TStructs.TelegramUpdatesError

@@ -19,7 +19,7 @@ import qualified Config.Config as Config
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
 import qualified Exceptions.Exceptions as BotEx
-import qualified Logger.LoggerMsgs as LoggerMsgs
+import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.PureStructs as PureStructs
 
 telUpdateToPureMessage ::

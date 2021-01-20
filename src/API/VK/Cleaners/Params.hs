@@ -20,9 +20,9 @@ makeParams ::
   PureStructs.MessageType ->
   VKStructs.VKMessage ->
   Maybe [PureStructs.Params]
-makeParams config (PureStructs.MTUserCommand PureStructs.Help) vkMsg =
-  pure $
-    PureStructs.ParamsText "message" (Config.helpMessage config) : baseParams vkMsg
+makeParams config (PureStructs.MTUserCommand PureStructs.Help) vkMsg = undefined
+ {- pure $
+    PureStructs.ParamsText "message" (Config.helpMessage config) : baseParams vkMsg-}
 makeParams _ (PureStructs.MTUserCommand PureStructs.Repeat) vkMsg =
   pure $
     baseParams vkMsg

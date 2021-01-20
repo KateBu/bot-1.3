@@ -13,8 +13,8 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import qualified Environment.Environment as Env
 import qualified Exceptions.Exceptions as BotEx
-import qualified Logger.Logger as Logger
-import qualified Logger.LoggerMsgs as LoggerMsgs
+import qualified Environment.Logger.Logger as Logger
+import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
 import qualified Logic.PureStructs as PureStructs
 import Network.HTTP.Req
   ( LbsResponse,
@@ -22,6 +22,9 @@ import Network.HTTP.Req
     responseStatusCode,
   )
 
+getPureMessageList = undefined 
+
+{-
 getPureMessageList :: Env.Env IO -> IO [PureStructs.PureMessage]
 getPureMessageList env = getU env >>= byteStringToPureMessageList env
 
@@ -61,3 +64,4 @@ responseToLbsByteString response = case responseStatusCode response of
   err ->
     BotEx.throwOtherException
       (Logger.makeLogMessage LoggerMsgs.badServerResponse ((T.pack . show) err))
+-}

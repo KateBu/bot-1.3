@@ -6,7 +6,7 @@ import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 import System.Random (Random (random), newStdGen)
 
-updateParams :: Config.BotType -> [PureStructs.Params]
+updateParams :: Config.Config -> [PureStructs.Params]
 updateParams (Config.VKBot (Config.VK _ _ key _ ts)) =
   [ PureStructs.ParamsText "act" "a_check",
     PureStructs.ParamsText "key" key,
@@ -16,7 +16,7 @@ updateParams (Config.VKBot (Config.VK _ _ key _ ts)) =
   ]
 updateParams _ = []
 
-updateHostPath :: Config.BotType -> Maybe WrapStructs.HostPath
+updateHostPath :: Config.Config -> Maybe WrapStructs.HostPath
 updateHostPath (Config.VKBot (Config.VK _ _ _ server _)) =
   pure $
     let (host, rest) = T.span (/= '/') (T.drop 8 server)
@@ -27,7 +27,7 @@ updateHostPath _ = Nothing
 sendHostPath :: Maybe WrapStructs.HostPath
 sendHostPath = pure $ WrapStructs.HostPath "api.vk.com" ["method", "messages.send"]
 
-sendBasicParams :: Config.BotType -> IO [PureStructs.Params]
+sendBasicParams :: Config.Config -> IO [PureStructs.Params]
 sendBasicParams (Config.VKBot (Config.VK tok _ _ _ _)) = do
   rid <- getRandonId
   pure
