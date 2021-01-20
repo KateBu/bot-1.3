@@ -1,6 +1,6 @@
-module Logger.LoggerMsgs where
+module Environment.Logger.LoggerMsgs where
 
-import qualified Logger.Logger as Logger
+import qualified Environment.Logger.LoggerStructs as Logger
 
 vkFatalError :: Logger.LogMessage
 vkFatalError =
@@ -177,3 +177,28 @@ parseErr = Logger.LogMessage Logger.Error "Parsing bytestring into struct failed
 
 httpEx :: Logger.LogMessage
 httpEx = Logger.LogMessage Logger.Error "Http exception: "
+
+addUserQueryFld :: Logger.LogMessage
+addUserQueryFld = Logger.LogMessage Logger.Error "Couldn't add user to Database"
+
+findUserQueryFld :: Logger.LogMessage
+findUserQueryFld = Logger.LogMessage Logger.Error "Find user query failed"
+
+addUserRepeatScs :: Logger.LogMessage
+addUserRepeatScs = Logger.LogMessage Logger.Info "New user was inserted into Database"
+
+updUserRepeatNoUser :: Logger.LogMessage
+updUserRepeatNoUser = Logger.LogMessage Logger.Warning "Cannot find userId in Database to update repeats"
+
+updUserRepeatScs ::  Logger.LogMessage
+updUserRepeatScs = Logger.LogMessage Logger.Info "The new repeat value for the user was set in Database"
+
+updUserRepeatFld ::  Logger.LogMessage
+updUserRepeatFld = Logger.LogMessage Logger.Error "UpdateUserRepeat query failed"
+
+initLogFld ::  Logger.LogMessage
+initLogFld = Logger.LogMessage Logger.Error "Cannot parse log priority from config file"
+
+findUserScs :: Logger.LogMessage
+findUserScs = Logger.LogMessage Logger.Debug "User was found in Database"
+

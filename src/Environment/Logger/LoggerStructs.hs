@@ -1,7 +1,6 @@
-module Logger.Logger where
+module Environment.Logger.LoggerStructs where
 
 import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
 
 data Priority
   = Debug
@@ -23,21 +22,8 @@ data Logger m = Logger
   { botLog :: LogMessage -> m ()
   }
 
-createLogger :: (Monad m) => Priority -> m (Logger IO)
-createLogger priority =
-  pure $
-    Logger
-      { botLog = \msg ->
-          if getPriority msg >= priority
-            then TIO.putStrLn (startText (getPriority msg) <> getText msg)
-            else pure ()
-      }
-
 startText :: Priority -> T.Text
 startText Debug = "Debug: "
 startText Info = "Info: "
 startText Warning = "Warning: "
 startText Error = "ERROR: "
-
-makeLogMessage :: LogMessage -> T.Text -> LogMessage
-makeLogMessage (LogMessage prior msg) info = LogMessage prior (msg <> info)
