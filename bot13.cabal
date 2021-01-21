@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dd62f1faaa86a3a07e3362e3beb7a65d4f6ed0add151198fdbd7c4e77d0e8580
+-- hash: ca6bfc0d0d5ac89233e8f02321b2fa52e55e352d730824b317cb3a25229c149b
 
 name:           bot13
 version:        0.1.0.0
@@ -133,6 +133,8 @@ library
       Services.DBHandle.Database.Database
       Services.DBHandle.Database.Queries
       Services.DBHandle.DBHandle
+      Services.ServiceHandle.SHandleFunctions
+      Services.ServiceHandle.SHandleStructs
       Services.SHandle
   other-modules:
       Paths_bot13
