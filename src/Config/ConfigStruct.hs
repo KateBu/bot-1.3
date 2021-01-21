@@ -1,6 +1,6 @@
 module Config.ConfigStruct where
 
-import qualified Data.Text as T 
+import qualified Data.Text as T
 
 type Token = T.Text
 

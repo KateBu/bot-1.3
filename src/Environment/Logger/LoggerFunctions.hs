@@ -1,11 +1,13 @@
 module Environment.Logger.LoggerFunctions where
 
-import qualified Data.Text as T 
+import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Environment.Logger.LoggerStructs
-    ( Logger(..), LogMessage(..), Priority, startText )
-
-
+  ( LogMessage (..),
+    Logger (..),
+    Priority,
+    startText,
+  )
 
 createLogger :: (Monad m) => Priority -> m (Logger IO)
 createLogger priority =

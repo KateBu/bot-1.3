@@ -5,8 +5,7 @@ import qualified Environment.Environment as Env
 import qualified Logic.PureStructs as PureStructs
 
 data Handle m = Handle
-  { 
-    hGetUpdates ::
+  { hGetUpdates ::
       m [PureStructs.PureMessage],
     hSendMessage ::
       PureStructs.PureMessage ->
@@ -17,7 +16,6 @@ new :: Env.Environment IO -> IO (Handle IO)
 new env =
   pure $
     Handle
-      { 
-        hGetUpdates = Wrapper.getPureMessageList env,
+      { hGetUpdates = Wrapper.getPureMessageList env,
         hSendMessage = Wrapper.sendM env
       }

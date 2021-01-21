@@ -1,7 +1,13 @@
 module Config.Config (module Config) where
 
+import Config.ConfigData as Config
 import Config.ConfigFunctions as Config
-    ( configGetUid, configSetOffset ) 
+  ( configGetUid,
+    configSetOffset,
+  )
 import Config.ConfigStruct as Config
-    ( VK(..), Telegram(..), Config(..), Token ) 
-import Config.ConfigData as Config 
+  ( Config (..),
+    Telegram (..),
+    Token,
+    VK (..),
+  )

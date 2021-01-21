@@ -1,18 +1,13 @@
-module Services.SHandle where
+module Services.SHandle (module SHandle) where
 
-import Environment.Environment as Env ( Environment ) 
-import qualified Services.APIHandle.APIHandle as APIHandle 
-import qualified Services.DBHandle.DBHandle  as DBHandle 
-
-data SHandle m = SHandle 
-    {
-        hAPI:: m (APIHandle.Handle m) ,
-        hDB :: m (DBHandle.Handle m) 
-    }
-
-new :: Env.Environment IO -> SHandle IO 
-new env = SHandle 
-    {
-        hAPI = APIHandle.new env,
-        hDB = DBHandle.new env 
-    }
+import Services.ServiceHandle.SHandleFunctions as SHandle
+  ( addUser,
+    findUser,
+    getUpdates,
+    sendMessage,
+    updateUser,
+  )
+import Services.ServiceHandle.SHandleStructs as SHandle
+  ( SHandle (..),
+    new,
+  )

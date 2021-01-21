@@ -11,31 +11,31 @@ import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 
 mbTextMessage ::
-  Config.Config ->
+  T.Text ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbTextMessage config uid chid mInfo =
-  TStructs.txt mInfo >>= mkTxtMsg config uid chid mInfo
+mbTextMessage hMsg uid chid mInfo =
+  TStructs.txt mInfo >>= mkTxtMsg hMsg uid chid mInfo
 
 mkTxtMsg ::
-  Config.Config ->
+  T.Text ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   T.Text ->
   Maybe PureStructs.PureMessage
-mkTxtMsg config uid chid mInfo "/help" = undefined 
- {- pure $
+mkTxtMsg hMsg uid chid mInfo "/help" =
+  pure $
     PureStructs.PureMessage
       (PureStructs.MTUserCommand PureStructs.Help)
       uid
       (Just chid)
       ( Just $
           basicParams chid mInfo
-            <> [PureStructs.ParamsText "text" (Config.helpMessage config)]
-      )-}
+            <> [PureStructs.ParamsText "text" hMsg]
+      )
 mkTxtMsg _ uid chid mInfo "/repeat" =
   pure $
     PureStructs.PureMessage

@@ -1,28 +1,30 @@
 module Environment.InitEnvironment.SetBotSettings where
 
+import qualified API.VK.Structs as VKStructs
+import qualified Config.Config as Config
+import Config.ConfigData
+  ( vkApiVersion,
+    vkLongPollUrl,
+  )
 import Control.Exception (IOException, try)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
+import qualified Environment.Logger.Logger as Logger
+import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
+import qualified Exceptions.Exceptions as BotEx
 import Network.HTTP.Simple
   ( getResponseBody,
     httpLBS,
     parseRequest,
   )
-import qualified Exceptions.Exceptions as BotEx
-import qualified Environment.Logger.Logger as Logger
-import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
-import qualified API.VK.Structs as VKStructs
-import Config.ConfigData
-    ( vkApiVersion, vkLongPollUrl )
-import qualified Config.Config as Config 
 
 setBotTypeSettings ::
   Maybe T.Text ->
   Maybe Int ->
   Maybe Config.Token ->
   Maybe Config.Token ->
-  IO Config.Config 
+  IO Config.Config
 setBotTypeSettings (Just "VK") mbGroup mbVKToken _ = do
   vkSettings <- getVKSettings mbGroup mbVKToken
   vkSettingsScs mbGroup mbVKToken vkSettings
@@ -69,7 +71,7 @@ vkSettingsScs ::
   Maybe Int ->
   Maybe Config.Token ->
   (T.Text, T.Text, Int) ->
-  IO Config.Config 
+  IO Config.Config
 vkSettingsScs (Just group) (Just vKToken) (key, serv, ts) = do
   let vk = Config.VK vKToken group key serv ts
   pure $ Config.VKBot vk

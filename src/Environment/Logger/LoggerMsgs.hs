@@ -14,6 +14,12 @@ runBot =
     Logger.Info
     "Bot is running..."
 
+getUpdInProcess :: Logger.LogMessage
+getUpdInProcess =
+  Logger.LogMessage
+    Logger.Debug
+    "getU function: trying to get updates..."
+
 getRespMulti :: Logger.LogMessage
 getRespMulti =
   Logger.LogMessage
@@ -37,6 +43,24 @@ vkDecBS =
   Logger.LogMessage
     Logger.Debug
     "VK bot is trying to decode bytestring into VKUpdates..."
+
+vkDecBsScs :: Logger.LogMessage
+vkDecBsScs =
+  Logger.LogMessage
+    Logger.Debug
+    "Bytestring decoded into VKUpdates"
+
+telDecBsScs :: Logger.LogMessage
+telDecBsScs =
+  Logger.LogMessage
+    Logger.Debug
+    "Bytestring decoded into TelegramUpdates"
+
+readValueFld :: Logger.LogMessage
+readValueFld =
+  Logger.LogMessage
+    Logger.Error
+    "Cannot read value"
 
 getTelUpdScs :: Logger.LogMessage
 getTelUpdScs =
@@ -158,6 +182,12 @@ parseVKMsgScs =
     Logger.Debug
     "VK messages were parsed to PureMessages successfully"
 
+parseTelMsgScs :: Logger.LogMessage
+parseTelMsgScs =
+  Logger.LogMessage
+    Logger.Debug
+    "Telegram messages were parsed to PureMessages successfully"
+
 testError :: Logger.LogMessage
 testError =
   Logger.LogMessage
@@ -185,20 +215,37 @@ findUserQueryFld :: Logger.LogMessage
 findUserQueryFld = Logger.LogMessage Logger.Error "Find user query failed"
 
 addUserRepeatScs :: Logger.LogMessage
-addUserRepeatScs = Logger.LogMessage Logger.Info "New user was inserted into Database"
+addUserRepeatScs = Logger.LogMessage Logger.Info "New User was inserted into Database"
 
 updUserRepeatNoUser :: Logger.LogMessage
 updUserRepeatNoUser = Logger.LogMessage Logger.Warning "Cannot find userId in Database to update repeats"
 
-updUserRepeatScs ::  Logger.LogMessage
-updUserRepeatScs = Logger.LogMessage Logger.Info "The new repeat value for the user was set in Database"
+updUserRepeatScs :: Logger.LogMessage
+updUserRepeatScs = Logger.LogMessage Logger.Info "New repeat value for User was set in Database"
 
-updUserRepeatFld ::  Logger.LogMessage
+updUserRepeatFld :: Logger.LogMessage
 updUserRepeatFld = Logger.LogMessage Logger.Error "UpdateUserRepeat query failed"
 
-initLogFld ::  Logger.LogMessage
+initLogFld :: Logger.LogMessage
 initLogFld = Logger.LogMessage Logger.Error "Cannot parse log priority from config file"
 
 findUserScs :: Logger.LogMessage
 findUserScs = Logger.LogMessage Logger.Debug "User was found in Database"
 
+emptyMsg :: Logger.LogMessage
+emptyMsg = Logger.LogMessage Logger.Debug "Empty Message processing in progress..."
+
+helpCmd :: Logger.LogMessage
+helpCmd = Logger.LogMessage Logger.Debug "Help command processing in progress..."
+
+sendMsg :: Logger.LogMessage
+sendMsg = Logger.LogMessage Logger.Debug "sendM function in progress..."
+
+getApiResp :: Logger.LogMessage
+getApiResp = Logger.LogMessage Logger.Debug "trying to get API response..."
+
+repeatCmd :: Logger.LogMessage
+repeatCmd = Logger.LogMessage Logger.Debug "Repeat command processing in progress..."
+
+callbackMsg :: Logger.LogMessage
+callbackMsg = Logger.LogMessage Logger.Debug "Callback processing in progress..."

@@ -3,18 +3,18 @@ module API.VK.Cleaners.ToPureMessages where
 import API.VK.Cleaners.MessageTypes (getMessageType)
 import API.VK.Cleaners.Params (baseParams, makeParams)
 import qualified API.VK.Structs as VKStructs
-import qualified Config.Config as Config
+import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 
 mkPureMessage ::
-  Config.Config ->
+  T.Text ->
   PureStructs.UpdateID ->
   VKStructs.VKMessage ->
   PureStructs.PureMessage
-mkPureMessage config uid vkMsg = mkPureMessage' config uid vkMsg $ getMessageType vkMsg
+mkPureMessage hMsg uid vkMsg = mkPureMessage' hMsg uid vkMsg $ getMessageType vkMsg
 
 mkPureMessage' ::
-  Config.Config ->
+  T.Text ->
   PureStructs.UpdateID ->
   VKStructs.VKMessage ->
   PureStructs.MessageType ->
@@ -29,12 +29,12 @@ mkPureMessage' _ uid vkMsg mType@(PureStructs.MTCallbackQuery callback) =
           baseParams vkMsg
         )
     )
-mkPureMessage' config uid vkMsg mType@(PureStructs.MTUserCommand _) =
+mkPureMessage' hMsg uid vkMsg mType@(PureStructs.MTUserCommand _) =
   PureStructs.PureMessage
     mType
     uid
     (Just $ VKStructs.from_id vkMsg)
-    (makeParams config mType vkMsg)
+    (makeParams hMsg mType vkMsg)
 mkPureMessage' config uid vkMsg mType@(PureStructs.MTCommon _) =
   PureStructs.PureMessage
     mType

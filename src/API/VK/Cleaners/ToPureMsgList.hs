@@ -2,15 +2,16 @@ module API.VK.Cleaners.ToPureMsgList (vkByteStringToPureMessageList) where
 
 import API.VK.Cleaners.ToPureMessages (mkPureMessage)
 import qualified API.VK.Structs as VKStructs
-import qualified Config.Config as Config
+import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import qualified Environment.Environment as Env
-import qualified Exceptions.Exceptions as BotEx
 import qualified Environment.Logger.Logger as Logger
 import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
+import qualified Exceptions.Exceptions as BotEx
 import qualified Logic.PureStructs as PureStructs
+import Text.Read (readMaybe)
 
 vkByteStringToPureMessageList ::
   Env.Environment IO ->
@@ -24,11 +25,11 @@ decByteString ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
-decByteString env json = undefined
-{- do
-  Env.eLog LoggerMsgs.vkDecBS env
-  let eiUpdates = eitherDecode json :: Either String VKStructs.VKUpdates
-  either decodeUpdErr decodeUpdScs eiUpdates -}
+decByteString env bs = do
+  logger <- runReaderT Env.eLogger env
+  Logger.botLog logger LoggerMsgs.vkDecBS
+  let eiUpdates = eitherDecode bs :: Either String VKStructs.VKUpdates
+  either decodeUpdErr (decodeUpdScs logger) eiUpdates
 
 decodeUpdErr ::
   String ->
@@ -37,47 +38,51 @@ decodeUpdErr err =
   BotEx.throwUpdateExcept (Logger.makeLogMessage LoggerMsgs.vkDecUpdatesFailed $ T.pack err)
 
 decodeUpdScs ::
+  Logger.Logger IO ->
   VKStructs.VKUpdates ->
   IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
-decodeUpdScs (VKStructs.VKUpdateError (VKStructs.UpdateErr errCode _)) = case errCode of
+decodeUpdScs _ (VKStructs.VKUpdateError (VKStructs.UpdateErr errCode _)) = case errCode of
   1 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed1
   2 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed2
   3 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed3
   _ -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed4
-decodeUpdScs (VKStructs.VKUpdates upd) =
-  pure
-    (read $ VKStructs.ts upd, VKStructs.updates upd)
+decodeUpdScs logger (VKStructs.VKUpdates upd) = do
+  Logger.botLog logger LoggerMsgs.vkDecBsScs
+  let mbOffset = readMaybe $ VKStructs.ts upd :: Maybe Int
+  maybe
+    (BotEx.throwOtherException LoggerMsgs.readValueFld)
+    (\offset -> pure (offset, VKStructs.updates upd))
+    mbOffset
 
 vkUpdInfoToPureMessageList ::
   Env.Environment IO ->
   (PureStructs.UpdateID, [VKStructs.VKUpdInfo]) ->
   IO [PureStructs.PureMessage]
-vkUpdInfoToPureMessageList env (uid, upds) = undefined
-  {-
-  do
-  Env.eLog LoggerMsgs.parseVKMsgScs env
-  config <- Env.eGetConfig env
-  pure $ vkUpdInfoToPureMessage config uid <$> upds
--}
+vkUpdInfoToPureMessageList env (uid, upds) = do
+  logger <- runReaderT Env.eLogger env
+  hMsg <- runReaderT Env.eHelpMsg env
+  Logger.botLog logger LoggerMsgs.parseVKMsgScs
+  pure $ vkUpdInfoToPureMessage hMsg uid <$> upds
+
 vkUpdInfoToPureMessage ::
-  Config.Config ->
+  T.Text ->
   PureStructs.UpdateID ->
   VKStructs.VKUpdInfo ->
   PureStructs.PureMessage
-vkUpdInfoToPureMessage config uid updInfo = case VKStructs.updType updInfo of
+vkUpdInfoToPureMessage hMsg uid updInfo = case VKStructs.updType updInfo of
   VKStructs.OtherEvent -> BotEx.throwPureOtherException LoggerMsgs.unexpVKEvent
   _ -> do
     let mbUpdObj = VKStructs.updObj updInfo
-    maybe (noUpdObj uid) (justUpdObj config uid) mbUpdObj
+    maybe (noUpdObj uid) (justUpdObj hMsg uid) mbUpdObj
 
 noUpdObj :: PureStructs.UpdateID -> PureStructs.PureMessage
 noUpdObj uid = PureStructs.PureMessage PureStructs.MTEmpty uid Nothing Nothing
 
 justUpdObj ::
-  Config.Config ->
+  T.Text ->
   PureStructs.UpdateID ->
   VKStructs.VKObject ->
   PureStructs.PureMessage
-justUpdObj config uid obj = do
+justUpdObj hMsg uid obj = do
   let vkMessage = VKStructs.vkMessage obj
-  mkPureMessage config uid vkMessage
+  mkPureMessage hMsg uid vkMessage

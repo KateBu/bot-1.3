@@ -1,27 +1,32 @@
 module Logic.ProcMsgs.Common where
 
+import Control.Monad.Reader (ReaderT (runReaderT))
+import Data.Maybe (fromMaybe)
 import qualified Environment.Environment as Env
 import qualified Logic.PureStructs as PureStructs
+import qualified Services.SHandle as Handle
 
 processMsgsCommon ::
   Monad m =>
   Env.Environment m ->
-  PureStructs.SendFunction m ->
+  Handle.SHandle m ->
   PureStructs.PureMessage ->
   PureStructs.ChatID ->
   m (Env.Environment m)
-processMsgsCommon env function msg chid = undefined {-do
-  newRepeat <- Env.eFindUserRepeat chid env
-  repeatMsg msg newRepeat function env
--}
+processMsgsCommon env handle msg userId = do
+  defaultRepeat <- runReaderT Env.eRep env
+  mbRepeat <- Handle.findUser handle userId
+  let repeat = fromMaybe defaultRepeat mbRepeat
+  repeatMsg msg repeat handle env
+
 repeatMsg ::
   Monad m =>
   PureStructs.PureMessage ->
   Int ->
-  PureStructs.SendFunction m ->
+  Handle.SHandle m ->
   Env.Environment m ->
   m (Env.Environment m)
 repeatMsg _ 0 _ env = pure env
-repeatMsg msg n function env = undefined {- do
-  function env msg
-    >>= repeatMsg msg (n -1) function-}
+repeatMsg msg n handle _ = do
+  Handle.sendMessage handle msg
+    >>= repeatMsg msg (n -1) handle

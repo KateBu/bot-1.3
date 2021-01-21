@@ -1,26 +1,26 @@
 module API.Bot where
 
 import Control.Exception (catch)
+import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Environment as Env
-import qualified Exceptions.Exceptions as BotEx
---import qualified Handle.Handle as Handle
+import qualified Environment.Logger.Logger as Logger
 import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
+import qualified Exceptions.Exceptions as BotEx
 import qualified Logic.Logic as Logic
+import qualified Services.SHandle as Handle
 
 runBot :: Env.Environment IO -> IO ()
-runBot env = undefined 
- {- catch
+runBot env =
+  catch
     ( do
-        currentConf <- Env.eGetConfig env
-        handle <- Handle.new currentConf
-        Handle.hGetUpdates handle env
-          >>= Logic.processMsgs env (Handle.hSendMessage handle)
+        let handle = Handle.new env
+        Handle.getUpdates handle
+          >>= Logic.processMsgs env handle
           >>= nextLoop
     )
-    BotEx.handleBotException-}
+    BotEx.handleBotException
 
 nextLoop :: Env.Environment IO -> IO ()
-nextLoop env = undefined
-{- do
-  Env.eLog LoggerMsgs.nextLoop env >> runBot env
--}
+nextLoop env = do
+  logger <- runReaderT Env.eLogger env
+  Logger.botLog logger LoggerMsgs.nextLoop >> runBot env

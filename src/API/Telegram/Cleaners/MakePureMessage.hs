@@ -15,20 +15,20 @@ import API.Telegram.Cleaners.MbMsgType
     mbVoice,
   )
 import qualified API.Telegram.TStructs.Updates as TStructs
-import qualified Config.Config as Config
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
-import qualified Exceptions.Exceptions as BotEx
+import qualified Data.Text as T
 import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
+import qualified Exceptions.Exceptions as BotEx
 import qualified Logic.PureStructs as PureStructs
 
 telUpdateToPureMessage ::
-  Config.Config ->
+  T.Text ->
   TStructs.TelUpdateResult ->
   PureStructs.PureMessage
-telUpdateToPureMessage config res = do
+telUpdateToPureMessage hMsg res = do
   let uid = TStructs.update_id res
-  let mbPureMessage = mbMakeCallbackPureMessage res uid <|> mbMakePureMessage config res uid
+  let mbPureMessage = mbMakeCallbackPureMessage res uid <|> mbMakePureMessage hMsg res uid
   fromMaybe (BotEx.throwPureUpdateExcept LoggerMsgs.noUpd) mbPureMessage
 
 mbMakeCallbackPureMessage ::
@@ -52,25 +52,25 @@ mbMakeCallbackPureMessage res uid = case TStructs.callback_query res of
   _ -> Nothing
 
 mbMakePureMessage ::
-  Config.Config ->
+  T.Text ->
   TStructs.TelUpdateResult ->
   PureStructs.UpdateID ->
   Maybe PureStructs.PureMessage
-mbMakePureMessage config res uid = case TStructs.messageInfo res of
+mbMakePureMessage hMsg res uid = case TStructs.messageInfo res of
   Nothing -> pure $ PureStructs.PureMessage PureStructs.MTEmpty uid Nothing Nothing
   Just mInfo -> do
     let chid = TStructs.chat_id $ TStructs.chat mInfo
-    case makeCommonMessage config uid chid mInfo of
+    case makeCommonMessage hMsg uid chid mInfo of
       Nothing -> Nothing
       Just pureMsg -> pure pureMsg
 
 makeCommonMessage ::
-  Config.Config ->
+  T.Text ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-makeCommonMessage config uid chid mInfo =
+makeCommonMessage hMsg uid chid mInfo =
   mbAnimation uid chid mInfo
     <|> mbAudio uid chid mInfo
     <|> mbDoc uid chid mInfo
@@ -82,4 +82,4 @@ makeCommonMessage config uid chid mInfo =
     <|> mbLocation uid chid mInfo
     <|> mbSticker uid chid mInfo
     <|> mbPoll uid chid mInfo
-    <|> mbTextMessage config uid chid mInfo
+    <|> mbTextMessage hMsg uid chid mInfo

@@ -1,22 +1,25 @@
 module Logic.ProcMsgs.Callback where
 
+import Data.Maybe (isNothing)
 import qualified Data.Text as T
 import qualified Environment.Environment as Env
 import qualified Logic.PureStructs as PureStructs
+import qualified Services.SHandle as Handle
 
 processMsgsCallback ::
   Monad m =>
-  Env.Environment m ->
-  PureStructs.SendFunction m ->
+  Handle.SHandle m ->
   PureStructs.PureMessage ->
   T.Text ->
   PureStructs.ChatID ->
   m (Env.Environment m)
-processMsgsCallback env function msg callbackData chid = undefined
-{- do
+processMsgsCallback handle msg callbackData userId = do
   let newRep = PureStructs.getNewRep callbackData
-  newEnv <- Env.eSetUserRepeat chid newRep env
-  function newEnv (makeCallbackResponse msg)-}
+  mbUserInDB <- Handle.findUser handle userId
+  if isNothing mbUserInDB
+    then Handle.addUser handle userId newRep
+    else Handle.updateUser handle userId newRep
+  Handle.sendMessage handle $ makeCallbackResponse msg
 
 makeCallbackResponse :: PureStructs.PureMessage -> PureStructs.PureMessage
 makeCallbackResponse msg = msg {PureStructs.messageType = PureStructs.MTCommon "Message"}

@@ -9,8 +9,8 @@ import API.VK.Cleaners.MsgTypes.UserCommand (mbUserCommand)
 import qualified API.VK.Structs as VKStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
-import qualified Exceptions.Exceptions as BotEx
 import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
+import qualified Exceptions.Exceptions as BotEx
 import qualified Logic.PureStructs as PureStructs
 
 getMessageType :: VKStructs.VKMessage -> PureStructs.MessageType

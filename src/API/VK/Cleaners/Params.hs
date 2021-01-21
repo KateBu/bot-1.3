@@ -12,17 +12,17 @@ import API.VK.Cleaners.Params.SharedFunctions
     setMessageParam,
   )
 import qualified API.VK.Structs as VKStructs
-import qualified Config.Config as Config
+import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 
 makeParams ::
-  Config.Config ->
+  T.Text ->
   PureStructs.MessageType ->
   VKStructs.VKMessage ->
   Maybe [PureStructs.Params]
-makeParams config (PureStructs.MTUserCommand PureStructs.Help) vkMsg = undefined
- {- pure $
-    PureStructs.ParamsText "message" (Config.helpMessage config) : baseParams vkMsg-}
+makeParams hMsg (PureStructs.MTUserCommand PureStructs.Help) vkMsg =
+  pure $
+    PureStructs.ParamsText "message" hMsg : baseParams vkMsg
 makeParams _ (PureStructs.MTUserCommand PureStructs.Repeat) vkMsg =
   pure $
     baseParams vkMsg

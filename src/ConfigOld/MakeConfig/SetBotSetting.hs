@@ -8,9 +8,9 @@ import Control.Monad ()
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
-import qualified Exceptions.Exceptions as BotEx
 import qualified Environment.Logger.Logger as Logger
 import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
+import qualified Exceptions.Exceptions as BotEx
 import Network.HTTP.Simple
   ( getResponseBody,
     httpLBS,

@@ -1,20 +1,21 @@
 module Environment.InitEnvironment where
 
-import qualified Data.Text as T
+import API.ParseConfig.ParseConfigFile (getConfigFile)
+import qualified Config.Config as Config
 import qualified Data.Configurator as Configurator
 import qualified Data.Configurator.Types as Configurator
-import API.ParseConfig.ParseConfigFile ( getConfigFile ) 
-import Environment.InitEnvironment.SetBotSettings
-    ( setBotTypeSettings )
+import qualified Data.Text as T
+import qualified Environment.EnvStructs as Env
 import Environment.InitEnvironment.InitEnvironment
-    ( initEnvironment )
-import qualified Config.Config as Config 
-import qualified Environment.EnvStructs as Env 
-
+  ( initEnvironment,
+  )
+import Environment.InitEnvironment.SetBotSettings
+  ( setBotTypeSettings,
+  )
 
 setEnvironment :: String -> IO (Env.Environment IO)
 setEnvironment path = do
-  getConfigFile path >>= setEnvironment' 
+  getConfigFile path >>= setEnvironment'
 
 setEnvironment' ::
   Configurator.Config ->
