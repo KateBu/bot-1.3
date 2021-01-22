@@ -71,4 +71,4 @@ checkUpdResp logger (usId, rep) [(usId', rep')] =
   if usId `T.isPrefixOf` usId' && rep == rep'
     then Logger.botLog logger LoggerMsgs.updUserRepeatScs
     else BotEx.throwOtherException LoggerMsgs.updUserRepeatFld
-checkUpdResp _ _ _ = BotEx.throwOtherException LoggerMsgs.updUserRepeatFld 
+checkUpdResp _ _ _ = BotEx.throwOtherException LoggerMsgs.updUserRepeatFld
