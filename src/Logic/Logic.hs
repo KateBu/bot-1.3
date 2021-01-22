@@ -1,6 +1,6 @@
 module Logic.Logic where
 
-import Control.Monad.Reader ( ReaderT(runReaderT) )
+import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Environment as Env
 import qualified Environment.Logger.Logger as Logger
 import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
@@ -16,10 +16,10 @@ processMsgs ::
   Handle.SHandle m ->
   [PureStructs.PureMessage] ->
   m (Env.Environment m)
-processMsgs env _ [] = pure env 
-processMsgs env handle (x:xs) = do 
-  env' <- processMsgs_ env handle x 
-  processMsgs env' handle xs 
+processMsgs env _ [] = pure env
+processMsgs env handle (x : xs) = do
+  env' <- processMsgs_ env handle x
+  processMsgs env' handle xs
 
 processMsgs_ ::
   (Monad m) =>

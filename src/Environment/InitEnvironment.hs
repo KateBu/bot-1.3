@@ -1,11 +1,10 @@
 module Environment.InitEnvironment where
 
+import qualified Config.Config as Config
 import Control.Exception (IOException, try)
-import qualified Data.Text as T
 import qualified Data.Configurator as Configurator
 import qualified Data.Configurator.Types as Configurator
-import qualified Exceptions.Exceptions as BotEx
-import qualified Config.Config as Config
+import qualified Data.Text as T
 import qualified Environment.EnvStructs as Env
 import Environment.InitEnvironment.InitEnvironment
   ( initEnvironment,
@@ -13,6 +12,7 @@ import Environment.InitEnvironment.InitEnvironment
 import Environment.InitEnvironment.SetBotSettings
   ( setBotTypeSettings,
   )
+import qualified Exceptions.Exceptions as BotEx
 
 setEnvironment :: String -> IO (Env.Environment IO)
 setEnvironment path = do

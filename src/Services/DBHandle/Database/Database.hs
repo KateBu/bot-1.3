@@ -51,7 +51,7 @@ add bType logger usId repeat = do
   checkAddResp logger (user, repeat) resp
 
 checkAddResp :: Monad m => Logger.Logger m -> (T.Text, Int) -> [(T.Text, Int)] -> m ()
-checkAddResp logger (usId,rep) [(usId',rep')] = do 
+checkAddResp logger (usId, rep) [(usId', rep')] = do
   if usId `T.isPrefixOf` usId' && rep == rep'
     then Logger.botLog logger LoggerMsgs.addUserRepeatScs
     else BotEx.throwOtherException LoggerMsgs.addUserQueryFld
@@ -66,7 +66,7 @@ update bType logger usId repeat = do
 checkUpdResp :: Monad m => Logger.Logger m -> (T.Text, Int) -> [(T.Text, Int)] -> m ()
 checkUpdResp logger _ [] =
   Logger.botLog logger LoggerMsgs.updUserRepeatNoUser
-checkUpdResp logger (usId,rep) [(usId',rep')] =
+checkUpdResp logger (usId, rep) [(usId', rep')] =
   if usId `T.isPrefixOf` usId' && rep == rep'
     then Logger.botLog logger LoggerMsgs.updUserRepeatScs
     else BotEx.throwOtherException LoggerMsgs.updUserRepeatFld
