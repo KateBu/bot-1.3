@@ -24,11 +24,11 @@ eGetUid :: Monad m => REnv m Int
 eGetUid = asks $ Config.configGetUid . config
 
 updateConfig :: Monad m => Environment m -> Config.Config -> m (Environment m)
-updateConfig (Environment _ rep hm logger) newConfig =
-  pure $ Environment newConfig rep hm logger
+updateConfig (Environment _ rep hm lgr) newConfig =
+  pure $ Environment newConfig rep hm lgr
 
 eSetOffset :: Monad m => Environment m -> Int -> m (Environment m)
 eSetOffset env newOffset = do
-  config <- runReaderT eConfig env
-  let newConfig = Config.configSetOffset config newOffset
+  conf <- runReaderT eConfig env
+  let newConfig = Config.configSetOffset conf newOffset
   updateConfig env newConfig
