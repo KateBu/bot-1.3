@@ -34,8 +34,10 @@ Tests don't work properly now
 <p>The bot works with a primitive database (PostreSQL), that contains one table to store user IDs and number of repetition for every user. The database supposed to be hosted locally (the same computer as the bot). So to create the database you just have to write a few strings in psql command line: </p> 
 
 - to create a new user 'bot' with password 'bot13': <b> CREATE USER bot WITH password 'bot13'; </b>
-- to create a new database 'users': <b> CREATE DATABASE users; </b>
-- to grant the database to user 'bot': <b> GRANT ALL ON DATABASE users TO bot; </b>
+- to create a new database 'users': <br> 
+    <b> CREATE DATABASE users; </b>
+- to grant the database to user 'bot':<br> 
+    <b> GRANT ALL ON DATABASE users TO bot; </b>
 - then run the database 'users' and create a new table: <br>
     <b>  CREATE TABLE UserRepeats <br>
     ( userId char (15) NOT NULL, <br>
@@ -43,7 +45,7 @@ Tests don't work properly now
     CHECK ( repeats > 0 and repeats < 6), <br>
     PRIMARY KEY ( userId ) <br>
     );</b>
-- that's all 
+- that's all
 
 ## How it works
 <p> You can see some screenshots below. </p>
