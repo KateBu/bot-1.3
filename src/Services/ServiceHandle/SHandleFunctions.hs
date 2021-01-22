@@ -35,9 +35,9 @@ addUser ::
   Int ->
   Int ->
   m ()
-addUser handle userId repeat = do
+addUser handle userId rep = do
   hDbHandle <- hDB handle
-  DBHandle.addUser hDbHandle userId repeat
+  DBHandle.addUser hDbHandle userId rep
 
 updateUser ::
   Monad m =>
@@ -45,6 +45,6 @@ updateUser ::
   Int ->
   Int ->
   m ()
-updateUser handle userId repeat = do
+updateUser handle userId rep = do
   hDbHandle <- hDB handle
-  DBHandle.updateUser hDbHandle userId repeat
+  DBHandle.updateUser hDbHandle userId rep
