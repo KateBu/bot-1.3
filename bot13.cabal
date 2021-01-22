@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 56fcfa9401e2e647b8215fe7063ec5f4f3d88411c138609f4a1ce912bc682746
+-- hash: e7e6934758d85dfb6ccfd47c8465ae50750be007259192381f5b390c114b5543
 
 name:           bot13
 version:        0.1.0.0
@@ -194,9 +194,9 @@ test-suite bot13-test
   main-is: Spec.hs
   other-modules:
       TestData
-      TestData.TestConfig
-      TestData.TestFunctions
+      TestData.TestEnvironment
       TestData.TestMessages
+      TestData.TestServices
       Tests
       Tests.AddUser
       Tests.ConfigSetOffset
