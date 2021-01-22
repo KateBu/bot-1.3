@@ -6,12 +6,12 @@ import qualified Data.Text as T
 import Database.PostgreSQL.Simple (Query)
 
 userId :: Config.Config -> Int -> Query
-userId (Config.VKBot _) usid = "\'" <> "VK" <> (fromString . show) usid <> "\'"
-userId (Config.TBot _) usid = "\'" <> "Tel" <> (fromString . show) usid <> "\'"
+userId (Config.VKBot _) usid = "\'" <> "vk" <> (fromString . show) usid <> "\'"
+userId (Config.TBot _) usid = "\'" <> "tel" <> (fromString . show) usid <> "\'"
 
 userIdText :: Config.Config -> Int -> T.Text
-userIdText (Config.VKBot _) usid = "VK" <> (T.pack . show) usid
-userIdText (Config.TBot _) usid = "Tel" <> (T.pack . show) usid
+userIdText (Config.VKBot _) usid = "vk" <> (T.pack . show) usid
+userIdText (Config.TBot _) usid = "tel" <> (T.pack . show) usid
 
 findUserQuery :: Config.Config -> Int -> Query
 findUserQuery bType usid =
