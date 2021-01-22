@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ffaad9198f653f29b04101428ff592731b1deefcf40f9ee20e28ffbed8d382d1
+-- hash: 56fcfa9401e2e647b8215fe7063ec5f4f3d88411c138609f4a1ce912bc682746
 
 name:           bot13
 version:        0.1.0.0
@@ -110,6 +110,13 @@ library
       Environment.Logger.LoggerFunctions
       Environment.Logger.LoggerMsgs
       Environment.Logger.LoggerStructs
+      Environment.Logger.Messages.Bot
+      Environment.Logger.Messages.DB
+      Environment.Logger.Messages.ProcMsgs
+      Environment.Logger.Messages.Telegram
+      Environment.Logger.Messages.Tests
+      Environment.Logger.Messages.VK
+      Environment.Logger.Messages.Wrapper
       Exceptions.Exceptions
       Exceptions.ExFunctions
       Exceptions.ExStructs
