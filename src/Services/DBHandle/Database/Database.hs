@@ -38,30 +38,31 @@ find bType logger userId = do
 
 checkFindResponse :: Monad m => Logger.Logger m -> [Only (Maybe Int)] -> m (Maybe Int)
 checkFindResponse _ [] = pure Nothing
-checkFindResponse logger [Only repeat] = do
+checkFindResponse logger [Only rep] = do
   Logger.botLog logger LoggerMsgs.findUserScs
-  pure repeat
+  pure rep
 checkFindResponse _ _ = BotEx.throwOtherException LoggerMsgs.findUserQueryFld
 
 add :: Config.Config -> Logger.Logger IO -> Int -> Int -> IO ()
-add bType logger usId repeat = do
+add bType logger usId rep = do
   conn <- connect connectInfo `catch` \ex -> BotEx.throwSQLException (ex :: SqlError)
   let user = userIdText bType usId
-  resp <- (query conn addUserQuery (user, repeat) :: IO [(T.Text, Int)]) `catches` BotEx.dbErrorsHandlers
-  checkAddResp logger (user, repeat) resp
+  resp <- (query conn addUserQuery (user, rep) :: IO [(T.Text, Int)]) `catches` BotEx.dbErrorsHandlers
+  checkAddResp logger (user, rep) resp
 
 checkAddResp :: Monad m => Logger.Logger m -> (T.Text, Int) -> [(T.Text, Int)] -> m ()
 checkAddResp logger (usId, rep) [(usId', rep')] = do
   if usId `T.isPrefixOf` usId' && rep == rep'
     then Logger.botLog logger LoggerMsgs.addUserRepeatScs
     else BotEx.throwOtherException LoggerMsgs.addUserQueryFld
+checkAddResp _ _ _ = BotEx.throwOtherException LoggerMsgs.addUserQueryFld
 
 update :: Config.Config -> Logger.Logger IO -> Int -> Int -> IO ()
-update bType logger usId repeat = do
+update bType logger usId rep = do
   conn <- connect connectInfo `catch` \ex -> BotEx.throwSQLException (ex :: SqlError)
   let user = userIdText bType usId
-  resp <- (query conn updateUserQuery (repeat, user) :: IO [(T.Text, Int)]) `catches` BotEx.dbErrorsHandlers
-  checkUpdResp logger (user, repeat) resp
+  resp <- (query conn updateUserQuery (rep, user) :: IO [(T.Text, Int)]) `catches` BotEx.dbErrorsHandlers
+  checkUpdResp logger (user, rep) resp
 
 checkUpdResp :: Monad m => Logger.Logger m -> (T.Text, Int) -> [(T.Text, Int)] -> m ()
 checkUpdResp logger _ [] =
@@ -70,3 +71,4 @@ checkUpdResp logger (usId, rep) [(usId', rep')] =
   if usId `T.isPrefixOf` usId' && rep == rep'
     then Logger.botLog logger LoggerMsgs.updUserRepeatScs
     else BotEx.throwOtherException LoggerMsgs.updUserRepeatFld
+checkUpdResp _ _ _ = BotEx.throwOtherException LoggerMsgs.updUserRepeatFld 
