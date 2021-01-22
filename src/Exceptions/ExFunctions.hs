@@ -3,6 +3,10 @@ module Exceptions.ExFunctions where
 import Control.Exception (Handler (..), IOException, throw)
 import qualified Data.Text as T
 import Database.PostgreSQL.Simple
+  ( FormatError,
+    ResultError,
+    SqlError,
+  )
 import qualified Environment.Logger.Logger as Logger
 import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
 import Exceptions.ExStructs (BotException (..))
