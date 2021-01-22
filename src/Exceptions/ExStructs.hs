@@ -1,6 +1,6 @@
 module Exceptions.ExStructs where
 
-import Control.Exception
+import Control.Exception (Exception, IOException)
 import Database.PostgreSQL.Simple
   ( FormatError,
     QueryError,
