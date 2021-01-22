@@ -6,21 +6,21 @@ import qualified Data.Text as T
 import Environment.EnvStructs (Environment (..))
 import qualified Environment.Logger.Logger as Logger
 
-type RMA m a = ReaderT (Environment m) m a
+type REnv m a = ReaderT (Environment m) m a
 
-eConfig :: Monad m => RMA m Config.Config
+eConfig :: Monad m => REnv m Config.Config
 eConfig = asks config
 
-eRep :: Monad m => RMA m Int
+eRep :: Monad m => REnv m Int
 eRep = asks repetition
 
-eHelpMsg :: Monad m => RMA m T.Text
+eHelpMsg :: Monad m => REnv m T.Text
 eHelpMsg = asks helpMsg
 
-eLogger :: Monad m => RMA m (Logger.Logger m)
+eLogger :: Monad m => REnv m (Logger.Logger m)
 eLogger = asks logger
 
-eGetUid :: Monad m => RMA m Int
+eGetUid :: Monad m => REnv m Int
 eGetUid = asks $ Config.configGetUid . config
 
 updateConfig :: Monad m => Environment m -> Config.Config -> m (Environment m)
