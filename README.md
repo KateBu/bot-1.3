@@ -17,6 +17,7 @@ Tests don't work properly now
 - clone the repo
 - build project with stack
 - check and fill in a config.cofig file (see below)
+- create a database (see below)
 - run an execute file
 
 ## How to fill in the Config File (config.config):
@@ -29,6 +30,19 @@ Tests don't work properly now
 <p><b>helpMessage</b>: you can change the message a user will get if sends /help command (quotes are required);</p>
 <p><b>logPriority</b>: use "Debug", "Info", "Warning" or "Error" (quotes are required).</p>
 
+## How to create a database:
+<p>The bot works with a primitive database (PostreSQL), that contains one table to store user IDs and number of repetition for every user. The database supposed to be hosted locally (the same computer as the bot). So to create the database you just have to write a few strings in psql command line: </p> 
+- to create a new user 'bot' with password 'bot13': <b> CREATE USER bot WITH password 'bot13'; </b>
+- to create a new database 'users': <b> CREATE DATABASE users; </b>
+- to grant the database to user 'bot': <b> GRANT ALL ON DATABASE users TO bot; </b>
+- then run the database 'users' and create a new table: <br>
+    <b>  CREATE TABLE UserRepeats <br>
+    ( userId char (15) NOT NULL, <br>
+    repeats integer NOT NULL, <br>
+    CHECK ( repeats > 0 and repeats < 6), <br>
+    PRIMARY KEY ( userId ) <br>
+    );</b>
+- that's all 
 
 ## How it works
 <p> You can see some screenshots below. </p>
