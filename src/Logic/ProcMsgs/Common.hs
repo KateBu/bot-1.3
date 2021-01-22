@@ -16,8 +16,8 @@ processMsgsCommon ::
 processMsgsCommon env handle msg userId = do
   defaultRepeat <- runReaderT Env.eRep env
   mbRepeat <- Handle.findUser handle userId
-  let repeat = fromMaybe defaultRepeat mbRepeat
-  repeatMsg msg repeat handle env
+  let rep = fromMaybe defaultRepeat mbRepeat
+  repeatMsg msg rep handle env
 
 repeatMsg ::
   Monad m =>
