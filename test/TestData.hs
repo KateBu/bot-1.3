@@ -1,6 +1,6 @@
 module TestData (module Tests) where
 
-import TestData.TestConfig as Tests
+import TestData.TestEnvironment as Tests
 
 import TestData.TestFunctions as Tests
 
