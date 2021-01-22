@@ -1,14 +1,9 @@
 module TestData (module Tests) where
 
 import TestData.TestConfig as Tests
-  ( testConfigTelegram,
-    testConfigVK,
-    users,
-  )
+
 import TestData.TestFunctions as Tests
-  ( testFunction0,
-    testFunction1,
-  )
+
 import TestData.TestMessages as Tests
   ( allMessages,
     callbackMessages,

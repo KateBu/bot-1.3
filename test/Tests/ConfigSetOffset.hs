@@ -4,6 +4,7 @@ import qualified Config.Config as Config
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
+{-
 testConfigSetOffset :: [Test]
 testConfigSetOffset = [testConfigSetOffset1, testConfigSetOffset2]
 
@@ -36,3 +37,4 @@ expectedConfigSetOffset2 = TestData.testConfigVK {Config.botType = Config.VKBot 
 
 actualConfigSetOffset2 :: Config.Config
 actualConfigSetOffset2 = Config.configSetOffset TestData.testConfigVK 42
+-}

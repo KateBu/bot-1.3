@@ -5,6 +5,7 @@ import qualified Data.Map as Map
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
+{-
 testAddUser :: [Test]
 testAddUser = [testAddUser1, testAddUser2]
 
@@ -37,3 +38,4 @@ expectedAddUser2 = TestData.testConfigVK {Config.users = Map.fromList [(11, 1), 
 
 actualAddUser2 :: Config.Config
 actualAddUser2 = Config.addUser 123 42 TestData.testConfigVK
+-}

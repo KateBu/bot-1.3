@@ -6,6 +6,7 @@ import qualified Logic.Logic as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
+{-
 testsRepeatMsg :: [Test]
 testsRepeatMsg = [testRepeatMsg0, testRepeatMsg1, testRepeatMsg2, testRepeatMsg3, testRepeatMsg4]
 
@@ -113,3 +114,4 @@ actualRepeatMsg4 =
 
 expectedRepeatMsg4 :: Maybe (Either BotEx.BotException Config.Config)
 expectedRepeatMsg4 = pure $ Right $ Config.configSetOffset TestData.testConfigTelegram 5
+-}

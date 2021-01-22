@@ -5,6 +5,7 @@ import qualified Logic.PureStructs as PureStructs
 import Test.HUnit (Test (TestCase), assertBool)
 import qualified TestData as TestData
 
+{-
 testMakeCallbackResponse :: Test
 testMakeCallbackResponse = TestCase (assertBool "Message type should be MTCommon Message" testMakeCallbackResponse')
 
@@ -16,3 +17,4 @@ testMakeCallbackResponse' =
         . Logic.makeCallbackResponse
         <$> TestData.allMessages
     )
+-}

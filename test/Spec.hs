@@ -1,23 +1,10 @@
 import Test.HUnit (runTestTT)
 import Tests as Tests
-  ( testAddUser,
-    testConfigSetOffset,
-    testDeleteUser,
-    testFindUserRepeat,
-    testGetLastConf,
-    testMakeCallbackResponse,
-    testMakeRepeatMsg,
-    testProcessMsgs,
-    testProcessMsgsCallback,
-    testProcessMsgsCommon,
-    testProcessMsgs_,
-    testReWriteUserRepeat,
-    testSetUserRepeat,
-    testsRepeatMsg,
-  )
+
 
 main :: IO ()
-main = do
+main = pure ()
+ {- do
   putStrLn "Config.setUserRepeat function tests:"
   mapM_ runTestTT Tests.testSetUserRepeat
   putStrLn "Config.reWriteUserRepeat function tests:"
@@ -46,3 +33,4 @@ main = do
   runTestTT Tests.testMakeCallbackResponse
   putStrLn "Logic.repeatMsg function tests:"
   mapM_ runTestTT Tests.testsRepeatMsg
+-}

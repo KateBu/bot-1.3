@@ -6,6 +6,7 @@ import qualified Logic.Logic as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
+{-
 testProcessMsgs_ :: [Test]
 testProcessMsgs_ =
   [ testProcessMsgs_1,
@@ -239,3 +240,4 @@ actualTestProcessMsgs_11 =
 
 expectedTestProcessMsgs_11 :: Maybe (Either BotEx.BotException Config.Config)
 expectedTestProcessMsgs_11 = pure . pure $ Config.configSetOffset TestData.testConfigTelegram 3
+-}

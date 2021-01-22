@@ -1,9 +1,8 @@
 module TestData.TestConfig where
 
 import qualified Config.Config as Config
-import qualified Data.Map as Map
-import qualified Logger.Logger as Logger
 
+{-
 users :: Config.Users
 users = Map.fromList [(11, 1), (22, 2), (33, 3)]
 
@@ -24,3 +23,4 @@ testConfigTelegram =
     1
     users
     Logger.Error
+-}

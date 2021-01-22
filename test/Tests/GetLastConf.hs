@@ -2,11 +2,10 @@ module Tests.GetLastConf where
 
 import qualified Config.Config as Config
 import qualified Exceptions.Exceptions as BotEx
-import qualified Logger.Logger as Logger
 import qualified Logic.Logic as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
-
+{-
 testGetLastConf :: [Test]
 testGetLastConf = [testGetLastConf1, testGetLastConf2, testGetLastConf3]
 
@@ -63,3 +62,4 @@ actualGetLastConf3 =
 
 expectedGetLastConf3 :: Maybe (Either BotEx.BotException Config.Config)
 expectedGetLastConf3 = pure $ BotEx.throwOtherException $ Logger.LogMessage Logger.Error "error"
+-}

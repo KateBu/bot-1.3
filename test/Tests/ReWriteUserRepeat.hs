@@ -1,10 +1,10 @@
 module Tests.ReWriteUserRepeat where
 
 import qualified Config.Config as Config
-import qualified Data.Map as Map
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
+{-
 testReWriteUserRepeat :: [Test]
 testReWriteUserRepeat = [testReWriteUserRepeat1, testReWriteUserRepeat2]
 
@@ -37,3 +37,4 @@ expectedReWriteUserRepeat2 = TestData.testConfigVK {Config.users = Map.fromList 
 
 actualReWriteUserRepeat2 :: Config.Config
 actualReWriteUserRepeat2 = Config.reWriteUserRepeat TestData.testConfigVK 33 1 1
+-}

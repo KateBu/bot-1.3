@@ -5,6 +5,7 @@ import qualified Data.Map as Map
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
+{-
 testDeleteUser :: [Test]
 testDeleteUser = [testDeleteUser1, testDeleteUser2, testDeleteUser3]
 
@@ -52,3 +53,4 @@ expectedDeleteUser3 = TestData.testConfigVK
 
 actualDeleteUser3 :: Config.Config
 actualDeleteUser3 = Config.deleteUser 42 TestData.testConfigVK
+-}

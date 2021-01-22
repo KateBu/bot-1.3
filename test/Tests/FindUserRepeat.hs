@@ -4,6 +4,7 @@ import qualified Config.Config as Config
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
+{-
 testFindUserRepeat :: [Test]
 testFindUserRepeat = [testFindUserRepeat1, testFindUserRepeat2, testFindUserRepeat3]
 
@@ -51,3 +52,4 @@ expectedFindUserRepeat3 = 3
 
 actualFindUserRepeat3 :: Int
 actualFindUserRepeat3 = Config.findUserRepeat TestData.testConfigVK 42
+-}

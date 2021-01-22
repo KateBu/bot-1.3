@@ -7,6 +7,7 @@ import qualified Logic.PureStructs as PureStructs
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
+{-
 testProcessMsgsCallback :: [Test]
 testProcessMsgsCallback =
   [ testProcessMsgsCallback1,
@@ -110,3 +111,4 @@ expectedProcessMsgsCallback4 :: Maybe (Either BotEx.BotException Config.Config)
 expectedProcessMsgsCallback4 = pure . pure $ Config.configSetOffset newConfig 1
   where
     newConfig = Config.setUserRepeat TestData.testConfigVK 22 5
+-}

@@ -1,10 +1,10 @@
 module Tests.SetUserRepeat where
 
 import qualified Config.Config as Config
-import qualified Data.Map as Map
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
+{-
 testSetUserRepeat :: [Test]
 testSetUserRepeat = [testSetUserRepeat1, testSetUserRepeat2, testSetUserRepeat3]
 
@@ -52,3 +52,4 @@ expectedSetUserRepeat3 = TestData.testConfigVK {Config.users = Map.fromList [(11
 
 actualSetUserRepeat3 :: Config.Config
 actualSetUserRepeat3 = Config.setUserRepeat TestData.testConfigVK 42 2
+-}
