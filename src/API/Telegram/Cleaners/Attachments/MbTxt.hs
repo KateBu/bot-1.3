@@ -6,7 +6,6 @@ import API.Telegram.Cleaners.Keyboard
     makeKeyboard,
   )
 import qualified API.Telegram.TStructs.MessageInfo as TStructs
-import qualified Config.Config as Config
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 
