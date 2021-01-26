@@ -267,7 +267,7 @@ cmnMsg3 :: PureStructs.PureMessage
 cmnMsg3 =
   PureStructs.PureMessage
     (PureStructs.MTCommon "Message")
-    2
+    42
     (Just 11)
     Nothing
 
