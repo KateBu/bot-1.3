@@ -2,9 +2,8 @@ module Tests.ConfigSetOffset where
 
 import qualified Config.Config as Config
 import Test.HUnit (Test (TestCase), assertEqual)
-import qualified TestData as TestData
+import qualified TestData 
 
-{-
 testConfigSetOffset :: [Test]
 testConfigSetOffset = [testConfigSetOffset1, testConfigSetOffset2]
 
@@ -18,7 +17,7 @@ testConfigSetOffset1 =
     )
 
 expectedConfigSetOffset1 :: Config.Config
-expectedConfigSetOffset1 = TestData.testConfigTelegram {Config.botType = Config.TBot (Config.Telegram "token" 5)}
+expectedConfigSetOffset1 =  Config.TBot $ Config.Telegram "token" 5
 
 actualConfigSetOffset1 :: Config.Config
 actualConfigSetOffset1 = Config.configSetOffset TestData.testConfigTelegram 5
@@ -33,8 +32,7 @@ testConfigSetOffset2 =
     )
 
 expectedConfigSetOffset2 :: Config.Config
-expectedConfigSetOffset2 = TestData.testConfigVK {Config.botType = Config.VKBot (Config.VK "token" 11 "key" "server" 42)}
+expectedConfigSetOffset2 = Config.VKBot $ Config.VK "token" 11 "key" "server" 42
 
 actualConfigSetOffset2 :: Config.Config
 actualConfigSetOffset2 = Config.configSetOffset TestData.testConfigVK 42
--}
