@@ -1,9 +1,12 @@
 module TestData (module Tests) where
 
 import TestData.TestEnvironment as Tests
-
-import TestData.TestFunctions as Tests
-
+    ( testEnvVK,
+      testEnvTelegram,
+      helpM,
+      testConfigVK,
+      testConfigTelegram,
+      testLogger )
 import TestData.TestMessages as Tests
   ( allMessages,
     callbackMessages,
@@ -35,3 +38,4 @@ import TestData.TestMessages as Tests
     emptyMsg4,
     newHelp,
   )
+import TestData.TestServices as Tests 
