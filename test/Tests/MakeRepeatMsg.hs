@@ -3,7 +3,7 @@ module Tests.MakeRepeatMsg where
 import qualified Logic.Logic as Logic
 import qualified Logic.PureStructs as PureStructs
 import Test.HUnit (Test (TestCase), assertBool)
-import qualified TestData as TestData
+import qualified TestData 
 
 testMakeRepeatMsg :: [Test]
 testMakeRepeatMsg = [testMakeRepeatMsgMsgType, testMakeRepeatMsgText]
