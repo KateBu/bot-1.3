@@ -1,35 +1,39 @@
 module Tests.RepeatMsgs where
 
 import qualified Config.Config as Config
-import qualified Exceptions.Exceptions as BotEx
-import qualified Logic.Logic as Logic
+import qualified Environment.Environment as Env
+import qualified Logic.ProcMsgs.Common as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
-import qualified TestData as TestData
+import qualified TestData
 
-{-
 testsRepeatMsg :: [Test]
-testsRepeatMsg = [testRepeatMsg0, testRepeatMsg1, testRepeatMsg2, testRepeatMsg3, testRepeatMsg4]
+testsRepeatMsg =
+  [ testRepeatMsg0,
+    testRepeatMsg1,
+    testRepeatMsg2,
+    testRepeatMsg3
+  ]
 
 testRepeatMsg0 :: Test
 testRepeatMsg0 =
   TestCase
     ( assertEqual
         "Logic.repeatMsg0"
-        expectedRepeatMsg0
         actualRepeatMsg0
+        expectedRepeatMsg0
     )
 
-actualRepeatMsg0 :: Maybe (Either BotEx.BotException Config.Config)
+actualRepeatMsg0 :: Maybe Config.Config
 actualRepeatMsg0 =
-  Logic.repeatMsg
-    TestData.newHelp
-    TestData.cbMsg1
-    0
-    TestData.testFunction0
-    TestData.testConfigVK
+  Env.config
+    <$> Logic.repeatMsg
+      TestData.cmnMsg1
+      0
+      TestData.servicesTel1
+      TestData.testEnvTelegram
 
-expectedRepeatMsg0 :: Maybe (Either BotEx.BotException Config.Config)
-expectedRepeatMsg0 = pure $ Right TestData.testConfigVK
+expectedRepeatMsg0 :: Maybe Config.Config
+expectedRepeatMsg0 = pure $ Env.config TestData.testEnvTelegram
 
 testRepeatMsg1 :: Test
 testRepeatMsg1 =
@@ -40,17 +44,17 @@ testRepeatMsg1 =
         actualRepeatMsg1
     )
 
-actualRepeatMsg1 :: Maybe (Either BotEx.BotException Config.Config)
+actualRepeatMsg1 :: Maybe Config.Config
 actualRepeatMsg1 =
-  Logic.repeatMsg
-    TestData.newHelp
-    TestData.cmnMsg1
-    1
-    TestData.testFunction0
-    TestData.testConfigVK
+  Env.config
+    <$> Logic.repeatMsg
+      TestData.cmnMsg1
+      1
+      TestData.servicesTel1
+      TestData.testEnvTelegram
 
-expectedRepeatMsg1 :: Maybe (Either BotEx.BotException Config.Config)
-expectedRepeatMsg1 = pure $ Right $ TestData.testConfigVK {Config.helpMessage = TestData.newHelp}
+expectedRepeatMsg1 :: Maybe Config.Config
+expectedRepeatMsg1 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 3
 
 testRepeatMsg2 :: Test
 testRepeatMsg2 =
@@ -61,17 +65,17 @@ testRepeatMsg2 =
         actualRepeatMsg2
     )
 
-actualRepeatMsg2 :: Maybe (Either BotEx.BotException Config.Config)
+actualRepeatMsg2 :: Maybe Config.Config
 actualRepeatMsg2 =
-  Logic.repeatMsg
-    TestData.newHelp
-    TestData.commandMsg1
-    5
-    TestData.testFunction0
-    TestData.testConfigTelegram
+  Env.config
+    <$> Logic.repeatMsg
+      TestData.cmnMsg2
+      2
+      TestData.servicesVk1
+      TestData.testEnvVK
 
-expectedRepeatMsg2 :: Maybe (Either BotEx.BotException Config.Config)
-expectedRepeatMsg2 = pure $ Right $ TestData.testConfigTelegram {Config.helpMessage = TestData.newHelp}
+expectedRepeatMsg2 :: Maybe Config.Config
+expectedRepeatMsg2 = Env.config <$> Env.eSetOffset TestData.testEnvVK 3
 
 testRepeatMsg3 :: Test
 testRepeatMsg3 =
@@ -82,36 +86,14 @@ testRepeatMsg3 =
         actualRepeatMsg3
     )
 
-actualRepeatMsg3 :: Maybe (Either BotEx.BotException Config.Config)
+actualRepeatMsg3 :: Maybe Config.Config
 actualRepeatMsg3 =
-  Logic.repeatMsg
-    TestData.newHelp
-    TestData.emptyMsg1
-    5
-    TestData.testFunction0
-    TestData.testConfigTelegram
+  Env.config
+    <$> Logic.repeatMsg
+      TestData.cmnMsg3
+      5
+      TestData.servicesVk1
+      TestData.testEnvVK
 
-expectedRepeatMsg3 :: Maybe (Either BotEx.BotException Config.Config)
-expectedRepeatMsg3 = Nothing
-
-testRepeatMsg4 :: Test
-testRepeatMsg4 =
-  TestCase
-    ( assertEqual
-        "Logic.repeatMsg2"
-        expectedRepeatMsg4
-        actualRepeatMsg4
-    )
-
-actualRepeatMsg4 :: Maybe (Either BotEx.BotException Config.Config)
-actualRepeatMsg4 =
-  Logic.repeatMsg
-    3
-    TestData.commandMsg1
-    5
-    TestData.testFunction1
-    TestData.testConfigTelegram
-
-expectedRepeatMsg4 :: Maybe (Either BotEx.BotException Config.Config)
-expectedRepeatMsg4 = pure $ Right $ Config.configSetOffset TestData.testConfigTelegram 5
--}
+expectedRepeatMsg3 :: Maybe Config.Config
+expectedRepeatMsg3 = Env.config <$> Env.eSetOffset TestData.testEnvVK 43
