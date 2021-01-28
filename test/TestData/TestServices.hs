@@ -9,35 +9,35 @@ import qualified Services.SHandle as Services
 import TestData.TestEnvironment (testEnvTelegram, testEnvVK)
 import qualified TestData.TestMessages as Msgs
 
-servicesVk :: Services.SHandle Maybe
-servicesVk =
+servicesVk1 :: Services.SHandle Maybe
+servicesVk1 =
   Services.SHandle
-    { Services.hAPI = pure apiVK,
+    { Services.hAPI = pure apiVK1,
       Services.hDB = pure db
     }
 
-servicesTel :: Services.SHandle Maybe
-servicesTel =
+servicesTel1 :: Services.SHandle Maybe
+servicesTel1 =
   Services.SHandle
-    { Services.hAPI = pure apiTel,
+    { Services.hAPI = pure apiTel1,
       Services.hDB = pure db
     }
 
 testDataBase :: Map.Map Int Int
 testDataBase = Map.fromList [(11, 1), (22, 2), (33, 3)]
 
-apiVK :: API.Handle Maybe
-apiVK =
+apiVK1 :: API.Handle Maybe
+apiVK1 =
   API.Handle
     { API.hGetUpdates = pure Msgs.allMessages,
-      API.hSendMessage = sendMsg testEnvVK
+      API.hSendMessage = sendMsg1 testEnvVK
     }
 
-apiTel :: API.Handle Maybe
-apiTel =
+apiTel1 :: API.Handle Maybe
+apiTel1 =
   API.Handle
     { API.hGetUpdates = pure Msgs.allMessages,
-      API.hSendMessage = sendMsg testEnvTelegram
+      API.hSendMessage = sendMsg1 testEnvTelegram
     }
 
 db :: DB.Handle Maybe
@@ -48,6 +48,5 @@ db =
       DB.updateUser = \_ _ -> pure ()
     }
 
-sendMsg :: Env.Environment Maybe -> PureStructs.PureMessage -> Maybe (Env.Environment Maybe)
-sendMsg env msg = do
-  Env.eSetOffset env $ succ (PureStructs.updateID msg)
+sendMsg1 :: Env.Environment Maybe -> PureStructs.PureMessage -> Maybe (Env.Environment Maybe)
+sendMsg1 env msg = Env.eSetOffset env $ succ (PureStructs.updateID msg)
