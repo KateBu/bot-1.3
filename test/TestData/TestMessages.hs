@@ -291,7 +291,7 @@ cmnMsg5 :: PureStructs.PureMessage
 cmnMsg5 =
   PureStructs.PureMessage
     (PureStructs.MTCommon "Message")
-    2
+    15
     (Just 42)
     ( Just
         [ PureStructs.ParamsBool "bool" True,
