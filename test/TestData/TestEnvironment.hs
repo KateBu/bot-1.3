@@ -11,7 +11,7 @@ testEnvVK =
 
 testEnvTelegram :: Env.Environment Maybe
 testEnvTelegram =
-  Env.Environment testConfigTelegram 3 helpM testLogger
+  Env.Environment testConfigTelegram 5 helpM testLogger
 
 helpM :: T.Text
 helpM = "help command response"
