@@ -1,12 +1,13 @@
 module TestData (module Tests) where
 
 import TestData.TestEnvironment as Tests
-    ( testEnvVK,
-      testEnvTelegram,
-      helpM,
-      testConfigVK,
-      testConfigTelegram,
-      testLogger )
+  ( helpM,
+    testConfigTelegram,
+    testConfigVK,
+    testEnvTelegram,
+    testEnvVK,
+    testLogger,
+  )
 import TestData.TestMessages as Tests
   ( allMessages,
     callbackMessages,
@@ -16,11 +17,14 @@ import TestData.TestMessages as Tests
     cbMsg4,
     cbMsg5,
     cbMsg6,
+    cbWithoutErrors,
+    cmdWithoutErrors,
     cmnMsg1,
     cmnMsg2,
     cmnMsg3,
     cmnMsg4,
     cmnMsg5,
+    cmnWithoutErrors,
     commandMessages,
     commandMsg1,
     commandMsg2,
@@ -36,6 +40,15 @@ import TestData.TestMessages as Tests
     emptyMsg2,
     emptyMsg3,
     emptyMsg4,
+    messagesWithoutErrors,
     newHelp,
   )
-import TestData.TestServices as Tests 
+import TestData.TestServices as Tests
+  ( apiTel1,
+    apiVK1,
+    db,
+    sendMsg1,
+    servicesTel1,
+    servicesVk1,
+    testDataBase,
+  )
