@@ -10,6 +10,18 @@ newHelp = "new help message"
 allMessages :: [PureStructs.PureMessage]
 allMessages = mconcat [emptyMessages, commandMessages, commonMessages, callbackMessages]
 
+messagesWithoutErrors :: [PureStructs.PureMessage]
+messagesWithoutErrors = mconcat [emptyMessages, cmdWithoutErrors, cbWithoutErrors, cmnWithoutErrors]
+
+cmdWithoutErrors :: [PureStructs.PureMessage]
+cmdWithoutErrors = [commandMsg2, commandMsg3, commandMsg6]
+
+cbWithoutErrors :: [PureStructs.PureMessage]
+cbWithoutErrors = [cbMsg2, cbMsg3]
+
+cmnWithoutErrors :: [PureStructs.PureMessage]
+cmnWithoutErrors = [cmnMsg3, cmnMsg4, cmnMsg5]
+
 emptyMessages :: [PureStructs.PureMessage]
 emptyMessages = [emptyMsg1, emptyMsg2, emptyMsg3, emptyMsg4]
 
