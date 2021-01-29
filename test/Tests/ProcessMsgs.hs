@@ -1,16 +1,20 @@
 module Tests.ProcessMsgs where
 
 import qualified Config.Config as Config
-import Data.Maybe (isJust)
-import qualified Exceptions.Exceptions as BotEx
+import qualified Environment.Environment as Env
 import qualified Logic.Logic as Logic
-import qualified Logic.PureStructs as PureStructs
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
-{-
 testProcessMsgs :: [Test]
-testProcessMsgs = [testProcessMsgs1, testProcessMsgs2, testProcessMsgs3]
+testProcessMsgs =
+  [ testProcessMsgs1,
+    testProcessMsgs2,
+    testProcessMsgs3,
+    testProcessMsgs4,
+    testProcessMsgs5,
+    testProcessMsgs6
+  ]
 
 testProcessMsgs1 :: Test
 testProcessMsgs1 =
@@ -21,19 +25,16 @@ testProcessMsgs1 =
         actualTestProcessMsgs1
     )
 
-actualTestProcessMsgs1 :: Maybe (Either BotEx.BotException Config.Config)
+actualTestProcessMsgs1 :: Maybe Config.Config
 actualTestProcessMsgs1 =
-  Logic.processMsgs
-    TestData.testConfigTelegram
-    5
-    TestData.testFunction1
-    (Right TestData.allMessages)
+  Env.config
+    <$> Logic.processMsgs
+      TestData.testEnvTelegram
+      TestData.servicesTel1
+      TestData.messagesWithoutErrors
 
-expectedTestProcessMsgs1 :: Maybe (Either BotEx.BotException Config.Config)
-expectedTestProcessMsgs1 = Logic.processMsgsErr
-
-withChid :: [PureStructs.PureMessage]
-withChid = filter (isJust . PureStructs.mbChatID) TestData.commonMessages
+expectedTestProcessMsgs1 :: Maybe Config.Config
+expectedTestProcessMsgs1 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 16
 
 testProcessMsgs2 :: Test
 testProcessMsgs2 =
@@ -44,16 +45,16 @@ testProcessMsgs2 =
         actualTestProcessMsgs2
     )
 
-actualTestProcessMsgs2 :: Maybe (Either BotEx.BotException Config.Config)
+actualTestProcessMsgs2 :: Maybe Config.Config
 actualTestProcessMsgs2 =
-  Logic.processMsgs
-    TestData.testConfigTelegram
-    5
-    TestData.testFunction1
-    (Right withChid)
+  Env.config
+    <$> Logic.processMsgs
+      TestData.testEnvVK
+      TestData.servicesVk1
+      TestData.emptyMessages
 
-expectedTestProcessMsgs2 :: Maybe (Either BotEx.BotException Config.Config)
-expectedTestProcessMsgs2 = pure . pure $ Config.configSetOffset TestData.testConfigTelegram 1
+expectedTestProcessMsgs2 :: Maybe Config.Config
+expectedTestProcessMsgs2 = Env.config <$> Env.eSetOffset TestData.testEnvVK 2
 
 testProcessMsgs3 :: Test
 testProcessMsgs3 =
@@ -64,14 +65,73 @@ testProcessMsgs3 =
         actualTestProcessMsgs3
     )
 
-actualTestProcessMsgs3 :: Maybe (Either BotEx.BotException Config.Config)
+actualTestProcessMsgs3 :: Maybe Config.Config
 actualTestProcessMsgs3 =
-  Logic.processMsgs
-    TestData.testConfigVK
-    5
-    TestData.testFunction1
-    (Right withChid)
+  Env.config
+    <$> Logic.processMsgs
+      TestData.testEnvTelegram
+      TestData.servicesTel1
+      TestData.cmdWithoutErrors
 
-expectedTestProcessMsgs3 :: Maybe (Either BotEx.BotException Config.Config)
-expectedTestProcessMsgs3 = pure . pure $ Config.configSetOffset TestData.testConfigVK 3
--}
+expectedTestProcessMsgs3 :: Maybe Config.Config
+expectedTestProcessMsgs3 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 3
+
+testProcessMsgs4 :: Test
+testProcessMsgs4 =
+  TestCase
+    ( assertEqual
+        "Logic.testProcessMsgs4"
+        expectedTestProcessMsgs4
+        actualTestProcessMsgs4
+    )
+
+actualTestProcessMsgs4 :: Maybe Config.Config
+actualTestProcessMsgs4 =
+  Env.config
+    <$> Logic.processMsgs
+      TestData.testEnvVK
+      TestData.servicesVk1
+      TestData.cbWithoutErrors
+
+expectedTestProcessMsgs4 :: Maybe Config.Config
+expectedTestProcessMsgs4 = Env.config <$> Env.eSetOffset TestData.testEnvVK 3
+
+testProcessMsgs5 :: Test
+testProcessMsgs5 =
+  TestCase
+    ( assertEqual
+        "Logic.testProcessMsgs5"
+        expectedTestProcessMsgs5
+        actualTestProcessMsgs5
+    )
+
+actualTestProcessMsgs5 :: Maybe Config.Config
+actualTestProcessMsgs5 =
+  Env.config
+    <$> Logic.processMsgs
+      TestData.testEnvTelegram
+      TestData.servicesTel1
+      TestData.cmnWithoutErrors
+
+expectedTestProcessMsgs5 :: Maybe Config.Config
+expectedTestProcessMsgs5 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 16
+
+testProcessMsgs6 :: Test
+testProcessMsgs6 =
+  TestCase
+    ( assertEqual
+        "Logic.testProcessMsgs6"
+        expectedTestProcessMsgs6
+        actualTestProcessMsgs6
+    )
+
+actualTestProcessMsgs6 :: Maybe Config.Config
+actualTestProcessMsgs6 =
+  Env.config
+    <$> Logic.processMsgs
+      TestData.testEnvVK
+      TestData.servicesVk1
+      []
+
+expectedTestProcessMsgs6 :: Maybe Config.Config
+expectedTestProcessMsgs6 = pure $ Env.config TestData.testEnvVK
