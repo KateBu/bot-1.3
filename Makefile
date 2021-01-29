@@ -3,6 +3,9 @@
 fmt:
 	cd src && ormolu --mode inplace $$(find . -name '*.hs')
 
+fmtTests:
+	cd test && ormolu --mode inplace $$(find . -name '*.hs')
+
 build:
 	stack build --ghc-options="-Wall -Werror"
 
@@ -11,3 +14,4 @@ run:
 
 tests:
 	stack test 
+	
