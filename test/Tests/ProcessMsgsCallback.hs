@@ -1,16 +1,15 @@
 module Tests.ProcessMsgsCallback where
 
 import qualified Config.Config as Config
-import qualified Logic.ProcMsgs.Callback as Logic
 import qualified Environment.Environment as Env
+import qualified Logic.ProcMsgs.Callback as Logic
 import qualified Logic.PureStructs as PureStructs
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
-
 testProcessMsgsCallback :: [Test]
 testProcessMsgsCallback =
-  [ testProcessMsgsCallback1 ]
+  [testProcessMsgsCallback1]
 
 testProcessMsgsCallback1 :: Test
 testProcessMsgsCallback1 =
@@ -22,7 +21,8 @@ testProcessMsgsCallback1 =
     )
 
 actualProcessMsgsCallback1 :: Maybe Config.Config
-actualProcessMsgsCallback1 = Env.config
+actualProcessMsgsCallback1 =
+  Env.config
     <$> Logic.processMsgsCallback
       TestData.servicesTel1
       TestData.cbMsg2
@@ -30,4 +30,4 @@ actualProcessMsgsCallback1 = Env.config
       11
 
 expectedProcessMsgsCallback1 :: Maybe Config.Config
-expectedProcessMsgsCallback1 =  Env.config <$> Env.eSetOffset TestData.testEnvTelegram 3
+expectedProcessMsgsCallback1 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 3
