@@ -1,4 +1,4 @@
-.PHONY: fmt build run tests 
+.PHONY: fmt build run tests fmtTests
 
 fmt:
 	cd src && ormolu --mode inplace $$(find . -name '*.hs')
