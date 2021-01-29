@@ -25,4 +25,4 @@ testConfigTelegram =
   Config.TBot $ Config.Telegram "token" 10
 
 testLogger :: Logger.Logger Maybe
-testLogger = Logger.Logger {Logger.botLog = const Nothing}
+testLogger = Logger.Logger {Logger.botLog = const $ Just ()}
