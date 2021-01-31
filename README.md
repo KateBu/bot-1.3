@@ -23,7 +23,7 @@
 
 <p> The <b>Telegram</b> folder contains module Cleaners (exports telByteStringToPureMessageList function and contains functions for decoding json data Telegram server sends into list of PureMessages), there are some functions for decoding in Cleaners folder. Module Data contains some specific data for connecting to Telegram server and some functions for building Telegram http requests. You can find specific data structures and FromJSON/ToJSON instances of Telegram server responses in Structs folder. </p>
 
-<p> The <b>VK</b> folder contains module Data (specific data for connecting to VK server and some functions for building VK http requests). Module Structs exports specific data structures and instances for VK server responses (all the structures are located in Structs folder). The structure of VK message is more complicated than Telegram's one so you can find functions for decoding VK response bytestrings into PureMessages in separate folder Cleaners.  </p>
+<p> The <b>VK</b> folder contains module Data (specific data for connecting to VK server and some functions for building VK http requests). The structure of VK message is more complicated than Telegram's one so you can find functions for decoding VK response bytestrings into PureMessages in separate folder Cleaners: module ToPureMsgList exports vkByteStringToPureMessageList function and uses functions from other modules and folders here to decode VK server responses into list of PureMessages. Structs folder contains specific data structures and FromJSON ToJSON instances of VK server responses.</p>
 
 
 <p> to be continued ... </p>
