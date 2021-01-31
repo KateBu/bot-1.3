@@ -3,6 +3,31 @@
 <p> Telegram bot works properly and supports any types of messages (with or without attachments).  </p>
 <p> VK bot can process text messages, /repeat and /help commands, map coordinates, links, stickers, audio, video attachments. If there is an attachment the VK bot cannot process, the attachment will be ignored.   </p>
 
+## Project structure description
+
+<p> The project is devided into three parts: add (Main module), src (see the structure of this part below), test (contains unit tests). </p> 
+
+### Src structure
+
+<p> src part contains the following folders: </p>
+
+- API  
+- Config  
+- Environment 
+- Exceptions  
+- Logic  
+- Services  
+
+#### API 
+<p> API folder contains modules Bot (runBot and nextLoop functions), Messages (contains parseFailMessage) and Wrapper (exports getPureMessageList and sendM functions) </p>
+
+<p> The <b> Telegram </b> folder contains module Cleaners (exports telByteStringToPureMessageList function and contains functions for decoding json data Telegram server sends into list of PureMessages), there are some functions for decoding in Cleaners folder. Module Data contains some specific data for connecting to Telegram server and some functions for building Telegram requests. You can find specific JSON structs and FromJSON ToJSON instances in Structs folder. </p>
+
+
+<p> to be continued ... </p>
+
+
+
 ## What the bot can do 
 
 <p> The bot can get a message from user (any kinds of messages) and then send the message back to user several times. If user sends "/help" command, bot sends user some information about itself. If user sends "/repeat" command, bot sends user an inline keyboard, so user can choose the number of repetitions.</p>
