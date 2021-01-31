@@ -1,6 +1,6 @@
 module Services.DBHandle.Database.Database where
 
-import qualified Config.Config as Config
+import qualified Config.Internals as Config
 import Control.Exception (catch, catches)
 import qualified Data.Text as T
 import Database.PostgreSQL.Simple
@@ -12,9 +12,9 @@ import Database.PostgreSQL.Simple
     query,
     query_,
   )
-import qualified Environment.Logger.Logger as Logger
-import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
-import qualified Exceptions.Exceptions as BotEx
+import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified Exceptions.Internals as BotEx
 import Services.DBHandle.Database.Queries
   ( addUserQuery,
     findUserQuery,

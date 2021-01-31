@@ -6,7 +6,7 @@ import API.Telegram.Cleaners.MakeMbParams
     makeMaybeNumParams,
     makeMaybeTextParams,
   )
-import qualified API.Telegram.TStructs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
 mbPoll ::

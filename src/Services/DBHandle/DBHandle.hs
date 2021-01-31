@@ -1,7 +1,7 @@
 module Services.DBHandle.DBHandle where
 
 import Control.Monad.Reader (ReaderT (runReaderT))
-import qualified Environment.Environment as Env
+import qualified Environment.Internals as Env
 import qualified Services.DBHandle.Database.Database as DB
 
 data Handle m = Handle

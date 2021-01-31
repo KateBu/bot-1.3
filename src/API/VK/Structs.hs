@@ -3,23 +3,23 @@ module API.VK.Structs
   )
 where
 
-import API.VK.VKStructs.Buttons as Structs
+import API.VK.Structs.Buttons as Structs
   ( BtnAction (..),
     VKButtons (..),
     VKKeyBoard (..),
   )
-import API.VK.VKStructs.LongPollResponse as Structs
+import API.VK.Structs.LongPollResponse as Structs
   ( LongPollResponse (..),
     ResponseError (..),
     VKResponse (..),
   )
-import API.VK.VKStructs.SendResult as Structs
+import API.VK.Structs.SendResult as Structs
   ( SendError (..),
     SendSuccess (..),
     VKResult (..),
     VKResultError (..),
   )
-import API.VK.VKStructs.Updates as Structs
+import API.VK.Structs.Updates as Structs
   ( AObject (..),
     AccessKey,
     Attachment (..),

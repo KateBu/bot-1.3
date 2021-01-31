@@ -6,10 +6,10 @@ import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
-import qualified Environment.Environment as Env
-import qualified Environment.Logger.Logger as Logger
-import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
-import qualified Exceptions.Exceptions as BotEx
+import qualified Environment.Internals as Env
+import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
 import Text.Read (readMaybe)
 

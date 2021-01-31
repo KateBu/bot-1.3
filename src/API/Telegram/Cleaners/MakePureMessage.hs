@@ -14,12 +14,12 @@ import API.Telegram.Cleaners.MbMsgType
     mbVideo,
     mbVoice,
   )
-import qualified API.Telegram.TStructs.Updates as TStructs
+import qualified API.Telegram.Structs.Updates as TStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
-import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
-import qualified Exceptions.Exceptions as BotEx
+import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
 
 telUpdateToPureMessage ::

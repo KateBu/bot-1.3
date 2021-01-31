@@ -1,7 +1,7 @@
 module TestData.TestServices where
 
 import qualified Data.Map as Map
-import qualified Environment.Environment as Env
+import qualified Environment.Internals as Env
 import qualified Logic.PureStructs as PureStructs
 import qualified Services.APIHandle.APIHandle as API
 import qualified Services.DBHandle.DBHandle as DB

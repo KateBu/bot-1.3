@@ -1,7 +1,7 @@
 module Tests.ProcessMsgsCommon where
 
-import qualified Config.Config as Config
-import qualified Environment.Environment as Env
+import qualified Config.Internals as Config
+import qualified Environment.Internals as Env
 import qualified Logic.ProcMsgs.Common as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData

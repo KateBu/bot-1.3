@@ -1,9 +1,9 @@
 module TestData.TestEnvironment where
 
-import qualified Config.Config as Config
+import qualified Config.Internals as Config
 import qualified Data.Text as T
-import qualified Environment.Environment as Env
-import qualified Environment.Logger.Logger as Logger
+import qualified Environment.Internals as Env
+import qualified Environment.Logger.Internals as Logger
 
 testEnvVK :: Env.Environment Maybe
 testEnvVK =

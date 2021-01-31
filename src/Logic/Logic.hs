@@ -1,10 +1,10 @@
 module Logic.Logic where
 
 import Control.Monad.Reader (ReaderT (runReaderT))
-import qualified Environment.Environment as Env
-import qualified Environment.Logger.Logger as Logger
-import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
-import qualified Exceptions.Exceptions as BotEx
+import qualified Environment.Internals as Env
+import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified Exceptions.Internals as BotEx
 import Logic.ProcMsgs.Callback (processMsgsCallback)
 import Logic.ProcMsgs.Common (processMsgsCommon)
 import qualified Logic.PureStructs as PureStructs

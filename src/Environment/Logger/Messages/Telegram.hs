@@ -1,6 +1,6 @@
 module Environment.Logger.Messages.Telegram where
 
-import qualified Environment.Logger.LoggerStructs as Logger
+import qualified Environment.Logger.Structs as Logger
 
 chidNotFound :: Logger.LogMessage
 chidNotFound =

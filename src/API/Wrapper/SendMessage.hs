@@ -1,20 +1,20 @@
 module API.Wrapper.SendMessage where
 
 import qualified API.VK.Structs as VKStructs
+import qualified API.Wrapper.Functions as WrapFunctions
 import API.Wrapper.GetResponseFunctions
   ( getResponseMultipart,
     getResponseUrl,
   )
-import qualified API.Wrapper.WrapFunctions as WrapFunctions
-import qualified API.Wrapper.WrapStructs as WrapStructs
-import qualified Config.Config as Config
+import qualified API.Wrapper.Structs as WrapStructs
+import qualified Config.Internals as Config
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (eitherDecode)
 import qualified Data.Text as T
-import qualified Environment.Environment as Env
-import qualified Environment.Logger.Logger as Logger
-import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
-import qualified Exceptions.Exceptions as BotEx
+import qualified Environment.Internals as Env
+import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
 import Network.HTTP.Req
   ( LbsResponse,

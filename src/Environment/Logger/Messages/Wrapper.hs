@@ -1,6 +1,6 @@
 module Environment.Logger.Messages.Wrapper where
 
-import qualified Environment.Logger.LoggerStructs as Logger
+import qualified Environment.Logger.Structs as Logger
 
 httpEx :: Logger.LogMessage
 httpEx = Logger.LogMessage Logger.Error "Http exception: "

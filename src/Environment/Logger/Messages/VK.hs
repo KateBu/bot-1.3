@@ -1,6 +1,6 @@
 module Environment.Logger.Messages.VK where
 
-import qualified Environment.Logger.LoggerStructs as Logger
+import qualified Environment.Logger.Structs as Logger
 
 vkUpdatesFailed1 :: Logger.LogMessage
 vkUpdatesFailed1 =

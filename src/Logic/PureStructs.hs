@@ -10,7 +10,6 @@ import Logic.Structs.Buttons as PureStructs
     rep4,
     rep5,
   )
-import Logic.Structs.Functions as PureStructs (SendFunction)
 import Logic.Structs.Messages as PureStructs
   ( ChatID,
     MbCaption,
@@ -20,4 +19,4 @@ import Logic.Structs.Messages as PureStructs
     UCommand (..),
     UpdateID,
   )
-import Logic.TextData as PureStructs (newRepeatText, repeatText)
+import Logic.Messages as PureStructs (newRepeatText, repeatText)

@@ -2,10 +2,10 @@ module API.Bot where
 
 import Control.Exception (catch)
 import Control.Monad.Reader (ReaderT (runReaderT))
-import qualified Environment.Environment as Env
-import qualified Environment.Logger.Logger as Logger
-import qualified Environment.Logger.LoggerMsgs as LoggerMsgs
-import qualified Exceptions.Exceptions as BotEx
+import qualified Environment.Internals as Env
+import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified Exceptions.Internals as BotEx
 import qualified Logic.Logic as Logic
 import qualified Services.SHandle as Handle
 

@@ -1,6 +1,6 @@
 module Environment.Logger.Messages.Tests where
 
-import qualified Environment.Logger.LoggerStructs as Logger
+import qualified Environment.Logger.Structs as Logger
 
 testError :: Logger.LogMessage
 testError =

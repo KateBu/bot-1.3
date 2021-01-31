@@ -2,7 +2,7 @@ module API.Telegram.Cleaners.Attachments.MbContact where
 
 import API.Telegram.Cleaners.GetParams (basicParams)
 import API.Telegram.Cleaners.MakeMbParams (makeMaybeTextParams)
-import qualified API.Telegram.TStructs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
 mbContact ::
