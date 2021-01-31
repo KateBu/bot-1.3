@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5823ab63f87717cf3d9c24dd75ab3de3f76a03815855e725978ca2fd36afcf18
+-- hash: 2f661b2f699826a225c1c4a82a8b117d5d6aceb656587a7c1ab87248cd842f28
 
 name:           bot13
 version:        0.1.0.0
@@ -47,33 +47,33 @@ library
       API.Telegram.Cleaners.MakeMbParams
       API.Telegram.Cleaners.MakePureMessage
       API.Telegram.Cleaners.MbMsgType
-      API.Telegram.TelData
-      API.Telegram.TStructs.Attachments.Animation
-      API.Telegram.TStructs.Attachments.Audio
-      API.Telegram.TStructs.Attachments.Contact
-      API.Telegram.TStructs.Attachments.Document
-      API.Telegram.TStructs.Attachments.Location
-      API.Telegram.TStructs.Attachments.Photo
-      API.Telegram.TStructs.Attachments.Poll
-      API.Telegram.TStructs.Attachments.Sticker
-      API.Telegram.TStructs.Attachments.Venue
-      API.Telegram.TStructs.Attachments.Video
-      API.Telegram.TStructs.Attachments.Voice
-      API.Telegram.TStructs.Buttons
-      API.Telegram.TStructs.Callback
-      API.Telegram.TStructs.Chat
-      API.Telegram.TStructs.MessageInfo
-      API.Telegram.TStructs.UpdateErr
-      API.Telegram.TStructs.Updates
+      API.Telegram.Data
+      API.Telegram.Structs.Attachments.Animation
+      API.Telegram.Structs.Attachments.Audio
+      API.Telegram.Structs.Attachments.Contact
+      API.Telegram.Structs.Attachments.Document
+      API.Telegram.Structs.Attachments.Location
+      API.Telegram.Structs.Attachments.Photo
+      API.Telegram.Structs.Attachments.Poll
+      API.Telegram.Structs.Attachments.Sticker
+      API.Telegram.Structs.Attachments.Venue
+      API.Telegram.Structs.Attachments.Video
+      API.Telegram.Structs.Attachments.Voice
+      API.Telegram.Structs.Buttons
+      API.Telegram.Structs.Callback
+      API.Telegram.Structs.Chat
+      API.Telegram.Structs.MessageInfo
+      API.Telegram.Structs.UpdateErr
+      API.Telegram.Structs.Updates
+      API.VK.Cleaners.GetMessageType
       API.VK.Cleaners.Keyboard
-      API.VK.Cleaners.MessageTypes
+      API.VK.Cleaners.MakeParams
       API.VK.Cleaners.MsgTypes.Attachment
       API.VK.Cleaners.MsgTypes.Callback
       API.VK.Cleaners.MsgTypes.Fwd
       API.VK.Cleaners.MsgTypes.Geo
       API.VK.Cleaners.MsgTypes.TextMsg
       API.VK.Cleaners.MsgTypes.UserCommand
-      API.VK.Cleaners.Params
       API.VK.Cleaners.Params.AttachParams
       API.VK.Cleaners.Params.BaseParams
       API.VK.Cleaners.Params.Fwd
@@ -81,35 +81,31 @@ library
       API.VK.Cleaners.Params.SharedFunctions
       API.VK.Cleaners.ToPureMessages
       API.VK.Cleaners.ToPureMsgList
+      API.VK.Data
       API.VK.Structs
-      API.VK.VKData
-      API.VK.VKStructs.Attachments
-      API.VK.VKStructs.Buttons
-      API.VK.VKStructs.LongPollResponse
-      API.VK.VKStructs.Message
-      API.VK.VKStructs.SendResult
-      API.VK.VKStructs.UpdateInfo
-      API.VK.VKStructs.Updates
+      API.VK.Structs.Attachments
+      API.VK.Structs.Buttons
+      API.VK.Structs.LongPollResponse
+      API.VK.Structs.Message
+      API.VK.Structs.SendResult
+      API.VK.Structs.UpdateInfo
+      API.VK.Structs.Updates
       API.Wrapper
+      API.Wrapper.Functions
       API.Wrapper.GetResponseFunctions
       API.Wrapper.GetUpdate
       API.Wrapper.SendMessage
-      API.Wrapper.WrapFunctions
-      API.Wrapper.WrapStructs
-      Config.Config
-      Config.ConfigData
-      Config.ConfigFunctions
-      Config.ConfigStruct
-      Environment.EnvFunctions
-      Environment.Environment
-      Environment.EnvStructs
-      Environment.InitEnvironment
-      Environment.InitEnvironment.InitEnvironment
-      Environment.InitEnvironment.SetBotSettings
-      Environment.Logger.Logger
-      Environment.Logger.LoggerFunctions
-      Environment.Logger.LoggerMsgs
-      Environment.Logger.LoggerStructs
+      API.Wrapper.Structs
+      Config.Data
+      Config.Functions
+      Config.Internals
+      Config.Struct
+      Environment.BotSettings.SetBotSettings
+      Environment.Functions
+      Environment.Internals
+      Environment.Logger.Functions
+      Environment.Logger.Internals
+      Environment.Logger.Messages
       Environment.Logger.Messages.Bot
       Environment.Logger.Messages.DB
       Environment.Logger.Messages.ProcMsgs
@@ -117,17 +113,19 @@ library
       Environment.Logger.Messages.Tests
       Environment.Logger.Messages.VK
       Environment.Logger.Messages.Wrapper
-      Exceptions.Exceptions
-      Exceptions.ExFunctions
-      Exceptions.ExStructs
+      Environment.Logger.Structs
+      Environment.SetEnvironment
+      Environment.Structs
+      Exceptions.Functions
+      Exceptions.Internals
+      Exceptions.Structs
       Logic.Logic
+      Logic.Messages
       Logic.ProcMsgs.Callback
       Logic.ProcMsgs.Common
       Logic.PureStructs
       Logic.Structs.Buttons
-      Logic.Structs.Functions
       Logic.Structs.Messages
-      Logic.TextData
       Services.APIHandle.APIHandle
       Services.DBHandle.Database.Database
       Services.DBHandle.Database.Queries
