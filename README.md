@@ -5,7 +5,7 @@
 
 ## Project structure description
 
-<p> The project is devided into three parts: add (Main module), src (see the structure of this part below), test (contains unit tests). </p> 
+<p> The project is devided into three parts: app (Main module), src (see the structure of this part below), test (contains unit tests). </p> 
 
 ### Src structure
 
@@ -21,7 +21,9 @@
 #### API 
 <p> API folder contains modules Bot (runBot and nextLoop functions), Messages (contains parseFailMessage) and Wrapper (exports getPureMessageList and sendM functions) </p>
 
-<p> The <b> Telegram </b> folder contains module Cleaners (exports telByteStringToPureMessageList function and contains functions for decoding json data Telegram server sends into list of PureMessages), there are some functions for decoding in Cleaners folder. Module Data contains some specific data for connecting to Telegram server and some functions for building Telegram requests. You can find specific JSON structs and FromJSON ToJSON instances in Structs folder. </p>
+<p> The <b>Telegram</b> folder contains module Cleaners (exports telByteStringToPureMessageList function and contains functions for decoding json data Telegram server sends into list of PureMessages), there are some functions for decoding in Cleaners folder. Module Data contains some specific data for connecting to Telegram server and some functions for building Telegram http requests. You can find specific data structures and FromJSON/ToJSON instances of Telegram server responses in Structs folder. </p>
+
+<p> The <b>VK</b> folder contains module Data (specific data for connecting to VK server and some functions for building VK http requests). Module Structs exports specific data structures and instances for VK server responses (all the structures are located in Structs folder). The structure of VK message is more complicated than Telegram's one so you can find functions for decoding VK response bytestrings into PureMessages in separate folder Cleaners.  </p>
 
 
 <p> to be continued ... </p>
