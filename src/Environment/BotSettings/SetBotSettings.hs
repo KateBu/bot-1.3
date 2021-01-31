@@ -1,6 +1,6 @@
 module Environment.BotSettings.SetBotSettings where
 
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import Config.Data
   ( vkApiVersion,
     vkLongPollUrl,

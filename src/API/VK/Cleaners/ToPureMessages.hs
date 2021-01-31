@@ -2,7 +2,7 @@ module API.VK.Cleaners.ToPureMessages where
 
 import API.VK.Cleaners.GetMessageType (getMessageType)
 import API.VK.Cleaners.MakeParams (baseParams, makeParams)
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 

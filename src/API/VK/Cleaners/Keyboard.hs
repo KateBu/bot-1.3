@@ -1,6 +1,6 @@
 module API.VK.Cleaners.Keyboard where
 
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import Data.Aeson (KeyValue ((.=)), Value, encode, object)
 import qualified Data.ByteString.Lazy as BSL
 import Data.ByteString.Lazy.Char8 as C8 (unpack)

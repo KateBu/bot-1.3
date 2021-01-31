@@ -1,7 +1,7 @@
 module API.VK.Cleaners.ToPureMsgList (vkByteStringToPureMessageList) where
 
 import API.VK.Cleaners.ToPureMessages (mkPureMessage)
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL

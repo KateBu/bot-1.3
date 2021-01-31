@@ -1,6 +1,6 @@
 module API.VK.Cleaners.MsgTypes.Callback where
 
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T

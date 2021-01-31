@@ -1,6 +1,6 @@
 module API.VK.Cleaners.MsgTypes.Geo where
 
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import qualified Logic.PureStructs as PureStructs
 
 mbGeo :: VKStructs.VKMessage -> Maybe PureStructs.MessageType

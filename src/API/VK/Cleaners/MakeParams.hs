@@ -11,7 +11,7 @@ import API.VK.Cleaners.Params.SharedFunctions
   ( setMaybeDoubleParam,
     setMessageParam,
   )
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 

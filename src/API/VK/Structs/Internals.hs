@@ -1,4 +1,4 @@
-module API.VK.Structs
+module API.VK.Structs.Internals
   ( module Structs,
   )
 where

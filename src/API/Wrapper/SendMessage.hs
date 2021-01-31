@@ -1,6 +1,6 @@
 module API.Wrapper.SendMessage where
 
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import qualified API.Wrapper.Functions as WrapFunctions
 import API.Wrapper.GetResponseFunctions
   ( getResponseMultipart,

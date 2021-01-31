@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b52d30e1b2234566fb2f60f8d3a192eaaba33e8db451185e6798e2ac92006b36
+-- hash: 6c8af18b7f1e140bbda87a64e44bc70e7661a7f56938d339b86be9d18b203b02
 
 name:           bot13
 version:        0.1.0.0
@@ -82,9 +82,9 @@ library
       API.VK.Cleaners.ToPureMessages
       API.VK.Cleaners.ToPureMsgList
       API.VK.Data
-      API.VK.Structs
       API.VK.Structs.Attachments
       API.VK.Structs.Buttons
+      API.VK.Structs.Internals
       API.VK.Structs.LongPollResponse
       API.VK.Structs.Message
       API.VK.Structs.SendResult

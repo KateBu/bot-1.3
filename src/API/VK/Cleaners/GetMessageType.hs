@@ -6,7 +6,7 @@ import API.VK.Cleaners.MsgTypes.Fwd (mbFwd)
 import API.VK.Cleaners.MsgTypes.Geo (mbGeo)
 import API.VK.Cleaners.MsgTypes.TextMsg (mbTextMsg)
 import API.VK.Cleaners.MsgTypes.UserCommand (mbUserCommand)
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
 import qualified Environment.Logger.Messages as LoggerMsgs

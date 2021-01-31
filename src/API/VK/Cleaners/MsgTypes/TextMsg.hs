@@ -1,6 +1,6 @@
 module API.VK.Cleaners.MsgTypes.TextMsg where
 
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 import qualified Logic.PureStructs as PureStructs
 
 mbTextMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType

@@ -1,6 +1,6 @@
 module API.VK.Cleaners.Params.IsObjFunctions where
 
-import qualified API.VK.Structs as VKStructs
+import qualified API.VK.Structs.Internals as VKStructs
 
 isLink, isSticker, isMedia :: VKStructs.AObject -> Bool
 isLink (VKStructs.VKLink _) = True
