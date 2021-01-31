@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2f661b2f699826a225c1c4a82a8b117d5d6aceb656587a7c1ab87248cd842f28
+-- hash: b52d30e1b2234566fb2f60f8d3a192eaaba33e8db451185e6798e2ac92006b36
 
 name:           bot13
 version:        0.1.0.0
@@ -119,19 +119,19 @@ library
       Exceptions.Functions
       Exceptions.Internals
       Exceptions.Structs
-      Logic.Logic
+      Logic.Main
       Logic.Messages
       Logic.ProcMsgs.Callback
       Logic.ProcMsgs.Common
       Logic.PureStructs
       Logic.Structs.Buttons
       Logic.Structs.Messages
-      Services.APIHandle.APIHandle
-      Services.DBHandle.Database.Database
-      Services.DBHandle.Database.Queries
-      Services.DBHandle.DBHandle
-      Services.ServiceHandle.SHandleFunctions
-      Services.ServiceHandle.SHandleStructs
+      Services.API.Handle
+      Services.DB.Database.Database
+      Services.DB.Database.Queries
+      Services.DB.Handle
+      Services.ServiceHandle.Functions
+      Services.ServiceHandle.Structs
       Services.SHandle
   other-modules:
       Paths_bot13

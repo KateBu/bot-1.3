@@ -1,10 +1,10 @@
-module Services.ServiceHandle.SHandleFunctions where
+module Services.ServiceHandle.Functions where
 
 import Environment.Internals as Env (Environment)
 import qualified Logic.PureStructs as PureStructs
-import qualified Services.APIHandle.APIHandle as APIHandle
-import qualified Services.DBHandle.DBHandle as DBHandle
-import Services.ServiceHandle.SHandleStructs (SHandle (hAPI, hDB))
+import qualified Services.API.Handle as APIHandle
+import qualified Services.DB.Handle as DBHandle
+import Services.ServiceHandle.Structs (SHandle (hAPI, hDB))
 
 getUpdates :: Monad m => SHandle m -> m [PureStructs.PureMessage]
 getUpdates handle = do

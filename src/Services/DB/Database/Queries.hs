@@ -1,4 +1,4 @@
-module Services.DBHandle.Database.Queries where
+module Services.DB.Database.Queries where
 
 import qualified Config.Internals as Config
 import Data.String (IsString (fromString))

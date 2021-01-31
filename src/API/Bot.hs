@@ -6,7 +6,7 @@ import qualified Environment.Internals as Env
 import qualified Environment.Logger.Internals as Logger
 import qualified Environment.Logger.Messages as LoggerMsgs
 import qualified Exceptions.Internals as BotEx
-import qualified Logic.Logic as Logic
+import qualified Logic.Main as Logic
 import qualified Services.SHandle as Handle
 
 runBot :: Env.Environment IO -> IO ()

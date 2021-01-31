@@ -3,8 +3,8 @@ module TestData.TestServices where
 import qualified Data.Map as Map
 import qualified Environment.Internals as Env
 import qualified Logic.PureStructs as PureStructs
-import qualified Services.APIHandle.APIHandle as API
-import qualified Services.DBHandle.DBHandle as DB
+import qualified Services.API.Handle as API
+import qualified Services.DB.Handle as DB
 import qualified Services.SHandle as Services
 import TestData.TestEnvironment (testEnvTelegram, testEnvVK)
 import qualified TestData.TestMessages as Msgs

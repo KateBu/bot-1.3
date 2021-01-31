@@ -2,7 +2,7 @@ module Tests.ProcessMsgs where
 
 import qualified Config.Internals as Config
 import qualified Environment.Internals as Env
-import qualified Logic.Logic as Logic
+import qualified Logic.Main as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 

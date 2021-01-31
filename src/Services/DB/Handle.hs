@@ -1,8 +1,8 @@
-module Services.DBHandle.DBHandle where
+module Services.DB.Handle where
 
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Internals as Env
-import qualified Services.DBHandle.Database.Database as DB
+import qualified Services.DB.Database.Database as DB
 
 data Handle m = Handle
   { findUser :: Int -> m (Maybe Int),

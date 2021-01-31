@@ -1,4 +1,4 @@
-module Logic.Logic where
+module Logic.Main where
 
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Internals as Env

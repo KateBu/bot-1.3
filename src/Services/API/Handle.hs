@@ -1,4 +1,4 @@
-module Services.APIHandle.APIHandle where
+module Services.API.Handle where
 
 import qualified API.Wrapper as Wrapper
 import qualified Environment.Internals as Env
