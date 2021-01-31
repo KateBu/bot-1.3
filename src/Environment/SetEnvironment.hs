@@ -27,13 +27,13 @@ setEnvironment' ::
   Configurator.Config ->
   IO (Env.Environment IO)
 setEnvironment' conf = do
-  botT <- Configurator.lookup conf (T.pack "bot.botType") :: IO (Maybe T.Text)
-  rep <- Configurator.lookup conf (T.pack "bot.repetition") :: IO (Maybe Int)
-  msg <- Configurator.lookup conf (T.pack "bot.helpMessage") :: IO (Maybe T.Text)
-  tTok <- Configurator.lookup conf (T.pack "bot.telegramToken") :: IO (Maybe Config.Token)
-  prior <- Configurator.lookup conf (T.pack "bot.logPriority") :: IO (Maybe String)
-  vkTok <- Configurator.lookup conf (T.pack "bot.VKToken") :: IO (Maybe Config.Token)
-  vkGroup <- Configurator.lookup conf (T.pack "bot.VKGroupID") :: IO (Maybe Int)
+  botT <- Configurator.lookup conf "bot.botType" :: IO (Maybe T.Text)
+  rep <- Configurator.lookup conf "bot.repetition" :: IO (Maybe Int)
+  msg <- Configurator.lookup conf "bot.helpMessage" :: IO (Maybe T.Text)
+  tTok <- Configurator.lookup conf "bot.telegramToken" :: IO (Maybe Config.Token)
+  prior <- Configurator.lookup conf "bot.logPriority" :: IO (Maybe String)
+  vkTok <- Configurator.lookup conf "bot.VKToken" :: IO (Maybe Config.Token)
+  vkGroup <- Configurator.lookup conf "bot.VKGroupID" :: IO (Maybe Int)
   setBotTypeSettings botT vkGroup vkTok tTok >>= initEnvironment msg rep prior
 
 initEnvironment ::
