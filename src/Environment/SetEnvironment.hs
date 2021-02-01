@@ -20,8 +20,8 @@ setEnvironment path = do
 
 getConfigFile :: String -> IO Configurator.Config
 getConfigFile path = do
-  config <- try $ Configurator.load [Configurator.Required path] :: IO (Either IOException Configurator.Config)
-  either BotEx.throwIOException pure config
+  eiConfig <- try $ Configurator.load [Configurator.Required path] :: IO (Either IOException Configurator.Config)
+  either BotEx.throwIOException pure eiConfig
 
 setEnvironment' ::
   Configurator.Config ->
@@ -43,14 +43,14 @@ initEnvironment ::
   Config.Config ->
   IO (Env.Environment IO)
 initEnvironment (Just helpMsg) (Just rep) (Just priorStr) config = do
-  let prior = readMaybe priorStr :: Maybe Logger.Priority
-  maybe (BotEx.throwOtherException LoggerMsgs.initLogFld) (makeEnv helpMsg rep config) prior
+  let mbPrior = readMaybe priorStr :: Maybe Logger.Priority
+  maybe (BotEx.throwOtherException LoggerMsgs.initLogFld) (makeEnv helpMsg rep config) mbPrior
 initEnvironment _ _ _ _ = BotEx.throwInitConfigExcept
 
 makeEnv :: T.Text -> Int -> Config.Config -> Logger.Priority -> IO (Env.Environment IO)
 makeEnv hm rep config prior = do
   logger <- Logger.createLogger prior
-  pure $ Env.Environment config rep hm logger
+  pure $ Env.Environment config (checkRepNumber rep) hm logger
 
 checkRepNumber :: Int -> Int
 checkRepNumber val
