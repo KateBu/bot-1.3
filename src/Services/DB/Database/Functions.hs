@@ -1,4 +1,4 @@
-module Services.DB.Database.Database where
+module Services.DB.Database.Functions where
 
 import qualified Config.Internals as Config
 import Control.Exception (catch, catches)
