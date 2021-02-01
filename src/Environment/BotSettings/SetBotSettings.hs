@@ -53,16 +53,16 @@ getLongPollInfo respBody = do
   either BotEx.throwParseExcept tryMakeVKSettings eiResponse
 
 tryMakeVKSettings :: VKStructs.VKResponse -> IO (T.Text, T.Text, Int)
-tryMakeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse k s t)) = pure (k, s, read t)
-tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError ec em)) =
+tryMakeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse key server ts)) = pure (key, server, read ts)
+tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError errCode errMsg)) =
   BotEx.throwBotExcept $
     BotEx.InitConfigExcept
       ( Logger.makeLogMessage
           LoggerMsgs.initConfigExcept
           ( "error_code: "
-              <> (T.pack . show) ec
+              <> (T.pack . show) errCode
               <> "error_message: "
-              <> em
+              <> errMsg
           )
       )
 tryMakeVKSettings _ = BotEx.throwParseExcept ""

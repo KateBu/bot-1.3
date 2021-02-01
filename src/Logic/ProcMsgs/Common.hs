@@ -27,6 +27,6 @@ repeatMsg ::
   Env.Environment m ->
   m (Env.Environment m)
 repeatMsg _ 0 _ env = pure env
-repeatMsg msg n handle _ = do
+repeatMsg msg repN handle _ = do
   Handle.sendMessage handle msg
-    >>= repeatMsg msg (n -1) handle
+    >>= repeatMsg msg (repN -1) handle

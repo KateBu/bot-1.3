@@ -16,9 +16,9 @@ sendMessage ::
   SHandle m ->
   PureStructs.PureMessage ->
   m (Env.Environment m)
-sendMessage handle msgs = do
+sendMessage handle msg = do
   hApiHandle <- hAPI handle
-  APIHandle.hSendMessage hApiHandle msgs
+  APIHandle.hSendMessage hApiHandle msg
 
 findUser ::
   Monad m =>

@@ -18,18 +18,18 @@ telByteStringToPureMessageList ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
-telByteStringToPureMessageList env eiBS =
-  decodeByteString env eiBS >>= telUpdatesToPureMessageList env
+telByteStringToPureMessageList env bytestring =
+  decodeByteString env bytestring >>= telUpdatesToPureMessageList env
 
 decodeByteString ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO TStructs.TelegramUpdates
-decodeByteString env json = do
+decodeByteString env bytestring = do
   logger <- runReaderT Env.eLogger env
   Logger.botLog logger LoggerMsgs.tDecBS
-  let mbTelegramUpdates = decode json :: Maybe TStructs.TelegramUpdates
-  maybe (getUpdErr json) (decodeScs logger) mbTelegramUpdates
+  let mbTelegramUpdates = decode bytestring :: Maybe TStructs.TelegramUpdates
+  maybe (getUpdErr bytestring) (decodeScs logger) mbTelegramUpdates
 
 decodeScs ::
   Logger.Logger IO ->
@@ -50,8 +50,8 @@ telUpdatesToPureMessageList env tUpd = do
   pure $ telUpdateToPureMessage hMsg <$> TStructs.result tUpd
 
 getUpdErr :: BSL.ByteString -> IO TStructs.TelegramUpdates
-getUpdErr json = do
-  let eiTelegramErr = eitherDecode json :: Either String TStructs.TelegramUpdatesError
+getUpdErr bytestring = do
+  let eiTelegramErr = eitherDecode bytestring :: Either String TStructs.TelegramUpdatesError
   either BotEx.throwParseExcept telError eiTelegramErr
 
 telError :: TStructs.TelegramUpdatesError -> IO TStructs.TelegramUpdates
