@@ -13,4 +13,9 @@ import Environment.Functions as Env
 import Environment.SetEnvironment as Env
   ( setEnvironment,
   )
-import Environment.Structs as Env (Environment (..))
+import Environment.Structs as Env
+  ( BotType,
+    Environment (..),
+    HelpMessage,
+    RepeatNumber,
+  )

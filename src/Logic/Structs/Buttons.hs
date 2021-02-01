@@ -1,6 +1,7 @@
 module Logic.Structs.Buttons where
 
 import qualified Data.Text as T
+import qualified Environment.Internals as Env
 
 data PureButtons = PureButtons T.Text T.Text
   deriving (Show)
@@ -29,7 +30,7 @@ rep4 = "/setRepetition4"
 rep5 :: T.Text
 rep5 = "/setRepetition5"
 
-getNewRep :: T.Text -> Int
+getNewRep :: T.Text -> Env.RepeatNumber
 getNewRep txt
   | txt == rep1 = 1
   | txt == rep2 = 2

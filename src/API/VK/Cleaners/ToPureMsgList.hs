@@ -65,7 +65,7 @@ vkUpdInfoToPureMessageList env (uid, upds) = do
   pure $ vkUpdInfoToPureMessage hMsg uid <$> upds
 
 vkUpdInfoToPureMessage ::
-  T.Text ->
+  Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKUpdInfo ->
   PureStructs.PureMessage
@@ -79,7 +79,7 @@ noUpdObj :: PureStructs.UpdateID -> PureStructs.PureMessage
 noUpdObj uid = PureStructs.PureMessage PureStructs.MTEmpty uid Nothing Nothing
 
 justUpdObj ::
-  T.Text ->
+  Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKObject ->
   PureStructs.PureMessage

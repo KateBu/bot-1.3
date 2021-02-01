@@ -17,13 +17,13 @@ import API.Telegram.Cleaners.MbMsgType
 import qualified API.Telegram.Structs.Updates as TStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
-import qualified Data.Text as T
+import qualified Environment.Internals as Env
 import qualified Environment.Logger.Messages as LoggerMsgs
 import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
 
 telUpdateToPureMessage ::
-  T.Text ->
+  Env.HelpMessage ->
   TStructs.TelUpdateResult ->
   PureStructs.PureMessage
 telUpdateToPureMessage hMsg res = do
@@ -52,7 +52,7 @@ mbMakeCallbackPureMessage res uid = case TStructs.callback_query res of
   _ -> Nothing
 
 mbMakePureMessage ::
-  T.Text ->
+  Env.HelpMessage ->
   TStructs.TelUpdateResult ->
   PureStructs.UpdateID ->
   Maybe PureStructs.PureMessage
@@ -65,7 +65,7 @@ mbMakePureMessage hMsg res uid = case TStructs.messageInfo res of
       Just pureMsg -> pure pureMsg
 
 makeCommonMessage ::
-  T.Text ->
+  Env.HelpMessage ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->

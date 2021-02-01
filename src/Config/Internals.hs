@@ -11,7 +11,11 @@ import Config.Functions as Config
   )
 import Config.Struct as Config
   ( Config (..),
+    Offset,
     Telegram (..),
     Token,
     VK (..),
+    VKGroup,
+    VKKey,
+    VKServer,
   )

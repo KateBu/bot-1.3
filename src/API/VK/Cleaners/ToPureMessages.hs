@@ -3,18 +3,18 @@ module API.VK.Cleaners.ToPureMessages where
 import API.VK.Cleaners.GetMessageType (getMessageType)
 import API.VK.Cleaners.MakeParams (baseParams, makeParams)
 import qualified API.VK.Structs.Internals as VKStructs
-import qualified Data.Text as T
+import qualified Environment.Internals as Env
 import qualified Logic.PureStructs as PureStructs
 
 mkPureMessage ::
-  T.Text ->
+  Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKMessage ->
   PureStructs.PureMessage
 mkPureMessage hMsg uid vkMsg = mkPureMessage' hMsg uid vkMsg $ getMessageType vkMsg
 
 mkPureMessage' ::
-  T.Text ->
+  Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKMessage ->
   PureStructs.MessageType ->

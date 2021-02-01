@@ -12,11 +12,11 @@ import API.VK.Cleaners.Params.SharedFunctions
     setMessageParam,
   )
 import qualified API.VK.Structs.Internals as VKStructs
-import qualified Data.Text as T
+import qualified Environment.Internals as Env
 import qualified Logic.PureStructs as PureStructs
 
 makeParams ::
-  T.Text ->
+  Env.HelpMessage ->
   PureStructs.MessageType ->
   VKStructs.VKMessage ->
   Maybe [PureStructs.Params]

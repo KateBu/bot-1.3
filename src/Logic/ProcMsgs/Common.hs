@@ -22,7 +22,7 @@ processMsgsCommon env handle msg userId = do
 repeatMsg ::
   Monad m =>
   PureStructs.PureMessage ->
-  Int ->
+  Env.RepeatNumber ->
   Handle.SHandle m ->
   Env.Environment m ->
   m (Env.Environment m)

@@ -7,10 +7,11 @@ import API.Telegram.Cleaners.Keyboard
   )
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Data.Text as T
+import qualified Environment.Internals as Env
 import qualified Logic.PureStructs as PureStructs
 
 mbTextMessage ::
-  T.Text ->
+  Env.HelpMessage ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
@@ -19,7 +20,7 @@ mbTextMessage hMsg uid chid mInfo =
   TStructs.txt mInfo >>= mkTxtMsg hMsg uid chid mInfo
 
 mkTxtMsg ::
-  T.Text ->
+  Env.HelpMessage ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->

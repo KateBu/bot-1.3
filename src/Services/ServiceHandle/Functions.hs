@@ -1,6 +1,6 @@
 module Services.ServiceHandle.Functions where
 
-import Environment.Internals as Env (Environment)
+import qualified Environment.Internals as Env
 import qualified Logic.PureStructs as PureStructs
 import qualified Services.API.Handle as APIHandle
 import qualified Services.DB.Handle as DBHandle
@@ -23,8 +23,8 @@ sendMessage handle msg = do
 findUser ::
   Monad m =>
   SHandle m ->
-  Int ->
-  m (Maybe Int)
+  PureStructs.ChatID ->
+  m (Maybe Env.RepeatNumber)
 findUser handle userId = do
   hDbHandle <- hDB handle
   DBHandle.findUser hDbHandle userId
@@ -32,8 +32,8 @@ findUser handle userId = do
 addUser ::
   Monad m =>
   SHandle m ->
-  Int ->
-  Int ->
+  PureStructs.ChatID ->
+  Env.RepeatNumber ->
   m ()
 addUser handle userId rep = do
   hDbHandle <- hDB handle
@@ -42,8 +42,8 @@ addUser handle userId rep = do
 updateUser ::
   Monad m =>
   SHandle m ->
-  Int ->
-  Int ->
+  PureStructs.ChatID ->
+  Env.RepeatNumber ->
   m ()
 updateUser handle userId rep = do
   hDbHandle <- hDB handle

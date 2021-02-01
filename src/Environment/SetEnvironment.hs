@@ -4,7 +4,6 @@ import qualified Config.Internals as Config
 import Control.Exception (IOException, try)
 import qualified Data.Configurator as Configurator
 import qualified Data.Configurator.Types as Configurator
-import qualified Data.Text as T
 import Environment.BotSettings.SetBotSettings
   ( setBotTypeSettings,
   )
@@ -27,18 +26,18 @@ setEnvironment' ::
   Configurator.Config ->
   IO (Env.Environment IO)
 setEnvironment' conf = do
-  botT <- Configurator.lookup conf "bot.botType" :: IO (Maybe T.Text)
-  rep <- Configurator.lookup conf "bot.repetition" :: IO (Maybe Int)
-  msg <- Configurator.lookup conf "bot.helpMessage" :: IO (Maybe T.Text)
+  botT <- Configurator.lookup conf "bot.botType" :: IO (Maybe Env.BotType)
+  rep <- Configurator.lookup conf "bot.repetition" :: IO (Maybe Env.RepeatNumber)
+  msg <- Configurator.lookup conf "bot.helpMessage" :: IO (Maybe Env.HelpMessage)
   tTok <- Configurator.lookup conf "bot.telegramToken" :: IO (Maybe Config.Token)
   prior <- Configurator.lookup conf "bot.logPriority" :: IO (Maybe String)
   vkTok <- Configurator.lookup conf "bot.VKToken" :: IO (Maybe Config.Token)
-  vkGroup <- Configurator.lookup conf "bot.VKGroupID" :: IO (Maybe Int)
+  vkGroup <- Configurator.lookup conf "bot.VKGroupID" :: IO (Maybe Config.VKGroup)
   setBotTypeSettings botT vkGroup vkTok tTok >>= initEnvironment msg rep prior
 
 initEnvironment ::
-  Maybe T.Text ->
-  Maybe Int ->
+  Maybe Env.HelpMessage ->
+  Maybe Env.RepeatNumber ->
   Maybe String ->
   Config.Config ->
   IO (Env.Environment IO)
@@ -47,12 +46,17 @@ initEnvironment (Just helpMsg) (Just rep) (Just priorStr) config = do
   maybe (BotEx.throwOtherException LoggerMsgs.initLogFld) (makeEnv helpMsg rep config) mbPrior
 initEnvironment _ _ _ _ = BotEx.throwInitConfigExcept
 
-makeEnv :: T.Text -> Int -> Config.Config -> Logger.Priority -> IO (Env.Environment IO)
+makeEnv ::
+  Env.HelpMessage ->
+  Env.RepeatNumber ->
+  Config.Config ->
+  Logger.Priority ->
+  IO (Env.Environment IO)
 makeEnv hm rep config prior = do
   logger <- Logger.createLogger prior
   pure $ Env.Environment config (checkRepNumber rep) hm logger
 
-checkRepNumber :: Int -> Int
+checkRepNumber :: Env.RepeatNumber -> Env.RepeatNumber
 checkRepNumber val
   | val <= 1 = 1
   | val >= 5 = 5
