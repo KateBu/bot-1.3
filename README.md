@@ -40,6 +40,17 @@
 
 - Structs module - Environment data type consists of Config, Logger, it also contains default number of repetitions and help message (the message that a user gets when sends /help command).
 - Functions module - contains some getters wrapped in ReaderT monad, and updateConfig and eSetOffset functions.
+- SetEnvironment module - contains functions to build enviroment based on information in .config file.
+- Internals module - a super module that exports functions, constructors etc.
+
+<p> The <b>Logger</b> folder contains the following modules: there are data structures in Structs module, functions for creating Logger and making LogMessage in Functions module. Messages module exports all the different LogMessages (from Messages folder here). Internals module exports functions, constructors etc.
+
+#### Exceptions 
+<p> Exceptions folder contains the following modules: </p>
+
+- Structs module - contains BotException data type and instances
+- Functions module - contians throw exception functions and handlers
+- Internals - a super module that exports functions, constructors etc.
 
 
 
