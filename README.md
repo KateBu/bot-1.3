@@ -27,6 +27,13 @@
 
 <p> The <b>Wrapper</b> folder contains the following modules: Funtions module (functions for building http requests with UrlEncoded body or Multipart body); GetResponseFunctions module (contains getResponseMultipart and getResponseUrl functions); GetUpdate module (contains getPureMessageList function: it gets updates from server and decodes them into list of PureMEssages); SendMessage module (contains the sendM function: it sends the PureMessage back to user and changes the offset); Structs module (contains data structures for building http reuests). </p>
 
+#### Config
+<p> Config folder contains the following modules: </p>
+
+- Data module - some information to connect to VK long poll server (url, API version and Time out for both VK and Telegram)
+- Functions module - contains configSetOffset function and configGetUid (get update ID) functions
+- Structs module - contains Config data type definition 
+- Internals module - a super module that exports functions, constructors etc.
 
 <p> to be continued ... </p>
 
