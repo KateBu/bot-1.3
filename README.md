@@ -59,12 +59,15 @@
 - Messages module - contains some text messages user gets when sends /repeat command
 - PureStructs module - exports constuctors, text data etc 
 
-<p>You can find data structures of PureMessages, Buttons etc in <b>Structs</b> folder.</p>
+<p>You can find data structures of PureMessages, Buttons etc... in <b>Structs</b> folder.</p>
 
+#### Services 
+<p> Services folder contains the following folders: </p>
 
-<p> to be continued ... </p>
-
-
+- API folder - the Handle module inside contains the Handle data type, which consists of two functions for communicating to a server: hGetUpdates (for connecting to the server to get updates) and hSendMessage (for sending messages to users). The folder also containes 'new' function (for crating IO Handle)
+- DB folder - the Handle module inside contains the Handle data type, which consists of three functions for communicating to a database: findUser (for looking up a user in the DB), addUSer (for inserting a new user into DB) and updateUser (for updating the number of repetitions for a user).The Handle module also has a 'new' functions (for creating IO Handle). There are two modules in <b> Database </b> folder here. It consists of Functions module (functions for connecting to a DB) and Queries module (contains the queries to a DB).
+- ServiceHandle folder - contains Structs module (SHandle data type combines API Handle and DB Handle, the module also provides the 'new' function for creating IO SHandle) and Functions module (contains getters for API Handle and DB Handle functions).
+<p><b>SHandle</b> module here exports constructors and functions for the services described above. </p>
 
 ## What the bot can do 
 
