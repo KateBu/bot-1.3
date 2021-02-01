@@ -50,8 +50,16 @@
 
 - Structs module - contains BotException data type and instances
 - Functions module - contians throw exception functions and handlers
-- Internals - a super module that exports functions, constructors etc.
+- Internals module - a super module that exports functions, constructors etc.
 
+#### Logic
+<p> Logic folder contains the following modules: </p>
+
+- Main module - contains the processMsgs function, that handles a list of PureMessages. The module also contains some additional that are called in processMsgs functions. There are some functions for processing Callback messages in Callback module (ProcMsgs folder), and some functions for processing Common messages in Common module (ProcMsgs folder)
+- Messages module - contains some text messages user gets when sends /repeat command
+- PureStructs module - exports constuctors, text data etc 
+
+<p>You can find data structures of PureMessages, Buttons etc in <b>Structs</b> folder.</p>
 
 
 <p> to be continued ... </p>
