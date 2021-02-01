@@ -12,6 +12,7 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import qualified Environment.Logger.Internals as Logger
 import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified Environment.Structs as Env
 import qualified Exceptions.Internals as BotEx
 import Network.HTTP.Simple
   ( getResponseBody,
@@ -20,24 +21,23 @@ import Network.HTTP.Simple
   )
 
 setBotTypeSettings ::
-  Maybe T.Text ->
-  Maybe Int ->
+  Maybe Env.BotType ->
+  Maybe Config.VKGroup ->
   Maybe Config.Token ->
   Maybe Config.Token ->
   IO Config.Config
-setBotTypeSettings (Just "VK") mbGroup mbVKToken _ = do
-  vkSettings <- getVKSettings mbGroup mbVKToken
-  vkSettingsScs mbGroup mbVKToken vkSettings
+setBotTypeSettings (Just "VK") (Just group) (Just vkToken) _ = do
+  vkSettings <- getVKSettings group vkToken
+  vkSettingsScs group vkToken vkSettings
 setBotTypeSettings (Just "Telegram") _ _ (Just tToken) =
   pure $ Config.TBot (Config.Telegram tToken 0)
 setBotTypeSettings _ _ _ _ = BotEx.throwInitConfigExcept
 
-getVKSettings :: Maybe Int -> Maybe T.Text -> IO (T.Text, T.Text, Int)
-getVKSettings (Just group) (Just tok) = do
+getVKSettings :: Config.VKGroup -> Config.Token -> IO (T.Text, T.Text, Int)
+getVKSettings group tok =
   getLongPollReqBody group tok >>= getLongPollInfo
-getVKSettings _ _ = BotEx.throwInitConfigExcept
 
-getLongPollReqBody :: Int -> T.Text -> IO BSL.ByteString
+getLongPollReqBody :: Config.VKGroup -> Config.Token -> IO BSL.ByteString
 getLongPollReqBody group tok = do
   resBody <-
     try
@@ -47,12 +47,12 @@ getLongPollReqBody group tok = do
 
 getLongPollInfo ::
   BSL.ByteString ->
-  IO (T.Text, T.Text, Int)
+  IO (Config.VKKey, Config.VKServer, Config.Offset)
 getLongPollInfo respBody = do
   let eiResponse = eitherDecode respBody :: Either String VKStructs.VKResponse
   either BotEx.throwParseExcept tryMakeVKSettings eiResponse
 
-tryMakeVKSettings :: VKStructs.VKResponse -> IO (T.Text, T.Text, Int)
+tryMakeVKSettings :: VKStructs.VKResponse -> IO (Config.VKKey, Config.VKServer, Config.Offset)
 tryMakeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse key server ts)) = pure (key, server, read ts)
 tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError errCode errMsg)) =
   BotEx.throwBotExcept $
@@ -68,16 +68,15 @@ tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError errCode errMsg)) =
 tryMakeVKSettings _ = BotEx.throwParseExcept ""
 
 vkSettingsScs ::
-  Maybe Int ->
-  Maybe Config.Token ->
-  (T.Text, T.Text, Int) ->
+  Config.VKGroup ->
+  Config.Token ->
+  (Config.VKKey, Config.VKServer, Config.Offset) ->
   IO Config.Config
-vkSettingsScs (Just group) (Just vKToken) (key, serv, ts) = do
-  let vk = Config.VK vKToken group key serv ts
+vkSettingsScs group token (key, serv, ts) = do
+  let vk = Config.VK token group key serv ts
   pure $ Config.VKBot vk
-vkSettingsScs _ _ _ = BotEx.throwInitConfigExcept
 
-makeVkLonpPollUrl :: Int -> T.Text -> String
+makeVkLonpPollUrl :: Config.VKGroup -> Config.Token -> String
 makeVkLonpPollUrl group tok =
   vkLongPollUrl
     <> show group
