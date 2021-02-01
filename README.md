@@ -35,6 +35,14 @@
 - Structs module - contains Config data type definition 
 - Internals module - a super module that exports functions, constructors etc.
 
+#### Environment 
+<p> Environment folder contains the following modules: </p>
+
+- Structs module - Environment data type consists of Config, Logger, it also contains default number of repetitions and help message (the message that a user gets when sends /help command).
+- Functions module - contains some getters wrapped in ReaderT monad, and updateConfig and eSetOffset functions.
+
+
+
 <p> to be continued ... </p>
 
 
