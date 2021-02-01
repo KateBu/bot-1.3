@@ -29,7 +29,7 @@ sendHostPath = pure $ WrapStructs.HostPath "api.vk.com" ["method", "messages.sen
 
 sendBasicParams :: Config.Config -> IO [PureStructs.Params]
 sendBasicParams (Config.VKBot (Config.VK tok _ _ _ _)) = do
-  rid <- getRandonId
+  rid <- getRandomId
   pure
     [ PureStructs.ParamsNum "random_id" rid,
       PureStructs.ParamsText "v" Config.vkApiVersion,
@@ -37,7 +37,7 @@ sendBasicParams (Config.VKBot (Config.VK tok _ _ _ _)) = do
     ]
 sendBasicParams _ = pure []
 
-getRandonId :: IO Int
-getRandonId = do
+getRandomId :: IO Int
+getRandomId = do
   gen <- newStdGen
   pure (fst . random $ gen :: Int)
