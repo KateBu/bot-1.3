@@ -11,7 +11,6 @@ import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import qualified Environment.Logger.Internals as Logger
-import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Environment.Structs as Env
 import qualified Exceptions.Internals as BotEx
 import Network.HTTP.Simple
@@ -19,6 +18,7 @@ import Network.HTTP.Simple
     httpLBS,
     parseRequest,
   )
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 setBotTypeSettings ::
   Maybe Env.BotType ->

@@ -4,7 +4,6 @@ module API.Telegram.Structs.Updates
   )
 where
 
-import TextMessages.ParseFailMessage (parseFailMessage)
 import API.Telegram.Structs.Callback as Structs
   ( CBChat (..),
     CBMsg (..),
@@ -37,6 +36,7 @@ import Data.Aeson
   )
 import Data.Aeson.Types (parseFail)
 import GHC.Generics (Generic)
+import TextMessages.ParseFailMessage (parseFailMessage)
 
 data TelegramUpdates = TelegramUpdates
   { ok :: Bool,

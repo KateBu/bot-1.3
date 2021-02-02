@@ -18,9 +18,9 @@ import qualified API.Telegram.Structs.Updates as TStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
 import qualified Environment.Internals as Env
-import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 telUpdateToPureMessage ::
   Env.HelpMessage ->

@@ -4,7 +4,6 @@ module API.Telegram.Structs.MessageInfo
   )
 where
 
-import TextMessages.ParseFailMessage (parseFailMessage)
 import API.Telegram.Structs.Attachments.Animation as Structs
   ( TelAmination (..),
   )
@@ -34,6 +33,7 @@ import Data.Aeson
   )
 import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
+import TextMessages.ParseFailMessage (parseFailMessage)
 
 data MessageInfo = MessageInfo
   { message_id :: Int,

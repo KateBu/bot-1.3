@@ -1,9 +1,9 @@
 module API.Telegram.Structs.Attachments.Document where
 
-import TextMessages.ParseFailMessage (parseFailMessage)
 import Data.Aeson (FromJSON (parseJSON), Value (Object), (.:))
 import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
+import TextMessages.ParseFailMessage (parseFailMessage)
 
 data TelDocument = TelDocument
   { doc_file_id :: T.Text

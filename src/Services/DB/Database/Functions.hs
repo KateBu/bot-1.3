@@ -14,7 +14,6 @@ import Database.PostgreSQL.Simple
   )
 import qualified Environment.Internals as Env
 import qualified Environment.Logger.Internals as Logger
-import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
 import Services.DB.Database.Queries
@@ -23,6 +22,7 @@ import Services.DB.Database.Queries
     updateUserQuery,
     userIdText,
   )
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 connectInfo :: ConnectInfo
 connectInfo =

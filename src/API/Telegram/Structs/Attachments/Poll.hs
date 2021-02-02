@@ -1,6 +1,5 @@
 module API.Telegram.Structs.Attachments.Poll where
 
-import TextMessages.ParseFailMessage (parseFailMessage)
 import Data.Aeson
   ( FromJSON (parseJSON),
     Value (Object),
@@ -9,6 +8,7 @@ import Data.Aeson
   )
 import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
+import TextMessages.ParseFailMessage (parseFailMessage)
 
 data TelPoll = TelPoll
   { question :: T.Text,

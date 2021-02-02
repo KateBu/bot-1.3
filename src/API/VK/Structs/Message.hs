@@ -4,7 +4,6 @@ module API.VK.Structs.Message
   )
 where
 
-import TextMessages.ParseFailMessage (parseFailMessage)
 import API.VK.Structs.Attachments as Structs
   ( AObject (..),
     AccessKey,
@@ -23,6 +22,7 @@ import Data.Aeson
   )
 import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
+import TextMessages.ParseFailMessage (parseFailMessage)
 
 data VKMessage = VKMessage
   { id :: Int,

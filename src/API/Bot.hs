@@ -4,10 +4,10 @@ import Control.Exception (catch)
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Internals as Env
 import qualified Environment.Logger.Internals as Logger
-import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Exceptions.Internals as BotEx
 import qualified Logic.Main as Logic
 import qualified Services.SHandle as Handle
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 runBot :: Env.Environment IO -> IO ()
 runBot env =

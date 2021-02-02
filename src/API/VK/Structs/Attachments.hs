@@ -1,6 +1,5 @@
 module API.VK.Structs.Attachments where
 
-import TextMessages.ParseFailMessage (parseFailMessage)
 import Data.Aeson
   ( FromJSON (parseJSON),
     Value (Object),
@@ -10,6 +9,7 @@ import Data.Aeson
 import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
+import TextMessages.ParseFailMessage (parseFailMessage)
 
 data Attachment = Attachment
   { aType :: T.Text,

@@ -13,7 +13,6 @@ import Data.Aeson (eitherDecode)
 import qualified Data.Text as T
 import qualified Environment.Internals as Env
 import qualified Environment.Logger.Internals as Logger
-import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
 import Network.HTTP.Req
@@ -23,6 +22,7 @@ import Network.HTTP.Req
     responseBody,
     responseStatusCode,
   )
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 sendM ::
   Env.Environment IO ->

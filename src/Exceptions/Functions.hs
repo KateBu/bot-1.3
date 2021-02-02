@@ -8,9 +8,9 @@ import Database.PostgreSQL.Simple
     SqlError,
   )
 import qualified Environment.Logger.Internals as Logger
-import qualified TextMessages.LoggerMessages as LoggerMsgs
 import Exceptions.Structs (BotException (..))
 import Network.HTTP.Req (HttpException)
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 handleBotException :: BotException -> IO ()
 handleBotException ex = do

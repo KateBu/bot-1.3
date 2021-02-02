@@ -8,10 +8,10 @@ import Environment.BotSettings.SetBotSettings
   ( setBotTypeSettings,
   )
 import qualified Environment.Logger.Internals as Logger
-import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Environment.Structs as Env
 import qualified Exceptions.Internals as BotEx
 import Text.Read (readMaybe)
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 setEnvironment :: String -> IO (Env.Environment IO)
 setEnvironment path = do

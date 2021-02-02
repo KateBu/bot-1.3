@@ -1,6 +1,5 @@
 module Logic.PureStructs (module PureStructs) where
 
-import TextMessages.RepeatCommandMessages as PureStructs (newRepeatText, repeatText)
 import Logic.Structs.Buttons as PureStructs
   ( PureButtons (..),
     buttons',
@@ -20,3 +19,4 @@ import Logic.Structs.PureMessage as PureStructs
     UCommand (..),
     UpdateID,
   )
+import TextMessages.RepeatCommandMessages as PureStructs (newRepeatText, repeatText)

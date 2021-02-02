@@ -4,7 +4,6 @@ module API.VK.Structs.UpdateInfo
   )
 where
 
-import TextMessages.ParseFailMessage (parseFailMessage)
 import API.VK.Structs.Message as Structs
   ( AObject (..),
     AccessKey,
@@ -24,6 +23,7 @@ import Data.Aeson
     (.:?),
   )
 import Data.Aeson.Types (parseFail)
+import TextMessages.ParseFailMessage (parseFailMessage)
 
 data EventType = MsgNew | OtherEvent
   deriving (Show)
