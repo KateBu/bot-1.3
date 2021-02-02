@@ -70,7 +70,7 @@ vkUpdInfoToPureMessage ::
   VKStructs.VKUpdInfo ->
   PureStructs.PureMessage
 vkUpdInfoToPureMessage hMsg uid updInfo = case VKStructs.updType updInfo of
-  VKStructs.OtherEvent -> BotEx.throwPureOtherException LoggerMsgs.unexpVKEvent
+  VKStructs.OtherEvent -> BotEx.throwOtherExceptionUnwrapped LoggerMsgs.unexpVKEvent
   _ -> do
     let mbUpdObj = VKStructs.updObj updInfo
     maybe (noUpdObj uid) (justUpdObj hMsg uid) mbUpdObj

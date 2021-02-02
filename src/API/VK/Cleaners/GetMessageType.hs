@@ -14,7 +14,7 @@ import qualified Logic.PureStructs as PureStructs
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 getMessageType :: VKStructs.VKMessage -> PureStructs.MessageType
-getMessageType vkMsg = fromMaybe (BotEx.throwPureOtherException LoggerMsgs.notImplemented) msgType
+getMessageType vkMsg = fromMaybe (BotEx.throwOtherExceptionUnwrapped LoggerMsgs.notImplemented) msgType
   where
     msgType =
       mbCallBackMsg vkMsg

@@ -29,7 +29,7 @@ telUpdateToPureMessage ::
 telUpdateToPureMessage hMsg res = do
   let uid = TStructs.update_id res
   let mbPureMessage = mbMakeCallbackPureMessage res uid <|> mbMakePureMessage hMsg res uid
-  fromMaybe (BotEx.throwPureUpdateExcept LoggerMsgs.noUpd) mbPureMessage
+  fromMaybe (BotEx.throwUpdateExceptUnwrapped LoggerMsgs.noUpd) mbPureMessage
 
 mbMakeCallbackPureMessage ::
   TStructs.TelUpdateResult ->
