@@ -10,7 +10,7 @@ mbCallBackMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
 mbCallBackMsg vkMsg =
   PureStructs.MTCallbackQuery <$> mbNewRep (fromMaybe "" $ VKStructs.cbPayload vkMsg)
 
-mbNewRep :: T.Text -> Maybe T.Text
+mbNewRep :: T.Text -> Maybe PureStructs.CallbackText
 mbNewRep callback =
   mbRep1 callback
     <|> mbRep2 callback
@@ -18,31 +18,31 @@ mbNewRep callback =
     <|> mbRep4 callback
     <|> mbRep5 callback
 
-mbRep1 :: T.Text -> Maybe T.Text
+mbRep1 :: T.Text -> Maybe PureStructs.CallbackText
 mbRep1 txt =
   if T.isInfixOf PureStructs.rep1 txt
     then pure PureStructs.rep1
     else Nothing
 
-mbRep2 :: T.Text -> Maybe T.Text
+mbRep2 :: T.Text -> Maybe PureStructs.CallbackText
 mbRep2 txt =
   if T.isInfixOf PureStructs.rep2 txt
     then pure PureStructs.rep2
     else Nothing
 
-mbRep3 :: T.Text -> Maybe T.Text
+mbRep3 :: T.Text -> Maybe PureStructs.CallbackText
 mbRep3 txt =
   if T.isInfixOf PureStructs.rep3 txt
     then pure PureStructs.rep3
     else Nothing
 
-mbRep4 :: T.Text -> Maybe T.Text
+mbRep4 :: T.Text -> Maybe PureStructs.CallbackText
 mbRep4 txt =
   if T.isInfixOf PureStructs.rep4 txt
     then pure PureStructs.rep4
     else Nothing
 
-mbRep5 :: T.Text -> Maybe T.Text
+mbRep5 :: T.Text -> Maybe PureStructs.CallbackText
 mbRep5 txt =
   if T.isInfixOf PureStructs.rep5 txt
     then pure PureStructs.rep5

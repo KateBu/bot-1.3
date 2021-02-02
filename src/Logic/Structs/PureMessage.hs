@@ -9,10 +9,12 @@ type ChatID = Int
 
 type MbCaption = Maybe T.Text
 
+type CallbackText = T.Text 
+
 data MessageType
   = MTEmpty
   | MTUserCommand UCommand
-  | MTCallbackQuery T.Text
+  | MTCallbackQuery CallbackText
   | MTCommon T.Text
   deriving (Show, Eq)
 

@@ -2,6 +2,7 @@ module Logic.Structs.Buttons where
 
 import qualified Data.Text as T
 import qualified Environment.Internals as Env
+import Logic.Structs.PureMessage (CallbackText)
 
 data PureButtons = PureButtons T.Text T.Text
   deriving (Show)
@@ -15,22 +16,22 @@ buttons' =
     [PureButtons "5" rep5]
   ]
 
-rep1 :: T.Text
+rep1 :: CallbackText
 rep1 = "/setRepetition1"
 
-rep2 :: T.Text
+rep2 :: CallbackText
 rep2 = "/setRepetition2"
 
-rep3 :: T.Text
+rep3 :: CallbackText
 rep3 = "/setRepetition3"
 
-rep4 :: T.Text
+rep4 :: CallbackText
 rep4 = "/setRepetition4"
 
-rep5 :: T.Text
+rep5 :: CallbackText
 rep5 = "/setRepetition5"
 
-getNewRep :: T.Text -> Env.RepeatNumber
+getNewRep :: CallbackText -> Env.RepeatNumber
 getNewRep txt
   | txt == rep1 = 1
   | txt == rep2 = 2

@@ -11,7 +11,8 @@ import Logic.Structs.Buttons as PureStructs
     rep5,
   )
 import Logic.Structs.PureMessage as PureStructs
-  ( ChatID,
+  ( CallbackText,
+    ChatID,
     MbCaption,
     MessageType (..),
     Params (..),
