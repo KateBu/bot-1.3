@@ -38,7 +38,11 @@ find bType logger userId = do
   resp <- query_ conn (findUserQuery bType userId) `catches` BotEx.dbErrorsHandlers
   checkFindResponse logger resp
 
-checkFindResponse :: Monad m => Logger.Logger m -> [Only (Maybe Env.RepeatNumber)] -> m (Maybe Env.RepeatNumber)
+checkFindResponse ::
+  BotEx.MonadThrow m =>
+  Logger.Logger m ->
+  [Only (Maybe Env.RepeatNumber)] ->
+  m (Maybe Env.RepeatNumber)
 checkFindResponse _ [] = pure Nothing
 checkFindResponse logger [Only rep] = do
   Logger.botLog logger LoggerMsgs.findUserScs
@@ -53,7 +57,7 @@ add bType logger usId rep = do
   checkAddResp logger (user, rep) resp
 
 checkAddResp ::
-  Monad m =>
+  BotEx.MonadThrow m =>
   Logger.Logger m ->
   (T.Text, Env.RepeatNumber) ->
   [(T.Text, Env.RepeatNumber)] ->
@@ -74,7 +78,7 @@ update bType logger usId rep = do
   checkUpdResp logger (user, rep) resp
 
 checkUpdResp ::
-  Monad m =>
+  BotEx.MonadThrow m =>
   Logger.Logger m ->
   (T.Text, Env.RepeatNumber) ->
   [(T.Text, Env.RepeatNumber)] ->

@@ -11,7 +11,7 @@ import qualified Services.SHandle as Handle
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 processMsgs ::
-  (Monad m) =>
+  (BotEx.MonadThrow m) =>
   Env.Environment m ->
   Handle.SHandle m ->
   [PureStructs.PureMessage] ->
@@ -22,7 +22,7 @@ processMsgs env handle (x : xs) = do
   processMsgs env' handle xs
 
 processMsgs_ ::
-  (Monad m) =>
+  (BotEx.MonadThrow m) =>
   Env.Environment m ->
   Handle.SHandle m ->
   PureStructs.PureMessage ->
@@ -47,7 +47,7 @@ processMsgs_ env handle msg = do
       let mbChid = PureStructs.mbChatID msg
       maybe processMsgsErr (processMsgsCommon env handle msg) mbChid
 
-processMsgsErr :: Monad m => m (Env.Environment m)
+processMsgsErr :: BotEx.MonadThrow m => m (Env.Environment m)
 processMsgsErr = BotEx.throwOtherException LoggerMsgs.chidNotFound
 
 makeRepeatMsg :: PureStructs.PureMessage -> PureStructs.PureMessage

@@ -1,20 +1,20 @@
 module Exceptions.Internals (module Exceptions) where
 
 import Exceptions.Functions as Exceptions
-  ( dbErrorsHandlers,
+  ( MonadThrow (..),
+    dbErrorsHandlers,
     handleBotException,
-    throwBotExcept,
     throwDBFormatExceptions,
     throwDBResultError,
     throwHttpException,
     throwIOException,
     throwInitConfigExcept,
     throwOtherException,
+    throwOtherExceptionUnwrapped,
     throwParseExcept,
-    throwPureOtherException,
-    throwPureUpdateExcept,
     throwSQLException,
     throwSendExcept,
     throwUpdateExcept,
+    throwUpdateExceptUnwrapped,
   )
 import Exceptions.Structs as Exceptions (BotException (..))

@@ -1,6 +1,11 @@
 module Exceptions.Functions where
 
-import Control.Exception (Handler (..), IOException, throw)
+import Control.Exception
+  ( Handler (..),
+    IOException,
+    throw,
+    throwIO,
+  )
 import qualified Data.Text as T
 import Database.PostgreSQL.Simple
   ( FormatError,
@@ -12,49 +17,55 @@ import Exceptions.Structs (BotException (..))
 import Network.HTTP.Req (HttpException)
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
+class (Monad m) => MonadThrow m where
+  throwBotExcept :: BotException -> m a
+
+instance MonadThrow IO where
+  throwBotExcept = throwIO
+
+instance MonadThrow Maybe where
+  throwBotExcept = const Nothing
+
 handleBotException :: BotException -> IO ()
 handleBotException ex = do
   print ex
   putStrLn "Program terminated"
 
-throwBotExcept :: Monad m => BotException -> m a
-throwBotExcept = pure . throw
+throwInitConfigExcept :: MonadThrow m => m a
+throwInitConfigExcept = throwBotExcept $ InitConfigExcept LoggerMsgs.initConfigExcept
 
-throwInitConfigExcept :: Monad m => m a
-throwInitConfigExcept = pure . throw $ InitConfigExcept LoggerMsgs.initConfigExcept
-
-throwParseExcept :: Monad m => String -> m a
+throwParseExcept :: MonadThrow m => String -> m a
 throwParseExcept err = throwBotExcept $ ParseExcept (Logger.makeLogMessage LoggerMsgs.parseErr (T.pack err))
 
-throwUpdateExcept :: Monad m => Logger.LogMessage -> m a
-throwUpdateExcept = pure . throw . UpdateExcept
+throwUpdateExcept :: MonadThrow m => Logger.LogMessage -> m a
+throwUpdateExcept = throwBotExcept . UpdateExcept
 
-throwPureUpdateExcept :: Logger.LogMessage -> a
-throwPureUpdateExcept = throw . UpdateExcept
+throwUpdateExceptUnwrapped :: Logger.LogMessage -> a
+throwUpdateExceptUnwrapped = throw . UpdateExcept
 
-throwSendExcept :: Monad m => Logger.LogMessage -> m a
-throwSendExcept = pure . throw . SendExcept
+throwSendExcept :: MonadThrow m => Logger.LogMessage -> m a
+throwSendExcept = throwBotExcept . SendExcept
 
-throwIOException :: Monad m => IOException -> m a
-throwIOException = pure . throw . IOExcept
+throwIOException :: MonadThrow m => IOException -> m a
+throwIOException = throwBotExcept . IOExcept
 
-throwOtherException :: Monad m => Logger.LogMessage -> m a
-throwOtherException = pure . throw . OtherExcept
+throwOtherException :: MonadThrow m => Logger.LogMessage -> m a
+throwOtherException = throwBotExcept . OtherExcept
 
-throwPureOtherException :: Logger.LogMessage -> a
-throwPureOtherException = throw . OtherExcept
+throwOtherExceptionUnwrapped :: Logger.LogMessage -> a
+throwOtherExceptionUnwrapped = throw . OtherExcept
 
-throwHttpException :: Monad m => HttpException -> m a
-throwHttpException err = pure . throw . HttpExcept $ Logger.makeLogMessage LoggerMsgs.httpEx (T.pack . show $ err)
+throwHttpException :: MonadThrow m => HttpException -> m a
+throwHttpException err = throwBotExcept . HttpExcept $ Logger.makeLogMessage LoggerMsgs.httpEx (T.pack . show $ err)
 
-throwSQLException :: Monad m => SqlError -> m a
-throwSQLException = pure . throw . DBSqlError
+throwSQLException :: MonadThrow m => SqlError -> m a
+throwSQLException = throwBotExcept . DBSqlError
 
-throwDBFormatExceptions :: Monad m => FormatError -> m a
-throwDBFormatExceptions = pure . throw . DBFormatError
+throwDBFormatExceptions :: MonadThrow m => FormatError -> m a
+throwDBFormatExceptions = throwBotExcept . DBFormatError
 
-throwDBResultError :: Monad m => ResultError -> m a
-throwDBResultError = pure . throw . DBResultError
+throwDBResultError :: MonadThrow m => ResultError -> m a
+throwDBResultError = throwBotExcept . DBResultError
 
 dbErrorsHandlers :: [Handler a]
 dbErrorsHandlers =
