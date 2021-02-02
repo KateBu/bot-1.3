@@ -1,3 +1,6 @@
+## Update info
+Project structure changed. Tests don't work now.
+
 # Echo bot for Telegram and VK 
 
 <p> Telegram bot works properly and supports any types of messages (with or without attachments).  </p>
