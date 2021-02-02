@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f146eb274bcd14092238066b4aecfc08dc57bebe9d24ae12494c4bc84cb48a80
+-- hash: 8f37fd12f38c61eb2e10b350d513b334283e0a38608f6b8157824c7c8db28ac8
 
 name:           bot13
 version:        0.1.0.0
@@ -28,7 +28,6 @@ source-repository head
 library
   exposed-modules:
       API.Bot
-      API.Messages
       API.Telegram.Cleaners
       API.Telegram.Cleaners.Attachments.MbAnimation
       API.Telegram.Cleaners.Attachments.MbAudio
@@ -105,14 +104,6 @@ library
       Environment.Internals
       Environment.Logger.Functions
       Environment.Logger.Internals
-      Environment.Logger.Messages
-      Environment.Logger.Messages.Bot
-      Environment.Logger.Messages.DB
-      Environment.Logger.Messages.ProcMsgs
-      Environment.Logger.Messages.Telegram
-      Environment.Logger.Messages.Tests
-      Environment.Logger.Messages.VK
-      Environment.Logger.Messages.Wrapper
       Environment.Logger.Structs
       Environment.SetEnvironment
       Environment.Structs
@@ -120,12 +111,11 @@ library
       Exceptions.Internals
       Exceptions.Structs
       Logic.Main
-      Logic.Messages
       Logic.ProcMsgs.Callback
       Logic.ProcMsgs.Common
       Logic.PureStructs
       Logic.Structs.Buttons
-      Logic.Structs.Messages
+      Logic.Structs.PureMessage
       Services.API.Handle
       Services.DB.Database.Functions
       Services.DB.Database.Queries
@@ -133,6 +123,16 @@ library
       Services.ServiceHandle.Functions
       Services.ServiceHandle.Structs
       Services.SHandle
+      TextMessages.LoggerMessages
+      TextMessages.LoggerMessages.Bot
+      TextMessages.LoggerMessages.DB
+      TextMessages.LoggerMessages.ProcMsgs
+      TextMessages.LoggerMessages.Telegram
+      TextMessages.LoggerMessages.Tests
+      TextMessages.LoggerMessages.VK
+      TextMessages.LoggerMessages.Wrapper
+      TextMessages.ParseFailMessage
+      TextMessages.RepeatCommandMessages
   other-modules:
       Paths_bot13
   hs-source-dirs:

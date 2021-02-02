@@ -1,4 +1,4 @@
-module Environment.Logger.Messages.Telegram where
+module TextMessages.LoggerMessages.Telegram where
 
 import qualified Environment.Logger.Structs as Logger
 

@@ -8,7 +8,7 @@ import Database.PostgreSQL.Simple
     SqlError,
   )
 import qualified Environment.Logger.Internals as Logger
-import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 import Exceptions.Structs (BotException (..))
 import Network.HTTP.Req (HttpException)
 

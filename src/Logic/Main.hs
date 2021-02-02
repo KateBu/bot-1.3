@@ -3,7 +3,7 @@ module Logic.Main where
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Internals as Env
 import qualified Environment.Logger.Internals as Logger
-import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Exceptions.Internals as BotEx
 import Logic.ProcMsgs.Callback (processMsgsCallback)
 import Logic.ProcMsgs.Common (processMsgsCommon)

@@ -1,6 +1,6 @@
 module API.Telegram.Structs.Attachments.Sticker where
 
-import API.Messages (parseFailMessage)
+import TextMessages.ParseFailMessage (parseFailMessage)
 import Data.Aeson (FromJSON (parseJSON), Value (Object), (.:))
 import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T

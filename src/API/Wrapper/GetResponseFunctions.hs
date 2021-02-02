@@ -2,7 +2,7 @@ module API.Wrapper.GetResponseFunctions where
 
 import qualified API.Wrapper.Functions as WrapFunctions
 import Control.Exception (catch)
-import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
 import Network.HTTP.Req

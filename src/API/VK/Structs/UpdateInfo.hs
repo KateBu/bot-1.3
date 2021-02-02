@@ -4,7 +4,7 @@ module API.VK.Structs.UpdateInfo
   )
 where
 
-import API.Messages (parseFailMessage)
+import TextMessages.ParseFailMessage (parseFailMessage)
 import API.VK.Structs.Message as Structs
   ( AObject (..),
     AccessKey,

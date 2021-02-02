@@ -4,7 +4,7 @@ module API.Telegram.Structs.Updates
   )
 where
 
-import API.Messages (parseFailMessage)
+import TextMessages.ParseFailMessage (parseFailMessage)
 import API.Telegram.Structs.Callback as Structs
   ( CBChat (..),
     CBMsg (..),

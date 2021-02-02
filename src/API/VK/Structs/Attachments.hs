@@ -1,6 +1,6 @@
 module API.VK.Structs.Attachments where
 
-import API.Messages (parseFailMessage)
+import TextMessages.ParseFailMessage (parseFailMessage)
 import Data.Aeson
   ( FromJSON (parseJSON),
     Value (Object),

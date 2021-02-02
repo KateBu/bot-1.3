@@ -1,4 +1,4 @@
-module Logic.Messages where
+module TextMessages.RepeatCommandMessages where
 
 import qualified Data.Text as T
 import qualified Environment.Internals as Env

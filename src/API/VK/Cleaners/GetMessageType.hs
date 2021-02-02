@@ -9,7 +9,7 @@ import API.VK.Cleaners.MsgTypes.UserCommand (mbUserCommand)
 import qualified API.VK.Structs.Internals as VKStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
-import qualified Environment.Logger.Messages as LoggerMsgs
+import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
 

@@ -4,7 +4,7 @@ module API.Telegram.Structs.MessageInfo
   )
 where
 
-import API.Messages (parseFailMessage)
+import TextMessages.ParseFailMessage (parseFailMessage)
 import API.Telegram.Structs.Attachments.Animation as Structs
   ( TelAmination (..),
   )

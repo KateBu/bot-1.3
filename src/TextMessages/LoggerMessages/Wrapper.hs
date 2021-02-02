@@ -1,4 +1,4 @@
-module Environment.Logger.Messages.Wrapper where
+module TextMessages.LoggerMessages.Wrapper where
 
 import qualified Environment.Logger.Structs as Logger
 

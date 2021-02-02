@@ -1,6 +1,6 @@
 module Logic.PureStructs (module PureStructs) where
 
-import Logic.Messages as PureStructs (newRepeatText, repeatText)
+import TextMessages.RepeatCommandMessages as PureStructs (newRepeatText, repeatText)
 import Logic.Structs.Buttons as PureStructs
   ( PureButtons (..),
     buttons',
@@ -11,7 +11,7 @@ import Logic.Structs.Buttons as PureStructs
     rep4,
     rep5,
   )
-import Logic.Structs.Messages as PureStructs
+import Logic.Structs.PureMessage as PureStructs
   ( ChatID,
     MbCaption,
     MessageType (..),

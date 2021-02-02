@@ -1,6 +1,6 @@
 module API.Telegram.Structs.Attachments.Audio where
 
-import API.Messages (parseFailMessage)
+import TextMessages.ParseFailMessage (parseFailMessage)
 import Data.Aeson
   ( FromJSON (parseJSON),
     Value (Object),

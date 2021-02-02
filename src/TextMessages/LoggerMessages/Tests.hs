@@ -1,4 +1,4 @@
-module Environment.Logger.Messages.Tests where
+module TextMessages.LoggerMessages.Tests where
 
 import qualified Environment.Logger.Structs as Logger
 

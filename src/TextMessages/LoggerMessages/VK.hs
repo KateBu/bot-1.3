@@ -1,4 +1,4 @@
-module Environment.Logger.Messages.VK where
+module TextMessages.LoggerMessages.VK where
 
 import qualified Environment.Logger.Structs as Logger
 

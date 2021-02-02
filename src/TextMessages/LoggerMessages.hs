@@ -1,6 +1,6 @@
-module Environment.Logger.Messages (module Messages) where
+module TextMessages.LoggerMessages (module Messages) where
 
-import Environment.Logger.Messages.Bot as Messages
+import TextMessages.LoggerMessages.Bot as Messages
   ( getUpdFld,
     initConfigExcept,
     initLogFld,
@@ -8,7 +8,7 @@ import Environment.Logger.Messages.Bot as Messages
     readValueFld,
     vkFatalError,
   )
-import Environment.Logger.Messages.DB as Messages
+import TextMessages.LoggerMessages.DB as Messages
   ( addUserQueryFld,
     addUserRepeatScs,
     findUserQueryFld,
@@ -17,7 +17,7 @@ import Environment.Logger.Messages.DB as Messages
     updUserRepeatNoUser,
     updUserRepeatScs,
   )
-import Environment.Logger.Messages.ProcMsgs as Messages
+import TextMessages.LoggerMessages.ProcMsgs as Messages
   ( callbackMsg,
     emptyMsg,
     getApiResp,
@@ -25,7 +25,7 @@ import Environment.Logger.Messages.ProcMsgs as Messages
     repeatCmd,
     sendMsg,
   )
-import Environment.Logger.Messages.Telegram as Messages
+import TextMessages.LoggerMessages.Telegram as Messages
   ( chidNotFound,
     getTelUpdScs,
     parseTelMsgScs,
@@ -33,8 +33,8 @@ import Environment.Logger.Messages.Telegram as Messages
     tDecBS,
     telDecBsScs,
   )
-import Environment.Logger.Messages.Tests as Messages (testError)
-import Environment.Logger.Messages.VK as Messages
+import TextMessages.LoggerMessages.Tests as Messages (testError)
+import TextMessages.LoggerMessages.VK as Messages
   ( getVKUpdScs,
     noChatId,
     notImplemented,
@@ -49,7 +49,7 @@ import Environment.Logger.Messages.VK as Messages
     vkUpdatesFailed3,
     vkUpdatesFailed4,
   )
-import Environment.Logger.Messages.Wrapper as Messages
+import TextMessages.LoggerMessages.Wrapper as Messages
   ( badServerResponse,
     getRespMulti,
     getRespUrl,
