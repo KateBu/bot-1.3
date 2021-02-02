@@ -20,9 +20,10 @@ Project structure changed. Tests don't work now.
 - Exceptions  
 - Logic  
 - Services  
+- TextMessages
 
 #### API 
-<p> API folder contains modules Bot (runBot and nextLoop functions), Messages (contains parseFailMessage) and Wrapper (exports getPureMessageList and sendM functions) </p>
+<p> API folder contains modules Bot (runBot and nextLoop functions) and Wrapper (exports getPureMessageList and sendM functions) </p>
 
 <p> The <b>Telegram</b> folder contains module Cleaners (exports telByteStringToPureMessageList function and contains functions for decoding json data Telegram server sends into list of PureMessages), there are some functions for decoding in Cleaners folder. Module Data contains some specific data for connecting to Telegram server and some functions for building Telegram http requests. You can find specific data structures and FromJSON/ToJSON instances of Telegram server responses in Structs folder. </p>
 
@@ -46,7 +47,7 @@ Project structure changed. Tests don't work now.
 - SetEnvironment module - contains functions to build enviroment based on information in .config file.
 - Internals module - a super module that exports functions, constructors etc.
 
-<p> The <b>Logger</b> folder contains the following modules: there are data structures in Structs module, functions for creating Logger and making LogMessage in Functions module. Messages module exports all the different LogMessages (from Messages folder here). Internals module exports functions, constructors etc.
+<p> The <b>Logger</b> folder contains the following modules: there are data structures in Structs module, functions for creating Logger and making LogMessage in Functions module. Internals module exports functions, constructors etc.
 
 #### Exceptions 
 <p> Exceptions folder contains the following modules: </p>
@@ -59,7 +60,6 @@ Project structure changed. Tests don't work now.
 <p> Logic folder contains the following modules: </p>
 
 - Main module - contains the processMsgs function, that handles a list of PureMessages. The module also contains some additional that are called in processMsgs functions. There are some functions for processing Callback messages in Callback module (ProcMsgs folder), and some functions for processing Common messages in Common module (ProcMsgs folder)
-- Messages module - contains some text messages user gets when sends /repeat command
 - PureStructs module - exports constuctors, text data etc 
 
 <p>You can find data structures of PureMessages, Buttons etc... in <b>Structs</b> folder.</p>
@@ -71,6 +71,15 @@ Project structure changed. Tests don't work now.
 - DB folder - the Handle module inside contains the Handle data type, which consists of three functions for communicating to a database: findUser (for looking up a user in the DB), addUSer (for inserting a new user into DB) and updateUser (for updating the number of repetitions for a user).The Handle module also has a 'new' functions (for creating IO Handle). There are two modules in <b> Database </b> folder here. It consists of Functions module (functions for connecting to a DB) and Queries module (contains the queries to a DB).
 - ServiceHandle folder - contains Structs module (SHandle data type combines API Handle and DB Handle, the module also provides the 'new' function for creating IO SHandle) and Functions module (contains getters for API Handle and DB Handle functions).
 <p><b>SHandle</b> module here exports constructors and functions for the services described above. </p>
+
+#### TextMessages 
+<p> TextMessages folder contains all the text messages used in the project. The folder contains the following modules: </p>
+
+- LoggerMessages - the module exports all the different text messages for logging (from LoggerMessages folder here). 
+- ParseFailMessage - the module contains a message for parseFail function
+- RepeatCommandMessages - the module contains some text messages user gets when sends /repeat command
+
+
 
 ## What the bot can do 
 
