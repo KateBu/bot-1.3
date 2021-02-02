@@ -13,7 +13,8 @@ testProcessMsgs =
     testProcessMsgs3,
     testProcessMsgs4,
     testProcessMsgs5,
-    testProcessMsgs6
+    testProcessMsgs6,
+    testProcessMsgs7
   ]
 
 testProcessMsgs1 :: Test
@@ -135,3 +136,20 @@ actualTestProcessMsgs6 =
 
 expectedTestProcessMsgs6 :: Maybe Config.Config
 expectedTestProcessMsgs6 = pure $ Env.config TestData.testEnvVK
+
+testProcessMsgs7 :: Test
+testProcessMsgs7 =
+  TestCase
+    ( assertEqual
+        "Logic.testProcessMsgs7"
+        Nothing
+        actualTestProcessMsgs7
+    )
+
+actualTestProcessMsgs7 :: Maybe Config.Config
+actualTestProcessMsgs7 =
+  Env.config
+    <$> Logic.processMsgs
+      TestData.testEnvTelegram
+      TestData.servicesTel1
+      TestData.allMessages

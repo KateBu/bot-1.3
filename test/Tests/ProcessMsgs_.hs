@@ -15,7 +15,8 @@ testProcessMsgs_ =
     testProcessMsgs_5,
     testProcessMsgs_6,
     testProcessMsgs_7,
-    testProcessMsgs_8
+    testProcessMsgs_8,
+    testProcessMsgs_9
   ]
 
 testProcessMsgs_1 :: Test
@@ -177,3 +178,22 @@ actualTestProcessMsgs_8 =
 
 expectedTestProcessMsgs_8 :: Maybe Config.Config
 expectedTestProcessMsgs_8 = Env.config <$> Env.eSetOffset TestData.testEnvVK 3
+
+testProcessMsgs_9 :: Test
+testProcessMsgs_9 =
+  TestCase
+    ( assertEqual
+        "Logic.testProcessMsgs_9"
+        Nothing
+        actualTestProcessMsgs_9
+    )
+
+actualTestProcessMsgs_9 :: Maybe Config.Config
+actualTestProcessMsgs_9 =
+  Env.config
+    <$> Logic.processMsgs_
+      TestData.testEnvVK
+      TestData.servicesVk1
+      TestData.cmnMsg1
+
+
