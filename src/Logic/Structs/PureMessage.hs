@@ -9,7 +9,7 @@ type ChatID = Int
 
 type MbCaption = Maybe T.Text
 
-type CallbackText = T.Text 
+type CallbackText = T.Text
 
 data MessageType
   = MTEmpty
