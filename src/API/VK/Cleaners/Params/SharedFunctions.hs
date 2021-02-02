@@ -4,13 +4,15 @@ import qualified API.VK.Structs.Internals as VKStructs
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 
+type Key = T.Text
+
 setMessageParam :: Maybe T.Text -> [PureStructs.Params]
 setMessageParam Nothing = []
 setMessageParam (Just "") = []
 setMessageParam (Just msg) = [PureStructs.ParamsText "message" msg]
 
 setMaybeTextParam ::
-  T.Text ->
+  Key ->
   (VKStructs.VKMessage -> Maybe T.Text) ->
   VKStructs.VKMessage ->
   [PureStructs.Params]
@@ -19,7 +21,7 @@ setMaybeTextParam key field vkMsg = case field vkMsg of
   Just txt -> [PureStructs.ParamsText key txt]
 
 setMaybeDoubleParam ::
-  T.Text ->
+  Key ->
   (VKStructs.VKMessage -> Maybe Double) ->
   VKStructs.VKMessage ->
   [PureStructs.Params]
