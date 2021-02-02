@@ -1,12 +1,11 @@
 module API.Wrapper.GetResponseFunctions where
 
 import qualified API.Wrapper.Functions as WrapFunctions
-import Control.Exception (catch)
+import Control.Exception (handle)
 import qualified Exceptions.Internals as BotEx
 import qualified Logic.PureStructs as PureStructs
 import Network.HTTP.Req
-  ( HttpException,
-    LbsResponse,
+  ( LbsResponse,
     Option,
     POST (POST),
     Scheme (Https),
@@ -26,16 +25,14 @@ getResponseMultipart ::
 getResponseMultipart Nothing _ _ = BotEx.throwOtherException LoggerMsgs.invalidHP
 getResponseMultipart (Just url) params options = do
   multipartParams <- WrapFunctions.paramsToMultipartBody params
-  catch
-    ( runReq defaultHttpConfig $ do
-        req
-          POST
-          url
-          multipartParams
-          lbsResponse
-          options
-    )
-    (\ex -> BotEx.throwHttpException (ex :: HttpException))
+  withHttpExceptionWrapped $
+    runReq defaultHttpConfig $ do
+      req
+        POST
+        url
+        multipartParams
+        lbsResponse
+        options
 
 getResponseUrl ::
   Maybe (Url 'Https) ->
@@ -44,13 +41,14 @@ getResponseUrl ::
   IO LbsResponse
 getResponseUrl Nothing _ _ = BotEx.throwOtherException LoggerMsgs.invalidHP
 getResponseUrl (Just ulr) params options =
-  catch
-    ( runReq defaultHttpConfig $ do
-        req
-          POST
-          ulr
-          (WrapFunctions.paramsToUrlBody params)
-          lbsResponse
-          options
-    )
-    (\ex -> BotEx.throwHttpException (ex :: HttpException))
+  withHttpExceptionWrapped $
+    runReq defaultHttpConfig $ do
+      req
+        POST
+        ulr
+        (WrapFunctions.paramsToUrlBody params)
+        lbsResponse
+        options
+
+withHttpExceptionWrapped :: IO a -> IO a
+withHttpExceptionWrapped = handle BotEx.throwHttpException
