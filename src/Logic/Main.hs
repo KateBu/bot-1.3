@@ -56,4 +56,6 @@ makeRepeatMsg msg =
     (PureStructs.MTCommon "Message")
     (PureStructs.updateID msg)
     (PureStructs.mbChatID msg)
-    (mconcat [PureStructs.mbParams msg, Just [PureStructs.ParamsText "text" PureStructs.repeatText]])
+    repeatParams
+  where
+    repeatParams = mconcat [PureStructs.mbParams msg, Just [PureStructs.ParamsText "text" PureStructs.repeatText]]
