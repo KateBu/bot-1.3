@@ -99,6 +99,7 @@
 <p><b>VKGroupID</b>: an Int, put your VK Group ID here if you want to run a VK Bot;</p>
 <p><b>helpMessage</b>: you can change the message a user will get if sends /help command (quotes are required);</p>
 <p><b>logPriority</b>: use "Debug", "Info", "Warning" or "Error" (quotes are required).</p>
+<p><b>dbConnectString</b>: a string for connecting to the database (quotes are required)</p>
 
 ## How to create a database:
 <p>The bot works with a primitive database (PostreSQL), that contains one table to store user IDs and number of repetition for every user. The database supposed to be hosted locally (the same computer as the bot). So to create the database you just have to write a few strings in psql command line: </p> 
