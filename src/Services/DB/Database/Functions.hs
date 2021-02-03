@@ -29,10 +29,11 @@ withDBConnection conStr body = withDBExceptionsWrapped $
   where
     initCon = connectPostgreSQL conStr
 
-find :: Env.Environment IO -> Env.DBConnectString -> PureStructs.ChatID -> IO (Maybe Env.RepeatNumber)
-find env conStr userId = do
+find :: Env.Environment IO -> PureStructs.ChatID -> IO (Maybe Env.RepeatNumber)
+find env userId = do
   config <- runReaderT Env.eConfig env
   logger <- runReaderT Env.eLogger env
+  conStr <- runReaderT Env.eDBConnectionString env
   withDBConnection conStr $
     \conn ->
       do
@@ -50,10 +51,11 @@ checkFindResponse logger [Only rep] = do
   pure rep
 checkFindResponse _ _ = BotEx.throwOtherException LoggerMsgs.findUserQueryFld
 
-add :: Env.Environment IO -> Env.DBConnectString -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
-add env conStr chid rep = do
+add :: Env.Environment IO -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
+add env chid rep = do
   config <- runReaderT Env.eConfig env
   logger <- runReaderT Env.eLogger env
+  conStr <- runReaderT Env.eDBConnectionString env
   let user = userIdText config chid
   withDBConnection conStr $
     \conn ->
@@ -73,10 +75,11 @@ checkAddResp logger (usId, rep) [(usId', rep')] = do
     else BotEx.throwOtherException LoggerMsgs.addUserQueryFld
 checkAddResp _ _ _ = BotEx.throwOtherException LoggerMsgs.addUserQueryFld
 
-update :: Env.Environment IO -> Env.DBConnectString -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
-update env conStr chid rep = do
+update :: Env.Environment IO -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
+update env chid rep = do
   config <- runReaderT Env.eConfig env
   logger <- runReaderT Env.eLogger env
+  conStr <- runReaderT Env.eDBConnectionString env
   let user = userIdText config chid
   withDBConnection conStr $
     \conn ->

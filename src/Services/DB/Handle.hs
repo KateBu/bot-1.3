@@ -1,6 +1,5 @@
 module Services.DB.Handle where
 
-import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Internals as Env
 import qualified Logic.PureStructs as PureStructs
 import qualified Services.DB.Database.Functions as DB
@@ -12,11 +11,10 @@ data Handle m = Handle
   }
 
 new :: Env.Environment IO -> IO (Handle IO)
-new env = do
-  dbConStr <- runReaderT Env.eDBConnectionString env
+new env =
   pure $
     Handle
-      { findUser = DB.find env dbConStr,
-        addUser = DB.add env dbConStr,
-        updateUser = DB.update env dbConStr
+      { findUser = DB.find env,
+        addUser = DB.add env,
+        updateUser = DB.update env
       }
