@@ -34,15 +34,14 @@ setEnvironment' conf = do
   vkTok <- Configurator.lookup conf "bot.VKToken" :: IO (Maybe Config.Token)
   vkGroup <- Configurator.lookup conf "bot.VKGroupID" :: IO (Maybe Config.VKGroup)
   dbCnt <- Configurator.lookup conf "bot.dbConnectString" :: IO (Maybe Env.DBConnectString)
-  botSettings <- setBotTypeSettings botT vkGroup vkTok tTok 
-  initEnvironment msg rep prior dbCnt botSettings 
-      
+  botSettings <- setBotTypeSettings botT vkGroup vkTok tTok
+  initEnvironment msg rep prior dbCnt botSettings
 
 initEnvironment ::
   Maybe Env.HelpMessage ->
   Maybe Env.RepeatNumber ->
   Maybe String ->
-  Maybe Env.DBConnectString -> 
+  Maybe Env.DBConnectString ->
   Config.Config ->
   IO (Env.Environment IO)
 initEnvironment (Just helpMsg) (Just rep) (Just priorStr) (Just dbCnt) config = do
@@ -53,7 +52,7 @@ initEnvironment _ _ _ _ _ = BotEx.throwInitConfigExcept
 makeEnv ::
   Env.HelpMessage ->
   Env.RepeatNumber ->
-  Env.DBConnectString -> 
+  Env.DBConnectString ->
   Config.Config ->
   Logger.Priority ->
   IO (Env.Environment IO)

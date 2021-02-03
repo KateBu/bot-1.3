@@ -11,7 +11,7 @@ type RepeatNumber = Int
 
 type BotType = T.Text
 
-type DBConnectString = BS.ByteString 
+type DBConnectString = BS.ByteString
 
 data Environment m = Environment
   { config :: Config.Config,
