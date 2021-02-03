@@ -97,15 +97,7 @@ commandMsg3 =
     (PureStructs.MTUserCommand PureStructs.Help)
     2
     (Just 0)
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 commandMsg4 :: PureStructs.PureMessage
 commandMsg4 =
@@ -113,15 +105,7 @@ commandMsg4 =
     (PureStructs.MTUserCommand PureStructs.Help)
     2
     Nothing
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 commandMsg5 :: PureStructs.PureMessage
 commandMsg5 =
@@ -129,15 +113,7 @@ commandMsg5 =
     (PureStructs.MTUserCommand PureStructs.Repeat)
     2
     Nothing
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 commandMsg6 :: PureStructs.PureMessage
 commandMsg6 =
@@ -145,15 +121,7 @@ commandMsg6 =
     (PureStructs.MTUserCommand PureStructs.Repeat)
     2
     (Just 1)
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 commandMsg7 :: PureStructs.PureMessage
 commandMsg7 =
@@ -193,15 +161,7 @@ cbMsg3 =
     (PureStructs.MTCallbackQuery PureStructs.rep3)
     2
     (Just 11)
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 cbMsg4 :: PureStructs.PureMessage
 cbMsg4 =
@@ -209,15 +169,7 @@ cbMsg4 =
     (PureStructs.MTCallbackQuery PureStructs.rep4)
     2
     Nothing
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 cbMsg5 :: PureStructs.PureMessage
 cbMsg5 =
@@ -225,15 +177,7 @@ cbMsg5 =
     (PureStructs.MTCallbackQuery PureStructs.rep5)
     (-11)
     Nothing
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 cbMsg6 :: PureStructs.PureMessage
 cbMsg6 =
@@ -241,15 +185,7 @@ cbMsg6 =
     (PureStructs.MTCallbackQuery "somethingElse")
     2
     Nothing
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 cmnMsg1 :: PureStructs.PureMessage
 cmnMsg1 =
@@ -257,15 +193,7 @@ cmnMsg1 =
     (PureStructs.MTCommon "Message")
     2
     Nothing
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 cmnMsg2 :: PureStructs.PureMessage
 cmnMsg2 =
@@ -289,15 +217,7 @@ cmnMsg4 =
     (PureStructs.MTCommon "Message")
     2
     (Just 33)
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
 
 cmnMsg5 :: PureStructs.PureMessage
 cmnMsg5 =
@@ -305,12 +225,15 @@ cmnMsg5 =
     (PureStructs.MTCommon "Message")
     15
     (Just 42)
-    ( Just
-        [ PureStructs.ParamsBool "bool" True,
-          PureStructs.ParamsText "text" "some text",
-          PureStructs.ParamsDouble "double" 3.14,
-          PureStructs.ParamsNum "num" 1024,
-          PureStructs.ParamsTextList "textList" ["one", "two", "three"],
-          PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
-        ]
-    )
+    msgParams
+
+msgParams :: Maybe [PureStructs.Params]
+msgParams =
+  Just
+    [ PureStructs.ParamsBool "bool" True,
+      PureStructs.ParamsText "text" "some text",
+      PureStructs.ParamsDouble "double" 3.14,
+      PureStructs.ParamsNum "num" 1024,
+      PureStructs.ParamsTextList "textList" ["one", "two", "three"],
+      PureStructs.ParamsJSON "json" (object ["json" .= ("testJson" :: T.Text)])
+    ]
