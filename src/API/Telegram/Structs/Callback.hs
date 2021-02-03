@@ -14,7 +14,7 @@ instance FromJSON Callback where
       <*> v .: "data"
   parseJSON _ = parseFail parseFailMessage
 
-data CBMsg = CBMsg
+newtype CBMsg = CBMsg
   { cb_chat :: CBChat
   }
   deriving (Show)
@@ -24,7 +24,7 @@ instance FromJSON CBMsg where
     CBMsg <$> v .: "chat"
   parseJSON _ = parseFail parseFailMessage
 
-data CBChat = CBChat
+newtype CBChat = CBChat
   { cb_chid :: Int
   }
   deriving (Show)

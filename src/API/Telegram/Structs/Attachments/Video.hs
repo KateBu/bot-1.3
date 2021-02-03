@@ -5,7 +5,7 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data TelVideo = TelVideo
+newtype TelVideo = TelVideo
   { video_file_id :: T.Text
   }
   deriving (Show)

@@ -5,7 +5,7 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data TelDocument = TelDocument
+newtype TelDocument = TelDocument
   { doc_file_id :: T.Text
   }
   deriving (Show)
