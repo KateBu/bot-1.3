@@ -25,11 +25,13 @@ mbVenue' uid chid mInfo venue =
       (PureStructs.MTCommon "Venue")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [ PureStructs.ParamsText "latitude" ((T.pack . show) $ TStructs.v_latitude venue),
-                 PureStructs.ParamsText "longitude" ((T.pack . show) $ TStructs.v_longitude venue),
-                 PureStructs.ParamsText "title" (TStructs.v_title venue),
-                 PureStructs.ParamsText "address" (TStructs.v_address venue)
-               ]
-      )
+      venueParams
+  where
+    venueParams =
+      Just $
+        basicParams chid mInfo
+          <> [ PureStructs.ParamsText "latitude" ((T.pack . show) $ TStructs.v_latitude venue),
+               PureStructs.ParamsText "longitude" ((T.pack . show) $ TStructs.v_longitude venue),
+               PureStructs.ParamsText "title" (TStructs.v_title venue),
+               PureStructs.ParamsText "address" (TStructs.v_address venue)
+             ]

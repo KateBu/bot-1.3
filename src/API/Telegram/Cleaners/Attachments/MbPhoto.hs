@@ -24,10 +24,12 @@ mbPhoto' uid chid mInfo photo =
       (PureStructs.MTCommon "Photo")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> getPhotoParams photo
-      )
+      photoParams
+  where
+    photoParams =
+      Just $
+        basicParams chid mInfo
+          <> getPhotoParams photo
 
 getPhotoParams :: [TStructs.TelPhoto] -> [PureStructs.Params]
 getPhotoParams [] = []

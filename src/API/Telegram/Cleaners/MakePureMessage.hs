@@ -43,12 +43,14 @@ mbMakeCallbackPureMessage res uid = case TStructs.callback_query res of
           (PureStructs.MTCallbackQuery cbData)
           uid
           (Just chid)
-          ( Just $
-              [ PureStructs.ParamsText "text" (PureStructs.newRepeatText (PureStructs.getNewRep cbData)),
-                PureStructs.ParamsNum "chat_id" chid
-              ]
-          )
+          (callbackParams chid)
       )
+    where
+      callbackParams chid =
+        Just $
+          [ PureStructs.ParamsText "text" (PureStructs.newRepeatText (PureStructs.getNewRep cbData)),
+            PureStructs.ParamsNum "chat_id" chid
+          ]
   _ -> Nothing
 
 mbMakePureMessage ::

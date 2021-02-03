@@ -24,7 +24,9 @@ mbAudio' uid chid mInfo aud =
       (PureStructs.MTCommon "Audio")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [PureStructs.ParamsText "audio" (TStructs.audio_id aud)]
-      )
+      audioParams
+  where
+    audioParams =
+      Just $
+        basicParams chid mInfo
+          <> [PureStructs.ParamsText "audio" (TStructs.audio_id aud)]

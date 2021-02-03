@@ -24,7 +24,9 @@ mbVoice' uid chid mInfo voice =
       (PureStructs.MTCommon "Voice")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [PureStructs.ParamsText "voice" (TStructs.voice_file_id voice)]
-      )
+      voiceParams
+  where
+    voiceParams =
+      Just $
+        basicParams chid mInfo
+          <> [PureStructs.ParamsText "voice" (TStructs.voice_file_id voice)]

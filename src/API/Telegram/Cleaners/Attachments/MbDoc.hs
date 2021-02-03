@@ -24,7 +24,9 @@ mbDoc' uid chid mInfo doc =
       (PureStructs.MTCommon "Document")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [PureStructs.ParamsText "document" (TStructs.doc_file_id doc)]
-      )
+      docParams
+  where
+    docParams =
+      Just $
+        basicParams chid mInfo
+          <> [PureStructs.ParamsText "document" (TStructs.doc_file_id doc)]

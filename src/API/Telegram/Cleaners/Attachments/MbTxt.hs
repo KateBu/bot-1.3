@@ -32,29 +32,35 @@ mkTxtMsg hMsg uid chid mInfo "/help" =
       (PureStructs.MTUserCommand PureStructs.Help)
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [PureStructs.ParamsText "text" hMsg]
-      )
+      helpParams
+  where
+    helpParams =
+      Just $
+        basicParams chid mInfo
+          <> [PureStructs.ParamsText "text" hMsg]
 mkTxtMsg _ uid chid mInfo "/repeat" =
   pure $
     PureStructs.PureMessage
       (PureStructs.MTUserCommand PureStructs.Repeat)
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [ PureStructs.ParamsJSON "reply_markup" (makeKeyboard ((map (map TButtons)) PureStructs.buttons')),
-                 PureStructs.ParamsBool "one_time_keyboard" True
-               ]
-      )
+      repeatParams
+  where
+    repeatParams =
+      Just $
+        basicParams chid mInfo
+          <> [ PureStructs.ParamsJSON "reply_markup" (makeKeyboard ((map (map TButtons)) PureStructs.buttons')),
+               PureStructs.ParamsBool "one_time_keyboard" True
+             ]
 mkTxtMsg _ uid chid mInfo text =
   pure $
     PureStructs.PureMessage
       (PureStructs.MTCommon "Message")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [PureStructs.ParamsText "text" text]
-      )
+      messageParams
+  where
+    messageParams =
+      Just $
+        basicParams chid mInfo
+          <> [PureStructs.ParamsText "text" text]

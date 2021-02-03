@@ -25,11 +25,13 @@ mbContact' uid chid mInfo contact =
       (PureStructs.MTCommon "Contact")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [ PureStructs.ParamsText "phone_number" (TStructs.phone_number contact),
-                 PureStructs.ParamsText "first_name" (TStructs.first_name contact)
-               ]
-            <> makeMaybeTextParams "last_name" (TStructs.last_name contact)
-            <> makeMaybeTextParams "vcard" (TStructs.vcard contact)
-      )
+      contactParams
+  where
+    contactParams =
+      Just $
+        basicParams chid mInfo
+          <> [ PureStructs.ParamsText "phone_number" (TStructs.phone_number contact),
+               PureStructs.ParamsText "first_name" (TStructs.first_name contact)
+             ]
+          <> makeMaybeTextParams "last_name" (TStructs.last_name contact)
+          <> makeMaybeTextParams "vcard" (TStructs.vcard contact)

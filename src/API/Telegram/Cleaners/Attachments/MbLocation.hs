@@ -25,9 +25,11 @@ mbLocation' uid chid mInfo location =
       (PureStructs.MTCommon "Location")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [ PureStructs.ParamsText "latitude" ((T.pack . show) $ TStructs.latitude location),
-                 PureStructs.ParamsText "longitude" ((T.pack . show) $ TStructs.longitude location)
-               ]
-      )
+      locationParams
+  where
+    locationParams =
+      Just $
+        basicParams chid mInfo
+          <> [ PureStructs.ParamsText "latitude" ((T.pack . show) $ TStructs.latitude location),
+               PureStructs.ParamsText "longitude" ((T.pack . show) $ TStructs.longitude location)
+             ]

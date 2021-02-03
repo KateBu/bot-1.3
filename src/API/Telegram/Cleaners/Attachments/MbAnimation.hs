@@ -24,7 +24,9 @@ mbAnimation' uid chid mInfo anim =
       (PureStructs.MTCommon "Animation")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [PureStructs.ParamsText "animation" (TStructs.animation_file_id anim)]
-      )
+      animParams
+  where
+    animParams =
+      Just $
+        basicParams chid mInfo
+          <> [PureStructs.ParamsText "animation" (TStructs.animation_file_id anim)]

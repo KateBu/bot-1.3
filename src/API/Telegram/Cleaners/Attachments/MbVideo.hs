@@ -24,7 +24,9 @@ mbVideo' uid chid mInfo video =
       (PureStructs.MTCommon "Video")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [PureStructs.ParamsText "video" (TStructs.video_file_id video)]
-      )
+      videoParams
+  where
+    videoParams =
+      Just $
+        basicParams chid mInfo
+          <> [PureStructs.ParamsText "video" (TStructs.video_file_id video)]

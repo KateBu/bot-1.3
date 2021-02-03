@@ -59,8 +59,10 @@ telError err =
   BotEx.throwUpdateExcept
     ( Logger.makeLogMessage
         LoggerMsgs.getUpdFld
-        ( "\n\terror code: " <> (T.pack . show . TStructs.error_code) err
-            <> "\n\terror describtion: "
-            <> TStructs.description err
-        )
+        errMessage
     )
+  where
+    errMessage =
+      "\n\terror code: " <> (T.pack . show . TStructs.error_code) err
+        <> "\n\terror describtion: "
+        <> TStructs.description err

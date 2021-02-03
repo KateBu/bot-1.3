@@ -59,12 +59,14 @@ tryMakeVKSettings (VKStructs.VKError (VKStructs.ResponseError errCode errMsg)) =
     BotEx.InitConfigExcept
       ( Logger.makeLogMessage
           LoggerMsgs.initConfigExcept
-          ( "error_code: "
-              <> (T.pack . show) errCode
-              <> "error_message: "
-              <> errMsg
-          )
+          errorMessage
       )
+  where
+    errorMessage =
+      "error_code: "
+        <> (T.pack . show) errCode
+        <> "error_message: "
+        <> errMsg
 tryMakeVKSettings _ = BotEx.throwParseExcept ""
 
 vkSettingsScs ::

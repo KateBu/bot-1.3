@@ -24,8 +24,10 @@ mbSticker' uid chid mInfo sticker =
       (PureStructs.MTCommon "Sticker")
       uid
       (Just chid)
-      ( Just $
-          basicParams chid mInfo
-            <> [ PureStructs.ParamsText "sticker" (TStructs.s_file_id sticker)
-               ]
-      )
+      stickerParams
+  where
+    stickerParams =
+      Just $
+        basicParams chid mInfo
+          <> [ PureStructs.ParamsText "sticker" (TStructs.s_file_id sticker)
+             ]
