@@ -4,7 +4,8 @@ import qualified Config.Internals as Config
 import Control.Monad.Reader (ReaderT (runReaderT), asks)
 import qualified Environment.Logger.Internals as Logger
 import Environment.Structs
-  ( Environment (..),
+  ( DBConnectString,
+    Environment (..),
     HelpMessage,
     RepeatNumber,
   )
@@ -23,12 +24,15 @@ eHelpMsg = asks helpMsg
 eLogger :: Monad m => REnv m (Logger.Logger m)
 eLogger = asks logger
 
+eDBConnectionString :: Monad m => REnv m DBConnectString
+eDBConnectionString = asks dbConnectString
+
 eGetUid :: Monad m => REnv m Config.Offset
 eGetUid = asks $ Config.configGetUid . config
 
 updateConfig :: Monad m => Environment m -> Config.Config -> m (Environment m)
-updateConfig (Environment _ rep hm lgr) newConfig =
-  pure $ Environment newConfig rep hm lgr
+updateConfig (Environment _ rep hm lgr dbCnt) newConfig =
+  pure $ Environment newConfig rep hm lgr dbCnt
 
 eSetOffset :: Monad m => Environment m -> Config.Offset -> m (Environment m)
 eSetOffset env newOffset = do

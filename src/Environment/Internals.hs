@@ -3,6 +3,7 @@ module Environment.Internals (module Env) where
 import Environment.Functions as Env
   ( REnv,
     eConfig,
+    eDBConnectionString,
     eGetUid,
     eHelpMsg,
     eLogger,
@@ -15,6 +16,7 @@ import Environment.SetEnvironment as Env
   )
 import Environment.Structs as Env
   ( BotType,
+    DBConnectString,
     Environment (..),
     HelpMessage,
     RepeatNumber,

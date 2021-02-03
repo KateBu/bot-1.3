@@ -33,28 +33,33 @@ setEnvironment' conf = do
   prior <- Configurator.lookup conf "bot.logPriority" :: IO (Maybe String)
   vkTok <- Configurator.lookup conf "bot.VKToken" :: IO (Maybe Config.Token)
   vkGroup <- Configurator.lookup conf "bot.VKGroupID" :: IO (Maybe Config.VKGroup)
-  setBotTypeSettings botT vkGroup vkTok tTok >>= initEnvironment msg rep prior
+  dbCnt <- Configurator.lookup conf "bot.dbConnectString" :: IO (Maybe Env.DBConnectString)
+  botSettings <- setBotTypeSettings botT vkGroup vkTok tTok 
+  initEnvironment msg rep prior dbCnt botSettings 
+      
 
 initEnvironment ::
   Maybe Env.HelpMessage ->
   Maybe Env.RepeatNumber ->
   Maybe String ->
+  Maybe Env.DBConnectString -> 
   Config.Config ->
   IO (Env.Environment IO)
-initEnvironment (Just helpMsg) (Just rep) (Just priorStr) config = do
+initEnvironment (Just helpMsg) (Just rep) (Just priorStr) (Just dbCnt) config = do
   let mbPrior = readMaybe priorStr :: Maybe Logger.Priority
-  maybe (BotEx.throwOtherException LoggerMsgs.initLogFld) (makeEnv helpMsg rep config) mbPrior
-initEnvironment _ _ _ _ = BotEx.throwInitConfigExcept
+  maybe (BotEx.throwOtherException LoggerMsgs.initLogFld) (makeEnv helpMsg rep dbCnt config) mbPrior
+initEnvironment _ _ _ _ _ = BotEx.throwInitConfigExcept
 
 makeEnv ::
   Env.HelpMessage ->
   Env.RepeatNumber ->
+  Env.DBConnectString -> 
   Config.Config ->
   Logger.Priority ->
   IO (Env.Environment IO)
-makeEnv hm rep config prior = do
+makeEnv hm rep dbCnt config prior = do
   logger <- Logger.createLogger prior
-  pure $ Env.Environment config (checkRepNumber rep) hm logger
+  pure $ Env.Environment config (checkRepNumber rep) hm logger dbCnt
 
 checkRepNumber :: Env.RepeatNumber -> Env.RepeatNumber
 checkRepNumber val
