@@ -3,7 +3,7 @@ module API.Wrapper.Functions where
 import qualified API.Telegram.Data as TelData
 import qualified API.VK.Data as VKData
 import qualified API.Wrapper.Structs as WrapStructs
-import qualified Config.Internals as Config
+import qualified Config.Exports  as Config
 import Data.Aeson (encode)
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL

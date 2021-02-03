@@ -12,7 +12,7 @@ import Database.PostgreSQL.Simple
     ResultError,
     SqlError,
   )
-import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Logger.Exports as Logger
 import Exceptions.Structs (BotException (..))
 import Network.HTTP.Req (HttpException)
 import qualified TextMessages.LoggerMessages as LoggerMsgs

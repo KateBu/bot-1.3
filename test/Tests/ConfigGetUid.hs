@@ -1,6 +1,6 @@
 module Tests.ConfigGetUid where
 
-import qualified Config.Internals as Config
+import qualified Config.Exports as Config
 import Test.HUnit (Test (TestCase), assertBool)
 import qualified TestData
 

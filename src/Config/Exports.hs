@@ -1,4 +1,4 @@
-module Config.Internals (module Config) where
+module Config.Exports (module Config) where
 
 import Config.Data as Config
   ( timeOut,

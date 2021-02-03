@@ -1,4 +1,4 @@
-module API.VK.Structs.Internals
+module API.VK.Structs.Exports
   ( module Structs,
   )
 where

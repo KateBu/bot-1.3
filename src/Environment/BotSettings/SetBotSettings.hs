@@ -1,18 +1,18 @@
 module Environment.BotSettings.SetBotSettings where
 
-import qualified API.VK.Structs.Internals as VKStructs
+import qualified API.VK.Structs.Exports as VKStructs
 import Config.Data
   ( vkApiVersion,
     vkLongPollUrl,
   )
-import qualified Config.Internals as Config
+import qualified Config.Exports  as Config
 import Control.Exception (IOException, try)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
-import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Logger.Exports as Logger
 import qualified Environment.Structs as Env
-import qualified Exceptions.Internals as BotEx
+import qualified Exceptions.Exports as BotEx
 import Network.HTTP.Simple
   ( getResponseBody,
     httpLBS,

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8f37fd12f38c61eb2e10b350d513b334283e0a38608f6b8157824c7c8db28ac8
+-- hash: d11a0a0cb154ccceb92321fbbf45117d8ef06565057c72c14c777368ad42fc7a
 
 name:           bot13
 version:        0.1.0.0
@@ -83,7 +83,7 @@ library
       API.VK.Data
       API.VK.Structs.Attachments
       API.VK.Structs.Buttons
-      API.VK.Structs.Internals
+      API.VK.Structs.Exports
       API.VK.Structs.LongPollResponse
       API.VK.Structs.Message
       API.VK.Structs.SendResult
@@ -96,19 +96,19 @@ library
       API.Wrapper.SendMessage
       API.Wrapper.Structs
       Config.Data
+      Config.Exports
       Config.Functions
-      Config.Internals
       Config.Struct
       Environment.BotSettings.SetBotSettings
+      Environment.Exports
       Environment.Functions
-      Environment.Internals
+      Environment.Logger.Exports
       Environment.Logger.Functions
-      Environment.Logger.Internals
       Environment.Logger.Structs
       Environment.SetEnvironment
       Environment.Structs
+      Exceptions.Exports
       Exceptions.Functions
-      Exceptions.Internals
       Exceptions.Structs
       Logic.Main
       Logic.ProcMsgs.Callback

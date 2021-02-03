@@ -1,4 +1,4 @@
-module Environment.Logger.Internals (module Logger) where
+module Environment.Logger.Exports (module Logger) where
 
 import Environment.Logger.Functions as Logger
   ( createLogger,

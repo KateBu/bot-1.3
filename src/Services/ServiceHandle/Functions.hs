@@ -1,6 +1,6 @@
 module Services.ServiceHandle.Functions where
 
-import qualified Environment.Internals as Env
+import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 import qualified Services.API.Handle as APIHandle
 import qualified Services.DB.Handle as DBHandle

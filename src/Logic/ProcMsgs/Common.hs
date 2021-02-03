@@ -2,7 +2,7 @@ module Logic.ProcMsgs.Common where
 
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Maybe (fromMaybe)
-import qualified Environment.Internals as Env
+import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 import qualified Services.SHandle as Handle
 

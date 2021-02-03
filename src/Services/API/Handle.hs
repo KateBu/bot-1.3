@@ -1,7 +1,7 @@
 module Services.API.Handle where
 
 import qualified API.Wrapper as Wrapper
-import qualified Environment.Internals as Env
+import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 
 data Handle m = Handle

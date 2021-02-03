@@ -1,7 +1,7 @@
 module Logic.Structs.Buttons where
 
 import qualified Data.Text as T
-import qualified Environment.Internals as Env
+import qualified Environment.Exports as Env
 import Logic.Structs.PureMessage (CallbackText)
 
 data PureButtons = PureButtons T.Text T.Text

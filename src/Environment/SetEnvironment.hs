@@ -1,15 +1,15 @@
 module Environment.SetEnvironment where
 
-import qualified Config.Internals as Config
+import qualified Config.Exports  as Config
 import Control.Exception (IOException, try)
 import qualified Data.Configurator as Configurator
 import qualified Data.Configurator.Types as Configurator
 import Environment.BotSettings.SetBotSettings
   ( setBotTypeSettings,
   )
-import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Logger.Exports as Logger
 import qualified Environment.Structs as Env
-import qualified Exceptions.Internals as BotEx
+import qualified Exceptions.Exports as BotEx
 import Text.Read (readMaybe)
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 

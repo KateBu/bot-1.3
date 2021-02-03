@@ -1,6 +1,6 @@
 module API.VK.Cleaners.MsgTypes.Fwd where
 
-import qualified API.VK.Structs.Internals as VKStructs
+import qualified API.VK.Structs.Exports as VKStructs
 import qualified Logic.PureStructs as PureStructs
 
 mbFwd :: VKStructs.VKMessage -> Maybe PureStructs.MessageType

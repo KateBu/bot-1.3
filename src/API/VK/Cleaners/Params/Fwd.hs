@@ -1,6 +1,6 @@
 module API.VK.Cleaners.Params.Fwd where
 
-import qualified API.VK.Structs.Internals as VKStructs
+import qualified API.VK.Structs.Exports as VKStructs
 import qualified Data.Text as T
 
 getFwdMsgIds :: Maybe [VKStructs.VKMessage] -> T.Text

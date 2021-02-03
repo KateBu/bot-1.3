@@ -1,7 +1,7 @@
 module Tests.RepeatMsgs where
 
-import qualified Config.Internals as Config
-import qualified Environment.Internals as Env
+import qualified Config.Exports as Config
+import qualified Environment.Exports as Env
 import qualified Logic.ProcMsgs.Common as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData

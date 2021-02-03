@@ -1,6 +1,6 @@
 module Services.DB.Handle where
 
-import qualified Environment.Internals as Env
+import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 import qualified Services.DB.Database.Functions as DB
 

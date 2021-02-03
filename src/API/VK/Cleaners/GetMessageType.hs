@@ -6,10 +6,10 @@ import API.VK.Cleaners.MsgTypes.Fwd (mbFwd)
 import API.VK.Cleaners.MsgTypes.Geo (mbGeo)
 import API.VK.Cleaners.MsgTypes.TextMsg (mbTextMsg)
 import API.VK.Cleaners.MsgTypes.UserCommand (mbUserCommand)
-import qualified API.VK.Structs.Internals as VKStructs
+import qualified API.VK.Structs.Exports as VKStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
-import qualified Exceptions.Internals as BotEx
+import qualified Exceptions.Exports as BotEx
 import qualified Logic.PureStructs as PureStructs
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 

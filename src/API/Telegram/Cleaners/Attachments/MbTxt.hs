@@ -7,7 +7,7 @@ import API.Telegram.Cleaners.Keyboard
   )
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Data.Text as T
-import qualified Environment.Internals as Env
+import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 
 mbTextMessage ::

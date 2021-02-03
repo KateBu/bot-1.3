@@ -1,6 +1,6 @@
 module Services.ServiceHandle.Structs where
 
-import Environment.Internals as Env (Environment)
+import Environment.Exports as Env (Environment)
 import qualified Services.API.Handle as APIHandle
 import qualified Services.DB.Handle as DBHandle
 

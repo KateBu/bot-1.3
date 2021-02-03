@@ -1,4 +1,4 @@
-module Exceptions.Internals (module Exceptions) where
+module Exceptions.Exports (module Exceptions) where
 
 import Exceptions.Functions as Exceptions
   ( MonadThrow (..),

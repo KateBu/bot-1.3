@@ -1,6 +1,6 @@
 module Services.DB.Database.Queries where
 
-import qualified Config.Internals as Config
+import qualified Config.Exports  as Config
 import Data.String (IsString (fromString))
 import qualified Data.Text as T
 import Database.PostgreSQL.Simple (Query)

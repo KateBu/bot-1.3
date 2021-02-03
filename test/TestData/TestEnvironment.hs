@@ -1,17 +1,17 @@
 module TestData.TestEnvironment where
 
-import qualified Config.Internals as Config
+import qualified Config.Exports  as Config
 import qualified Data.Text as T
-import qualified Environment.Internals as Env
-import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Exports as Env
+import qualified Environment.Logger.Exports as Logger
 
 testEnvVK :: Env.Environment Maybe
 testEnvVK =
-  Env.Environment testConfigVK 3 helpM testLogger
+  Env.Environment testConfigVK 3 helpM testLogger "lkj"
 
 testEnvTelegram :: Env.Environment Maybe
 testEnvTelegram =
-  Env.Environment testConfigTelegram 5 helpM testLogger
+  Env.Environment testConfigTelegram 5 helpM testLogger "poi"
 
 helpM :: T.Text
 helpM = "help command response"

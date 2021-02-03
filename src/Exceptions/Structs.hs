@@ -7,7 +7,7 @@ import Database.PostgreSQL.Simple
     ResultError,
     SqlError,
   )
-import qualified Environment.Logger.Internals as Logger
+import qualified Environment.Logger.Exports as Logger
 
 data BotException
   = InitConfigExcept Logger.LogMessage

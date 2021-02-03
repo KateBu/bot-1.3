@@ -1,6 +1,6 @@
 module API.VK.Cleaners.Params.SharedFunctions where
 
-import qualified API.VK.Structs.Internals as VKStructs
+import qualified API.VK.Structs.Exports as VKStructs
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 

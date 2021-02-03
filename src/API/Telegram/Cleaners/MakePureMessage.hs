@@ -17,8 +17,8 @@ import API.Telegram.Cleaners.MbMsgType
 import qualified API.Telegram.Structs.Updates as TStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
-import qualified Environment.Internals as Env
-import qualified Exceptions.Internals as BotEx
+import qualified Environment.Exports as Env
+import qualified Exceptions.Exports as BotEx
 import qualified Logic.PureStructs as PureStructs
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 

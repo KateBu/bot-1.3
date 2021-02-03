@@ -1,9 +1,9 @@
 module Logic.Main where
 
 import Control.Monad.Reader (ReaderT (runReaderT))
-import qualified Environment.Internals as Env
-import qualified Environment.Logger.Internals as Logger
-import qualified Exceptions.Internals as BotEx
+import qualified Environment.Exports as Env
+import qualified Environment.Logger.Exports as Logger
+import qualified Exceptions.Exports as BotEx
 import Logic.ProcMsgs.Callback (processMsgsCallback)
 import Logic.ProcMsgs.Common (processMsgsCommon)
 import qualified Logic.PureStructs as PureStructs

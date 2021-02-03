@@ -1,14 +1,14 @@
 module API.VK.Cleaners.ToPureMsgList (vkByteStringToPureMessageList) where
 
 import API.VK.Cleaners.ToPureMessages (mkPureMessage)
-import qualified API.VK.Structs.Internals as VKStructs
+import qualified API.VK.Structs.Exports as VKStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
-import qualified Environment.Internals as Env
-import qualified Environment.Logger.Internals as Logger
-import qualified Exceptions.Internals as BotEx
+import qualified Environment.Exports as Env
+import qualified Environment.Logger.Exports as Logger
+import qualified Exceptions.Exports as BotEx
 import qualified Logic.PureStructs as PureStructs
 import Text.Read (readMaybe)
 import qualified TextMessages.LoggerMessages as LoggerMsgs

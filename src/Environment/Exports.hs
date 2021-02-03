@@ -1,4 +1,4 @@
-module Environment.Internals (module Env) where
+module Environment.Exports (module Env) where
 
 import Environment.Functions as Env
   ( REnv,

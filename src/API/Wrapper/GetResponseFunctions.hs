@@ -2,7 +2,7 @@ module API.Wrapper.GetResponseFunctions where
 
 import qualified API.Wrapper.Functions as WrapFunctions
 import Control.Exception (handle)
-import qualified Exceptions.Internals as BotEx
+import qualified Exceptions.Exports as BotEx
 import qualified Logic.PureStructs as PureStructs
 import Network.HTTP.Req
   ( LbsResponse,
