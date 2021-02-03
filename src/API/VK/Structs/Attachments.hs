@@ -79,7 +79,7 @@ data AObject
   | VKUnknown
   deriving (Show)
 
-data Geo = Geo
+newtype Geo = Geo
   { gCoordinates :: Coordinates
   }
   deriving (Show)
