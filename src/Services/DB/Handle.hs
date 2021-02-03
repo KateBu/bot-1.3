@@ -16,7 +16,7 @@ new env = do
   dbConStr <- runReaderT Env.eDBConnectionString env
   pure $
     Handle
-      { findUser = DB.find' env dbConStr,
-        addUser = DB.add' env dbConStr,
-        updateUser = DB.update' env dbConStr
+      { findUser = DB.find env dbConStr,
+        addUser = DB.add env dbConStr,
+        updateUser = DB.update env dbConStr
       }
