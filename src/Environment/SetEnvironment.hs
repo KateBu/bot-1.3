@@ -1,6 +1,6 @@
 module Environment.SetEnvironment where
 
-import qualified Config.Exports  as Config
+import qualified Config.Exports as Config
 import Control.Exception (IOException, try)
 import qualified Data.Configurator as Configurator
 import qualified Data.Configurator.Types as Configurator

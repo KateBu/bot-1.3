@@ -1,6 +1,6 @@
 module Environment.Functions where
 
-import qualified Config.Exports  as Config
+import qualified Config.Exports as Config
 import Control.Monad.Reader (ReaderT (runReaderT), asks)
 import qualified Environment.Logger.Exports as Logger
 import Environment.Structs

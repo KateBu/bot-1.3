@@ -1,6 +1,6 @@
 module Environment.Structs where
 
-import qualified Config.Exports  as Config
+import qualified Config.Exports as Config
 import qualified Data.ByteString as BS
 import qualified Data.Text as T
 import qualified Environment.Logger.Exports as Logger

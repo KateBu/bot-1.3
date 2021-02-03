@@ -7,7 +7,7 @@ import API.Wrapper.GetResponseFunctions
     getResponseUrl,
   )
 import qualified API.Wrapper.Structs as WrapStructs
-import qualified Config.Exports  as Config
+import qualified Config.Exports as Config
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (eitherDecode)
 import qualified Data.Text as T

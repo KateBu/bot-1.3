@@ -5,7 +5,7 @@ import Config.Data
   ( vkApiVersion,
     vkLongPollUrl,
   )
-import qualified Config.Exports  as Config
+import qualified Config.Exports as Config
 import Control.Exception (IOException, try)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL

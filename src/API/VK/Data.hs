@@ -1,7 +1,7 @@
 module API.VK.Data where
 
 import qualified API.Wrapper.Structs as WrapStructs
-import qualified Config.Exports  as Config
+import qualified Config.Exports as Config
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 import System.Random (Random (random), newStdGen)
