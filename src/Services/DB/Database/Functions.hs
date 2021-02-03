@@ -1,14 +1,13 @@
 module Services.DB.Database.Functions where
 
-import qualified Config.Internals as Config
-import Control.Exception (catch, catches)
+import Control.Exception (bracket, catches)
+import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Data.Text as T
 import Database.PostgreSQL.Simple
-  ( ConnectInfo (connectDatabase, connectPassword, connectUser),
+  ( Connection,
     Only (Only),
-    SqlError,
-    connect,
-    defaultConnectInfo,
+    close,
+    connectPostgreSQL,
     query,
     query_,
   )
@@ -24,19 +23,22 @@ import Services.DB.Database.Queries
   )
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
-connectInfo :: ConnectInfo
-connectInfo =
-  defaultConnectInfo
-    { connectUser = "bot",
-      connectPassword = "bot13",
-      connectDatabase = "users"
-    }
+withDBConnection :: Env.DBConnectString -> (Connection -> IO a) -> IO a
+withDBConnection conStr body =
+  bracket initCon close $ \conn -> body conn
+  where
+    initCon = connectPostgreSQL conStr
 
-find :: Config.Config -> Logger.Logger IO -> PureStructs.ChatID -> IO (Maybe Env.RepeatNumber)
-find bType logger userId = do
-  conn <- connect connectInfo `catch` \ex -> BotEx.throwSQLException (ex :: SqlError)
-  resp <- query_ conn (findUserQuery bType userId) `catches` BotEx.dbErrorsHandlers
-  checkFindResponse logger resp
+find' :: Env.Environment IO -> Env.DBConnectString -> PureStructs.ChatID -> IO (Maybe Env.RepeatNumber)
+find' env conStr userId = do
+  config <- runReaderT Env.eConfig env
+  logger <- runReaderT Env.eLogger env
+  withDBConnection conStr $
+    \conn ->
+      do
+        resp <- query_ conn (findUserQuery config userId)
+        checkFindResponse logger resp
+        `catches` BotEx.dbErrorsHandlers
 
 checkFindResponse ::
   BotEx.MonadThrow m =>
@@ -49,12 +51,17 @@ checkFindResponse logger [Only rep] = do
   pure rep
 checkFindResponse _ _ = BotEx.throwOtherException LoggerMsgs.findUserQueryFld
 
-add :: Config.Config -> Logger.Logger IO -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
-add bType logger usId rep = do
-  conn <- connect connectInfo `catch` \ex -> BotEx.throwSQLException (ex :: SqlError)
-  let user = userIdText bType usId
-  resp <- (query conn addUserQuery (user, rep) :: IO [(T.Text, Env.RepeatNumber)]) `catches` BotEx.dbErrorsHandlers
-  checkAddResp logger (user, rep) resp
+add' :: Env.Environment IO -> Env.DBConnectString -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
+add' env conStr chid rep = do
+  config <- runReaderT Env.eConfig env
+  logger <- runReaderT Env.eLogger env
+  let user = userIdText config chid
+  withDBConnection conStr $
+    \conn ->
+      do
+        resp <- query conn addUserQuery (user, rep)
+        checkAddResp logger (user, rep) resp
+        `catches` BotEx.dbErrorsHandlers
 
 checkAddResp ::
   BotEx.MonadThrow m =>
@@ -68,14 +75,17 @@ checkAddResp logger (usId, rep) [(usId', rep')] = do
     else BotEx.throwOtherException LoggerMsgs.addUserQueryFld
 checkAddResp _ _ _ = BotEx.throwOtherException LoggerMsgs.addUserQueryFld
 
-update :: Config.Config -> Logger.Logger IO -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
-update bType logger usId rep = do
-  conn <- connect connectInfo `catch` \ex -> BotEx.throwSQLException (ex :: SqlError)
-  let user = userIdText bType usId
-  resp <-
-    (query conn updateUserQuery (rep, user) :: IO [(T.Text, Env.RepeatNumber)])
-      `catches` BotEx.dbErrorsHandlers
-  checkUpdResp logger (user, rep) resp
+update' :: Env.Environment IO -> Env.DBConnectString -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
+update' env conStr chid rep = do
+  config <- runReaderT Env.eConfig env
+  logger <- runReaderT Env.eLogger env
+  let user = userIdText config chid
+  withDBConnection conStr $
+    \conn ->
+      do
+        resp <- query conn updateUserQuery (rep, user)
+        checkUpdResp logger (user, rep) resp
+        `catches` BotEx.dbErrorsHandlers
 
 checkUpdResp ::
   BotEx.MonadThrow m =>

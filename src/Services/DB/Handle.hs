@@ -13,11 +13,10 @@ data Handle m = Handle
 
 new :: Env.Environment IO -> IO (Handle IO)
 new env = do
-  config <- runReaderT Env.eConfig env
-  logger <- runReaderT Env.eLogger env
+  dbConStr <- runReaderT Env.eDBConnectionString env
   pure $
     Handle
-      { findUser = DB.find config logger,
-        addUser = DB.add config logger,
-        updateUser = DB.update config logger
+      { findUser = DB.find' env dbConStr,
+        addUser = DB.add' env dbConStr,
+        updateUser = DB.update' env dbConStr
       }
