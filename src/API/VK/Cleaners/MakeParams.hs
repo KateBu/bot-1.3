@@ -50,7 +50,7 @@ makeParams _ (PureStructs.MTCommon "Attachment") vkMsg = do
 makeParams _ _ _ = Nothing
 
 getLatitude :: VKStructs.VKMessage -> Maybe Double
-getLatitude = (fmap (VKStructs.latitude . VKStructs.gCoordinates) . VKStructs.geo)
+getLatitude = fmap (VKStructs.latitude . VKStructs.gCoordinates) . VKStructs.geo
 
 getLongitude :: VKStructs.VKMessage -> Maybe Double
-getLongitude = (fmap (VKStructs.longitude . VKStructs.gCoordinates) . VKStructs.geo)
+getLongitude = fmap (VKStructs.longitude . VKStructs.gCoordinates) . VKStructs.geo

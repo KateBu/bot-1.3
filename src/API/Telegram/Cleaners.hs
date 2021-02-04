@@ -18,8 +18,9 @@ telByteStringToPureMessageList ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
-telByteStringToPureMessageList env bytestring =
-  decodeByteString env bytestring >>= telUpdatesToPureMessageList env
+telByteStringToPureMessageList env bytestring = do 
+  tUpdates <- decodeByteString env bytestring 
+  telUpdatesToPureMessageList env tUpdates 
 
 decodeByteString ::
   Env.Environment IO ->

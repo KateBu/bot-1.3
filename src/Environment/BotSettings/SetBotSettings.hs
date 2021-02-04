@@ -34,16 +34,20 @@ setBotTypeSettings (Just "Telegram") _ _ (Just tToken) =
 setBotTypeSettings _ _ _ _ = BotEx.throwInitConfigExcept
 
 getVKSettings :: Config.VKGroup -> Config.Token -> IO (T.Text, T.Text, Int)
-getVKSettings group tok =
-  getLongPollReqBody group tok >>= getLongPollInfo
+getVKSettings group tok = do
+  respBody <- getLongPollReqBody group tok
+  getLongPollInfo respBody
 
 getLongPollReqBody :: Config.VKGroup -> Config.Token -> IO BSL.ByteString
 getLongPollReqBody group tok = do
   resBody <-
-    try
-      (getResponseBody <$> (parseRequest (makeVkLonpPollUrl group tok) >>= httpLBS)) ::
+    try (getResponseBody <$> request) ::
       IO (Either IOException BSL.ByteString)
   either BotEx.throwIOException pure resBody
+  where
+    request = do
+      request' <- parseRequest (makeVkLonpPollUrl group tok)
+      httpLBS request'
 
 getLongPollInfo ::
   BSL.ByteString ->
