@@ -35,8 +35,8 @@ makeParams _ (PureStructs.MTCommon "Message") vkMsg = do
 makeParams _ (PureStructs.MTCommon "Geo") vkMsg =
   pure $
     setMessageParam (VKStructs.msgText vkMsg)
-      <> setMaybeDoubleParam "lat" (fmap (VKStructs.latitude . VKStructs.gCoordinates) . VKStructs.geo) vkMsg
-      <> setMaybeDoubleParam "long" (fmap (VKStructs.longitude . VKStructs.gCoordinates) . VKStructs.geo) vkMsg
+      <> setMaybeDoubleParam "lat" getLatitude vkMsg
+      <> setMaybeDoubleParam "long" getLongitude vkMsg
       <> baseParams vkMsg
 makeParams _ (PureStructs.MTCommon "Fwd") vkMsg = do
   let msgIds = getFwdMsgIds (VKStructs.fwdMessages vkMsg)
@@ -48,3 +48,9 @@ makeParams _ (PureStructs.MTCommon "Attachment") vkMsg = do
   let attachParams = attachmentListParams vkMsg (VKStructs.attachments vkMsg)
   makeAttachParams vkMsg attachParams
 makeParams _ _ _ = Nothing
+
+getLatitude :: VKStructs.VKMessage -> Maybe Double
+getLatitude = (fmap (VKStructs.latitude . VKStructs.gCoordinates) . VKStructs.geo)
+
+getLongitude :: VKStructs.VKMessage -> Maybe Double
+getLongitude = (fmap (VKStructs.longitude . VKStructs.gCoordinates) . VKStructs.geo)
