@@ -9,9 +9,9 @@ mbVoice ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbVoice uid chid mInfo = do 
-  voiceInfo <- TStructs.voice mInfo 
-  mbVoice' uid chid mInfo voiceInfo 
+mbVoice uid chid mInfo = do
+  voiceInfo <- TStructs.voice mInfo
+  mbVoice' uid chid mInfo voiceInfo
 
 mbVoice' ::
   PureStructs.UpdateID ->

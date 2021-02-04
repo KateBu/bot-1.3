@@ -18,8 +18,7 @@ vkByteStringToPureMessageList ::
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
 vkByteStringToPureMessageList env bs =
-  decByteString env bs
-    >>= vkUpdInfoToPureMessageList env
+  decByteString env bs >>= vkUpdInfoToPureMessageList env
 
 decByteString ::
   Env.Environment IO ->

@@ -9,9 +9,9 @@ mbDoc ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbDoc uid chid mInfo = do 
+mbDoc uid chid mInfo = do
   docInfo <- TStructs.document mInfo
-  mbDoc' uid chid mInfo docInfo 
+  mbDoc' uid chid mInfo docInfo
 
 mbDoc' ::
   PureStructs.UpdateID ->

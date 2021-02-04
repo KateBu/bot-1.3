@@ -9,9 +9,9 @@ mbVideo ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbVideo uid chid mInfo = do 
-  videoInfo <- TStructs.video mInfo 
-  mbVideo' uid chid mInfo videoInfo 
+mbVideo uid chid mInfo = do
+  videoInfo <- TStructs.video mInfo
+  mbVideo' uid chid mInfo videoInfo
 
 mbVideo' ::
   PureStructs.UpdateID ->

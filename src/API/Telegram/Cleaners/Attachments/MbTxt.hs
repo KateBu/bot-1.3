@@ -16,9 +16,9 @@ mbTextMessage ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbTextMessage hMsg uid chid mInfo = do 
-  textInfo <- TStructs.txt mInfo 
-  mkTxtMsg hMsg uid chid mInfo textInfo 
+mbTextMessage hMsg uid chid mInfo = do
+  textInfo <- TStructs.txt mInfo
+  mkTxtMsg hMsg uid chid mInfo textInfo
 
 mkTxtMsg ::
   Env.HelpMessage ->

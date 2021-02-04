@@ -9,9 +9,9 @@ mbPhoto ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbPhoto uid chid mInfo = do 
-  photoInfo <- TStructs.photo mInfo 
-  mbPhoto' uid chid mInfo photoInfo 
+mbPhoto uid chid mInfo = do
+  photoInfo <- TStructs.photo mInfo
+  mbPhoto' uid chid mInfo photoInfo
 
 mbPhoto' ::
   PureStructs.UpdateID ->
