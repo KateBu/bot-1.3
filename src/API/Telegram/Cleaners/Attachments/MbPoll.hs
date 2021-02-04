@@ -29,18 +29,19 @@ mbPoll' uid chid mInfo poll =
       (PureStructs.MTCommon "Poll")
       uid
       (Just chid)
-      pollParams
-  where
-    pollParams =
-      Just $
-        basicParams chid mInfo
-          <> [ PureStructs.ParamsText "question" (TStructs.question poll),
-               PureStructs.ParamsTextList "options" (map TStructs.poll_option (TStructs.poll_options poll))
-             ]
-          <> makeMaybeBoolParams "is_anonimous" (TStructs.is_anonymous poll)
-          <> makeMaybeBoolParams "allows_multiple_answers" (TStructs.allows_multiple_answers poll)
-          <> makeMaybeNumParams "correct_option_id" (TStructs.correct_option_id poll)
-          <> makeMaybeTextParams "explanation" (TStructs.explanation poll)
-          <> makeMaybeNumParams "open_period" (TStructs.open_period poll)
-          <> makeMaybeNumParams "close_date" (TStructs.close_date poll)
-          <> makeMaybeBoolParams "is_closed" (TStructs.is_closed poll)
+      (pollParams chid mInfo poll)
+
+pollParams :: PureStructs.ChatID -> TStructs.MessageInfo -> TStructs.TelPoll -> Maybe [PureStructs.Params]
+pollParams chid mInfo poll =
+  Just $
+    basicParams chid mInfo
+      <> [ PureStructs.ParamsText "question" (TStructs.question poll),
+           PureStructs.ParamsTextList "options" (map TStructs.poll_option (TStructs.poll_options poll))
+         ]
+      <> makeMaybeBoolParams "is_anonimous" (TStructs.is_anonymous poll)
+      <> makeMaybeBoolParams "allows_multiple_answers" (TStructs.allows_multiple_answers poll)
+      <> makeMaybeNumParams "correct_option_id" (TStructs.correct_option_id poll)
+      <> makeMaybeTextParams "explanation" (TStructs.explanation poll)
+      <> makeMaybeNumParams "open_period" (TStructs.open_period poll)
+      <> makeMaybeNumParams "close_date" (TStructs.close_date poll)
+      <> makeMaybeBoolParams "is_closed" (TStructs.is_closed poll)
