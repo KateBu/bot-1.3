@@ -9,8 +9,9 @@ mbSticker ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbSticker uid chid mInfo =
-  TStructs.sticker mInfo >>= mbSticker' uid chid mInfo
+mbSticker uid chid mInfo = do 
+  stickerInfo <- TStructs.sticker mInfo 
+  mbSticker' uid chid mInfo stickerInfo 
 
 mbSticker' ::
   PureStructs.UpdateID ->

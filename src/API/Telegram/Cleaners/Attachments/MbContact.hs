@@ -10,8 +10,9 @@ mbContact ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbContact uid chid mInfo =
-  TStructs.contact mInfo >>= mbContact' uid chid mInfo
+mbContact uid chid mInfo = do
+  contactInfo <- TStructs.contact mInfo 
+  mbContact' uid chid mInfo contactInfo 
 
 mbContact' ::
   PureStructs.UpdateID ->

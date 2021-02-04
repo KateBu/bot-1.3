@@ -14,8 +14,9 @@ mbPoll ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbPoll uid chid mInfo =
-  TStructs.poll mInfo >>= mbPoll' uid chid mInfo
+mbPoll uid chid mInfo = do 
+  pollInfo <- TStructs.poll mInfo 
+  mbPoll' uid chid mInfo pollInfo 
 
 mbPoll' ::
   PureStructs.UpdateID ->

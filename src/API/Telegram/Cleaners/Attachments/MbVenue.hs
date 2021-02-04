@@ -10,8 +10,9 @@ mbVenue ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbVenue uid chid mInfo =
-  TStructs.venue mInfo >>= mbVenue' uid chid mInfo
+mbVenue uid chid mInfo = do 
+  venueInfo <- TStructs.venue mInfo 
+  mbVenue' uid chid mInfo venueInfo 
 
 mbVenue' ::
   PureStructs.UpdateID ->

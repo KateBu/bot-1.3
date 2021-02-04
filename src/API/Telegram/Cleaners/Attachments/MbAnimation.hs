@@ -9,8 +9,9 @@ mbAnimation ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbAnimation uid chid mInfo =
-  TStructs.animation mInfo >>= mbAnimation' uid chid mInfo
+mbAnimation uid chid mInfo = do
+  animInfo <- TStructs.animation mInfo
+  mbAnimation' uid chid mInfo animInfo
 
 mbAnimation' ::
   PureStructs.UpdateID ->

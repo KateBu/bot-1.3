@@ -9,8 +9,9 @@ mbAudio ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbAudio uid chid mInfo =
-  TStructs.audio mInfo >>= mbAudio' uid chid mInfo
+mbAudio uid chid mInfo = do 
+  audioInfo <- TStructs.audio mInfo
+  mbAudio' uid chid mInfo audioInfo 
 
 mbAudio' ::
   PureStructs.UpdateID ->
