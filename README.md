@@ -34,7 +34,7 @@
 - Data module - some information to connect to VK long poll server (url, API version and Time out for both VK and Telegram)
 - Functions module - contains configSetOffset function and configGetUid (get update ID) functions
 - Structs module - contains Config data type definition 
-- Internals module - a super module that exports functions, constructors etc.
+- Exports module - a super module that exports functions, constructors etc.
 
 #### Environment 
 <p> Environment folder contains the following modules: </p>
@@ -42,16 +42,16 @@
 - Structs module - Environment data type consists of Config, Logger, it also contains default number of repetitions and help message (the message that a user gets when sends /help command).
 - Functions module - contains some getters wrapped in ReaderT monad, and updateConfig and eSetOffset functions.
 - SetEnvironment module - contains functions to build enviroment based on information in .config file.
-- Internals module - a super module that exports functions, constructors etc.
+- Exports module - a super module that exports functions, constructors etc.
 
-<p> The <b>Logger</b> folder contains the following modules: there are data structures in Structs module, functions for creating Logger and making LogMessage in Functions module. Internals module exports functions, constructors etc.
+<p> The <b>Logger</b> folder contains the following modules: there are data structures in Structs module, functions for creating Logger and making LogMessage in Functions module. Exports module exports functions, constructors etc.
 
 #### Exceptions 
 <p> Exceptions folder contains the following modules: </p>
 
 - Structs module - contains BotException data type and instances
 - Functions module - contians throw exception functions and handlers
-- Internals module - a super module that exports functions, constructors etc.
+- Exports module - a super module that exports functions, constructors etc.
 
 #### Logic
 <p> Logic folder contains the following modules: </p>
