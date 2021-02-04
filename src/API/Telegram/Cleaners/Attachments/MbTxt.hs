@@ -50,7 +50,7 @@ mkTxtMsg _ uid chid mInfo "/repeat" =
     repeatParams =
       Just $
         basicParams chid mInfo
-          <> [ PureStructs.ParamsJSON "reply_markup" (makeKeyboard ((map (map TButtons)) PureStructs.buttons')),
+          <> [ PureStructs.ParamsJSON "reply_markup" (makeKeyboard (map (map TButtons) PureStructs.buttons')),
                PureStructs.ParamsBool "one_time_keyboard" True
              ]
 mkTxtMsg _ uid chid mInfo text =

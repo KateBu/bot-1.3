@@ -28,8 +28,7 @@ hostPathToUrlScheme (Just (WrapStructs.HostPath hpHost hpPath)) = pure $ makeUrl
 hostPathToUrlScheme _ = Nothing
 
 makeUrlScheme :: Url 'Https -> [T.Text] -> Url 'Https
-makeUrlScheme acc [] = acc
-makeUrlScheme acc (x : xs) = makeUrlScheme (acc /: x) xs
+makeUrlScheme = foldl (/:)
 
 paramToUrl :: PureStructs.Params -> FormUrlEncodedParam
 paramToUrl (PureStructs.ParamsText key val) = key =: val
@@ -66,7 +65,7 @@ paramsToHttps _ = mempty
 mbSendOption :: Config.Config -> IO (Option 'Https)
 mbSendOption vk@(Config.VKBot _) = do
   params <- VKData.sendBasicParams vk
-  pure $ (mconcat (paramsToHttps <$> params))
+  pure $ mconcat (paramsToHttps <$> params)
 mbSendOption _ = mempty
 
 updateParam :: Config.Config -> [PureStructs.Params]

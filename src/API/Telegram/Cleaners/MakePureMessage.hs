@@ -47,7 +47,7 @@ mbMakeCallbackPureMessage res uid = case TStructs.callback_query res of
       )
     where
       callbackParams chid =
-        Just $
+        Just
           [ PureStructs.ParamsText "text" (PureStructs.newRepeatText (PureStructs.getNewRep cbData)),
             PureStructs.ParamsNum "chat_id" chid
           ]
@@ -62,9 +62,7 @@ mbMakePureMessage hMsg res uid = case TStructs.messageInfo res of
   Nothing -> pure $ PureStructs.PureMessage PureStructs.MTEmpty uid Nothing Nothing
   Just mInfo -> do
     let chid = TStructs.chat_id $ TStructs.chat mInfo
-    case makeCommonMessage hMsg uid chid mInfo of
-      Nothing -> Nothing
-      Just pureMsg -> pure pureMsg
+    makeCommonMessage hMsg uid chid mInfo
 
 makeCommonMessage ::
   Env.HelpMessage ->

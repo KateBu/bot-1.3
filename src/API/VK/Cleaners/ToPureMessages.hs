@@ -27,7 +27,7 @@ mkPureMessage' _ uid vkMsg mType@(PureStructs.MTCallbackQuery callback) =
     msgParams
   where
     msgParams =
-      Just $
+      Just
         ( PureStructs.ParamsText "message" (PureStructs.newRepeatText $ PureStructs.getNewRep callback) :
           baseParams vkMsg
         )

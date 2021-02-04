@@ -9,4 +9,4 @@ getFwdMsgIds (Just []) = ""
 getFwdMsgIds (Just [x]) = T.pack . show $ VKStructs.id x
 getFwdMsgIds (Just (x : xs)) =
   (T.pack . show $ VKStructs.id x) <> ","
-    <> (getFwdMsgIds (Just xs))
+    <> getFwdMsgIds (Just xs)

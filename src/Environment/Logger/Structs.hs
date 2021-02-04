@@ -18,7 +18,7 @@ data LogMessage = LogMessage
 instance Show LogMessage where
   show (LogMessage prior txt) = T.unpack $ startText prior <> txt
 
-data Logger m = Logger
+newtype Logger m = Logger
   { botLog :: LogMessage -> m ()
   }
 

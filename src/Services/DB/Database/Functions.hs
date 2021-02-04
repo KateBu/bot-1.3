@@ -1,5 +1,6 @@
 module Services.DB.Database.Functions where
 
+import qualified Config.Exports as Config
 import Control.Exception (bracket, catches)
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Data.Text as T
@@ -31,9 +32,7 @@ withDBConnection conStr body = withDBExceptionsWrapped $
 
 find :: Env.Environment IO -> PureStructs.ChatID -> IO (Maybe Env.RepeatNumber)
 find env userId = do
-  config <- runReaderT Env.eConfig env
-  logger <- runReaderT Env.eLogger env
-  conStr <- runReaderT Env.eDBConnectionString env
+  (logger, config, conStr) <- loggerConfigDbString env
   withDBConnection conStr $
     \conn ->
       do
@@ -53,9 +52,7 @@ checkFindResponse _ _ = BotEx.throwOtherException LoggerMsgs.findUserQueryFld
 
 add :: Env.Environment IO -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
 add env chid rep = do
-  config <- runReaderT Env.eConfig env
-  logger <- runReaderT Env.eLogger env
-  conStr <- runReaderT Env.eDBConnectionString env
+  (logger, config, conStr) <- loggerConfigDbString env
   let user = userIdText config chid
   withDBConnection conStr $
     \conn ->
@@ -77,9 +74,7 @@ checkAddResp _ _ _ = BotEx.throwOtherException LoggerMsgs.addUserQueryFld
 
 update :: Env.Environment IO -> PureStructs.ChatID -> Env.RepeatNumber -> IO ()
 update env chid rep = do
-  config <- runReaderT Env.eConfig env
-  logger <- runReaderT Env.eLogger env
-  conStr <- runReaderT Env.eDBConnectionString env
+  (logger, config, conStr) <- loggerConfigDbString env
   let user = userIdText config chid
   withDBConnection conStr $
     \conn ->
@@ -103,3 +98,10 @@ checkUpdResp _ _ _ = BotEx.throwOtherException LoggerMsgs.updUserRepeatFld
 
 withDBExceptionsWrapped :: IO a -> IO a
 withDBExceptionsWrapped = flip catches BotEx.dbErrorsHandlers
+
+loggerConfigDbString :: Env.Environment IO -> IO (Logger.Logger IO, Config.Config, Env.DBConnectString)
+loggerConfigDbString env = do
+  config <- runReaderT Env.eConfig env
+  logger <- runReaderT Env.eLogger env
+  conStr <- runReaderT Env.eDBConnectionString env
+  pure (logger, config, conStr)
