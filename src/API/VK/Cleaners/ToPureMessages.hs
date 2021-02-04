@@ -24,11 +24,13 @@ mkPureMessage' _ uid vkMsg mType@(PureStructs.MTCallbackQuery callback) =
     mType
     uid
     (Just $ VKStructs.from_id vkMsg)
-    ( Just $
+    msgParams
+  where
+    msgParams =
+      Just $
         ( PureStructs.ParamsText "message" (PureStructs.newRepeatText $ PureStructs.getNewRep callback) :
           baseParams vkMsg
         )
-    )
 mkPureMessage' hMsg uid vkMsg mType@(PureStructs.MTUserCommand _) =
   PureStructs.PureMessage
     mType
