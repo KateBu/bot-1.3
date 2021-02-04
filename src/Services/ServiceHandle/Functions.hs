@@ -4,7 +4,7 @@ import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 import qualified Services.API.Handle as APIHandle
 import qualified Services.DB.Handle as DBHandle
-import Services.ServiceHandle.Structs (SHandle (hAPI, hDB))
+import Services.ServiceHandle.Handle (SHandle (hAPI, hDB))
 
 getUpdates :: Monad m => SHandle m -> m [PureStructs.PureMessage]
 getUpdates handle = do

@@ -5,7 +5,7 @@ import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 import qualified Services.API.Handle as API
 import qualified Services.DB.Handle as DB
-import qualified Services.SHandle as Services
+import qualified Services.Exports as Services
 import TestData.TestEnvironment (testEnvTelegram, testEnvVK)
 import qualified TestData.TestMessages as Msgs
 

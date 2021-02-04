@@ -1,4 +1,4 @@
-module Services.SHandle (module SHandle) where
+module Services.Exports (module SHandle) where
 
 import Services.ServiceHandle.Functions as SHandle
   ( addUser,
@@ -7,7 +7,7 @@ import Services.ServiceHandle.Functions as SHandle
     sendMessage,
     updateUser,
   )
-import Services.ServiceHandle.Structs as SHandle
+import Services.ServiceHandle.Handle as SHandle
   ( SHandle (..),
     new,
   )

@@ -4,7 +4,7 @@ import Data.Maybe (isNothing)
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
-import qualified Services.SHandle as Handle
+import qualified Services.Exports as Handle
 
 processMsgsCallback ::
   Monad m =>

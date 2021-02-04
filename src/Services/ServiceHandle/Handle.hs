@@ -1,4 +1,4 @@
-module Services.ServiceHandle.Structs where
+module Services.ServiceHandle.Handle where
 
 import Environment.Exports as Env (Environment)
 import qualified Services.API.Handle as APIHandle

@@ -4,7 +4,7 @@ import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Maybe (fromMaybe)
 import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
-import qualified Services.SHandle as Handle
+import qualified Services.Exports as Handle
 
 processMsgsCommon ::
   Monad m =>
