@@ -17,9 +17,9 @@ vkByteStringToPureMessageList ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
-vkByteStringToPureMessageList env bs = do 
-  decodedPair <- decByteString env bs 
-  vkUpdInfoToPureMessageList env decodedPair 
+vkByteStringToPureMessageList env bs = do
+  decodedPair <- decByteString env bs
+  vkUpdInfoToPureMessageList env decodedPair
 
 decByteString ::
   Env.Environment IO ->

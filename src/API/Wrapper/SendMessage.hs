@@ -42,8 +42,8 @@ mkSendConfig ::
 mkSendConfig env msg params = do
   config <- runReaderT Env.eConfig env
   basicParams <- WrapFunctions.mbSendOption config
-  lResponse <- getApiResponse env basicParams params msg 
-  checkApiResponse env msg lResponse 
+  lResponse <- getApiResponse env basicParams params msg
+  checkApiResponse env msg lResponse
 
 getApiResponse ::
   Env.Environment IO ->
