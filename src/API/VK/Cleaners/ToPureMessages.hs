@@ -10,8 +10,8 @@ makePureMessage ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKMessage ->
-  PureStructs.PureMessage
-makePureMessage helpMsg updateId vkMsg = makePureMessage' helpMsg updateId vkMsg $ getMessageType vkMsg
+  Maybe PureStructs.PureMessage
+makePureMessage helpMsg updateId vkMsg = makePureMessage' helpMsg updateId vkMsg <$> getMessageType vkMsg
 
 makePureMessage' ::
   Env.HelpMessage ->

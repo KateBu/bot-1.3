@@ -52,9 +52,6 @@ throwIOException = throwBotExcept . IOExcept
 throwOtherException :: MonadThrow m => Logger.LogMessage -> m a
 throwOtherException = throwBotExcept . OtherExcept
 
-throwOtherExceptionUnwrapped :: Logger.LogMessage -> a
-throwOtherExceptionUnwrapped = throw . OtherExcept
-
 throwHttpException :: MonadThrow m => HttpException -> m a
 throwHttpException err = throwBotExcept . HttpExcept $ logMsg
   where

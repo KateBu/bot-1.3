@@ -10,7 +10,6 @@ import Exceptions.Functions as Exceptions
     throwIOException,
     throwInitConfigExcept,
     throwOtherException,
-    throwOtherExceptionUnwrapped,
     throwParseExcept,
     throwSQLException,
     throwSendExcept,

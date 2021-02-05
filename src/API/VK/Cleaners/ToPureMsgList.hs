@@ -64,27 +64,29 @@ vkUpdateInfoToPureMessageList env (updateId, updates) = do
   logger <- runReaderT Env.eLogger env
   helpMsg <- runReaderT Env.eHelpMsg env
   Logger.botLog logger LoggerMsgs.parseVKMsgSuccess
-  pure $ vkUpdInfoToPureMessage helpMsg updateId <$> updates
+  maybe (BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed) pure (pureMsg helpMsg)
+  where
+    pureMsg helpMsg = sequence $ vkUpdInfoToPureMessage helpMsg updateId <$> updates
 
 vkUpdInfoToPureMessage ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKUpdInfo ->
-  PureStructs.PureMessage
+  Maybe PureStructs.PureMessage
 vkUpdInfoToPureMessage helpMsg updateId updateInfo = case VKStructs.update_type updateInfo of
-  VKStructs.OtherEvent -> BotEx.throwOtherExceptionUnwrapped LoggerMsgs.unexpectedVKEvent
+  VKStructs.OtherEvent -> Nothing
   _ -> do
     let mbUpdateObject = VKStructs.update_object updateInfo
     maybe (makeEmptyMsg updateId) (makeMsgWithParams helpMsg updateId) mbUpdateObject
 
-makeEmptyMsg :: PureStructs.UpdateID -> PureStructs.PureMessage
-makeEmptyMsg updateId = PureStructs.PureMessage PureStructs.MsgTypeEmpty updateId Nothing Nothing
+makeEmptyMsg :: PureStructs.UpdateID -> Maybe PureStructs.PureMessage
+makeEmptyMsg updateId = pure $ PureStructs.PureMessage PureStructs.MsgTypeEmpty updateId Nothing Nothing
 
 makeMsgWithParams ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKObject ->
-  PureStructs.PureMessage
+  Maybe PureStructs.PureMessage
 makeMsgWithParams helpMsg updateId object = do
   let vkMessage = VKStructs.vkMessage object
   makePureMessage helpMsg updateId vkMessage
