@@ -48,6 +48,7 @@ import TextMessages.LoggerMessages.VK as Messages
     vkDecodeByteStringSuccess,
     vkMsgTypeNotImplemented,
     vkUpdatesDecodingFailed,
+    vkUpdatesFailed,
     vkUpdatesFailedCode1,
     vkUpdatesFailedCode2,
     vkUpdatesFailedCode3,

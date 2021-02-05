@@ -26,6 +26,12 @@ vkUpdatesFailedCode4 =
     Logger.Error
     "VKUpdate failed: Unexpected error code"
 
+vkUpdatesFailed :: Logger.LogMessage
+vkUpdatesFailed =
+  Logger.LogMessage
+    Logger.Error
+    "VK bot couldn't get Updates"
+
 vkUpdatesDecodingFailed :: Logger.LogMessage
 vkUpdatesDecodingFailed =
   Logger.LogMessage
