@@ -14,6 +14,5 @@ import Exceptions.Functions as Exceptions
     throwSQLException,
     throwSendExcept,
     throwUpdateExcept,
-    throwUpdateExceptUnwrapped,
   )
 import Exceptions.Structs as Exceptions (BotException (..))

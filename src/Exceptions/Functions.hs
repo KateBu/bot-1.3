@@ -3,7 +3,6 @@ module Exceptions.Functions where
 import Control.Exception
   ( Handler (..),
     IOException,
-    throw,
     throwIO,
   )
 import qualified Data.Text as T
@@ -39,9 +38,6 @@ throwParseExcept err = throwBotExcept $ ParseExcept (Logger.makeLogMessage Logge
 
 throwUpdateExcept :: MonadThrow m => Logger.LogMessage -> m a
 throwUpdateExcept = throwBotExcept . UpdateExcept
-
-throwUpdateExceptUnwrapped :: Logger.LogMessage -> a
-throwUpdateExceptUnwrapped = throw . UpdateExcept
 
 throwSendExcept :: MonadThrow m => Logger.LogMessage -> m a
 throwSendExcept = throwBotExcept . SendExcept

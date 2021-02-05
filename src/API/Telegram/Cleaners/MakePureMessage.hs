@@ -16,22 +16,18 @@ import API.Telegram.Cleaners.MbMsgType
   )
 import qualified API.Telegram.Structs.Updates as TStructs
 import Control.Applicative (Alternative ((<|>)))
-import Data.Maybe (fromMaybe)
 import qualified Environment.Exports as Env
-import qualified Exceptions.Exports as BotEx
 import qualified Logic.PureStructs as PureStructs
-import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 telUpdateToPureMessage ::
   Env.HelpMessage ->
   TStructs.TelUpdateResult ->
-  PureStructs.PureMessage
-telUpdateToPureMessage helpMsg telUpdateResult = do
-  let updateId = TStructs.update_id telUpdateResult
-  let mbPureMessage =
-        mbMakeCallbackPureMessage telUpdateResult updateId
-          <|> mbMakePureMessage helpMsg telUpdateResult updateId
-  fromMaybe (BotEx.throwUpdateExceptUnwrapped LoggerMsgs.noUpdates) mbPureMessage
+  Maybe PureStructs.PureMessage
+telUpdateToPureMessage helpMsg telUpdateResult =
+  mbMakeCallbackPureMessage telUpdateResult updateId
+    <|> mbMakePureMessage helpMsg telUpdateResult updateId
+  where
+    updateId = TStructs.update_id telUpdateResult
 
 mbMakeCallbackPureMessage ::
   TStructs.TelUpdateResult ->

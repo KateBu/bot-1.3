@@ -51,9 +51,10 @@ telUpdatesToPureMessageList env telegramUpdates = do
   helpMsg <- runReaderT Env.eHelpMsg env
   logger <- runReaderT Env.eLogger env
   Logger.botLog logger logMsg
-  pure $ telUpdateToPureMessage helpMsg <$> TStructs.result telegramUpdates
+  maybe (BotEx.throwUpdateExcept LoggerMsgs.telegramUpdatesFailed) pure (pureMsg helpMsg)
   where
     logMsg = LoggerMsgs.parseTelelegramMsgSuccess
+    pureMsg helpMsg = sequence $ telUpdateToPureMessage helpMsg <$> TStructs.result telegramUpdates
 
 getUpdateError :: BSL.ByteString -> IO TStructs.TelegramUpdates
 getUpdateError bytestring = do
