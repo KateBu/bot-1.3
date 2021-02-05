@@ -16,8 +16,8 @@ data Config = TBot Telegram | VKBot VK
   deriving (Show, Eq)
 
 data Telegram = Telegram
-  { tToken :: Token,
-    tOffset :: Offset
+  { telegramToken :: Token,
+    telegramOffset :: Offset
   }
   deriving (Show, Eq)
 

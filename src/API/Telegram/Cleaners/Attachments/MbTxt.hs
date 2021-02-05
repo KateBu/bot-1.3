@@ -16,52 +16,53 @@ mbTextMessage ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbTextMessage hMsg uid chid mInfo = do
-  textInfo <- TStructs.txt mInfo
-  mkTxtMsg hMsg uid chid mInfo textInfo
+mbTextMessage helpMsg updateId chatId msgInfo = do
+  textInfo <- TStructs.txt msgInfo
+  makeTxtMsg helpMsg updateId chatId msgInfo textInfo
 
-mkTxtMsg ::
+makeTxtMsg ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   T.Text ->
   Maybe PureStructs.PureMessage
-mkTxtMsg hMsg uid chid mInfo "/help" =
+makeTxtMsg helpMsg updateId chatId msgInfo "/help" =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTUserCommand PureStructs.Help)
-      uid
-      (Just chid)
+      (PureStructs.MsgTypeUserCommand PureStructs.Help)
+      updateId
+      (Just chatId)
       helpParams
   where
     helpParams =
       Just $
-        basicParams chid mInfo
-          <> [PureStructs.ParamsText "text" hMsg]
-mkTxtMsg _ uid chid mInfo "/repeat" =
+        basicParams chatId msgInfo
+          <> [PureStructs.ParamsText "text" helpMsg]
+makeTxtMsg _ updateId chatId msgInfo "/repeat" =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTUserCommand PureStructs.Repeat)
-      uid
-      (Just chid)
+      (PureStructs.MsgTypeUserCommand PureStructs.Repeat)
+      updateId
+      (Just chatId)
       repeatParams
   where
     repeatParams =
       Just $
-        basicParams chid mInfo
-          <> [ PureStructs.ParamsJSON "reply_markup" (makeKeyboard (map (map TButtons) PureStructs.buttons')),
+        basicParams chatId msgInfo
+          <> [ PureStructs.ParamsJSON "reply_markup" keyboard,
                PureStructs.ParamsBool "one_time_keyboard" True
              ]
-mkTxtMsg _ uid chid mInfo text =
+    keyboard = makeKeyboard $ map (map TButtons) PureStructs.buttons
+makeTxtMsg _ updateId chatId msgInfo text =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Message")
-      uid
-      (Just chid)
+      (PureStructs.MsgTypeCommon "Message")
+      updateId
+      (Just chatId)
       messageParams
   where
     messageParams =
       Just $
-        basicParams chid mInfo
+        basicParams chatId msgInfo
           <> [PureStructs.ParamsText "text" text]

@@ -5,7 +5,7 @@ import Control.Exception (IOException, try)
 import qualified Data.Configurator as Configurator
 import qualified Data.Configurator.Types as Configurator
 import Environment.BotSettings.SetBotSettings
-  ( setBotTypeSettings,
+  ( setBotSettings,
   )
 import qualified Environment.Logger.Exports as Logger
 import qualified Environment.Structs as Env
@@ -34,7 +34,7 @@ setEnvironment' conf = do
   vkTok <- Configurator.lookup conf "bot.VKToken" :: IO (Maybe Config.Token)
   vkGroup <- Configurator.lookup conf "bot.VKGroupID" :: IO (Maybe Config.VKGroup)
   dbCnt <- Configurator.lookup conf "bot.dbConnectString" :: IO (Maybe Env.DBConnectString)
-  botSettings <- setBotTypeSettings botT vkGroup vkTok tTok
+  botSettings <- setBotSettings botT vkGroup vkTok tTok
   initEnvironment msg rep prior dbCnt botSettings
 
 initEnvironment ::
@@ -44,24 +44,27 @@ initEnvironment ::
   Maybe Env.DBConnectString ->
   Config.Config ->
   IO (Env.Environment IO)
-initEnvironment (Just helpMsg) (Just rep) (Just priorStr) (Just dbCnt) config = do
-  let mbPrior = readMaybe priorStr :: Maybe Logger.Priority
-  maybe (BotEx.throwOtherException LoggerMsgs.initLogFld) (makeEnv helpMsg rep dbCnt config) mbPrior
+initEnvironment (Just helpMsg) (Just repeatNumber) (Just priorityStr) (Just dbConnectString) config = do
+  let mbPriority = readMaybe priorityStr :: Maybe Logger.Priority
+  maybe
+    (BotEx.throwOtherException LoggerMsgs.initLogFailed)
+    (initEnvironment' helpMsg repeatNumber dbConnectString config)
+    mbPriority
 initEnvironment _ _ _ _ _ = BotEx.throwInitConfigExcept
 
-makeEnv ::
+initEnvironment' ::
   Env.HelpMessage ->
   Env.RepeatNumber ->
   Env.DBConnectString ->
   Config.Config ->
   Logger.Priority ->
   IO (Env.Environment IO)
-makeEnv hm rep dbCnt config prior = do
-  logger <- Logger.createLogger prior
-  pure $ Env.Environment config (checkRepNumber rep) hm logger dbCnt
+initEnvironment' helpMsg repeatNumber dbConnectString config priority = do
+  logger <- Logger.createLogger priority
+  pure $ Env.Environment config (checkRepeatNumber repeatNumber) helpMsg logger dbConnectString
 
-checkRepNumber :: Env.RepeatNumber -> Env.RepeatNumber
-checkRepNumber val
+checkRepeatNumber :: Env.RepeatNumber -> Env.RepeatNumber
+checkRepeatNumber val
   | val <= 1 = 1
   | val >= 5 = 5
   | otherwise = val

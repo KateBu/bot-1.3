@@ -11,7 +11,7 @@ testMakeCallbackResponse = TestCase (assertBool "Message type should be MTCommon
 testMakeCallbackResponse' :: Bool
 testMakeCallbackResponse' =
   all
-    (== PureStructs.MTCommon "Message")
+    (== PureStructs.MsgTypeCommon "Message")
     ( PureStructs.messageType
         . Logic.makeCallbackResponse
         <$> TestData.allMessages

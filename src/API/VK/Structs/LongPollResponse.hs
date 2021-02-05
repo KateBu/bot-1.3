@@ -12,13 +12,13 @@ data VKResponse
 data LongPollResponse = LongPollResponse
   { key :: T.Text,
     server :: T.Text,
-    currentTs :: String
+    current_ts :: String
   }
   deriving (Show)
 
 data ResponseError = ResponseError
-  { errorCode :: Int,
-    errorMsg :: T.Text
+  { error_code :: Int,
+    error_msg :: T.Text
   }
   deriving (Show)
 

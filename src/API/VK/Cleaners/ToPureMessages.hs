@@ -6,46 +6,46 @@ import qualified API.VK.Structs.Exports as VKStructs
 import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 
-mkPureMessage ::
+makePureMessage ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKMessage ->
   PureStructs.PureMessage
-mkPureMessage hMsg uid vkMsg = mkPureMessage' hMsg uid vkMsg $ getMessageType vkMsg
+makePureMessage helpMsg updateId vkMsg = makePureMessage' helpMsg updateId vkMsg $ getMessageType vkMsg
 
-mkPureMessage' ::
+makePureMessage' ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKMessage ->
   PureStructs.MessageType ->
   PureStructs.PureMessage
-mkPureMessage' _ uid vkMsg mType@(PureStructs.MTCallbackQuery callback) =
+makePureMessage' _ updateId vkMsg msgType@(PureStructs.MsgTypeCallbackQuery callback) =
   PureStructs.PureMessage
-    mType
-    uid
+    msgType
+    updateId
     (Just $ VKStructs.from_id vkMsg)
     msgParams
   where
     msgParams =
       Just
-        ( PureStructs.ParamsText "message" (PureStructs.newRepeatText $ PureStructs.getNewRep callback) :
+        ( PureStructs.ParamsText "message" (PureStructs.newRepeatText $ PureStructs.getNewRepeatNumber callback) :
           baseParams vkMsg
         )
-mkPureMessage' hMsg uid vkMsg mType@(PureStructs.MTUserCommand _) =
+makePureMessage' helpMsg updateId vkMsg msgType@(PureStructs.MsgTypeUserCommand _) =
   PureStructs.PureMessage
-    mType
-    uid
+    msgType
+    updateId
     (Just $ VKStructs.from_id vkMsg)
-    (makeParams hMsg mType vkMsg)
-mkPureMessage' config uid vkMsg mType@(PureStructs.MTCommon _) =
+    (makeParams helpMsg msgType vkMsg)
+makePureMessage' helpMsg updateId vkMsg msgType@(PureStructs.MsgTypeCommon _) =
   PureStructs.PureMessage
-    mType
-    uid
+    msgType
+    updateId
     (Just $ VKStructs.from_id vkMsg)
-    (makeParams config mType vkMsg)
-mkPureMessage' _ uid _ _ =
+    (makeParams helpMsg msgType vkMsg)
+makePureMessage' _ updateId _ _ =
   PureStructs.PureMessage
-    PureStructs.MTEmpty
-    uid
+    PureStructs.MsgTypeEmpty
+    updateId
     Nothing
     Nothing

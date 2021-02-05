@@ -2,8 +2,8 @@ module TextMessages.LoggerMessages.Bot where
 
 import qualified Environment.Logger.Structs as Logger
 
-vkFatalError :: Logger.LogMessage
-vkFatalError =
+vkSettingsFatalError :: Logger.LogMessage
+vkSettingsFatalError =
   Logger.LogMessage
     Logger.Error
     "FATAL ERROR: VK Config parsing error. Couldn't find group id or token"
@@ -16,17 +16,17 @@ initConfigExcept =
         <> " check the path to the file and the information inside it"
     )
 
-initLogFld :: Logger.LogMessage
-initLogFld = Logger.LogMessage Logger.Error "Cannot parse log priority from config file"
+initLogFailed :: Logger.LogMessage
+initLogFailed = Logger.LogMessage Logger.Error "Cannot parse log priority from config file"
 
-getUpdFld :: Logger.LogMessage
-getUpdFld =
+getUpdateFailed :: Logger.LogMessage
+getUpdateFailed =
   Logger.LogMessage
     Logger.Error
     "GetUpdates function failed: "
 
-readValueFld :: Logger.LogMessage
-readValueFld =
+readUpdateIdFailed :: Logger.LogMessage
+readUpdateIdFailed =
   Logger.LogMessage
     Logger.Error
     "Cannot read value"

@@ -29,15 +29,15 @@ data EventType = MsgNew | OtherEvent
   deriving (Show)
 
 data VKUpdInfo = VKUpdInfo
-  { updType :: EventType,
-    updObj :: Maybe VKObject
+  { update_type :: EventType,
+    update_object :: Maybe VKObject
   }
   deriving (Show)
 
 instance FromJSON VKUpdInfo where
   parseJSON = withObject "VKUpdInfo" $ \obj -> do
-    upType <- obj .: "type"
-    case (upType :: String) of
+    updateType <- obj .: "type"
+    case (updateType :: String) of
       "message_new" ->
         VKUpdInfo MsgNew
           <$> obj .:? "object"

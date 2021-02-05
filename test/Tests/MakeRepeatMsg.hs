@@ -19,7 +19,7 @@ testMakeRepeatMsgMsgType =
 testMakeRepeatMsgMsgType' :: Bool
 testMakeRepeatMsgMsgType' =
   all
-    (== PureStructs.MTCommon "Message")
+    (== PureStructs.MsgTypeCommon "Message")
     ( PureStructs.messageType
         . Logic.makeRepeatMsg
         <$> TestData.allMessages

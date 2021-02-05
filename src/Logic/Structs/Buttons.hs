@@ -7,34 +7,34 @@ import Logic.Structs.PureMessage (CallbackText)
 data PureButtons = PureButtons T.Text T.Text
   deriving (Show)
 
-buttons' :: [[PureButtons]]
-buttons' =
-  [ [PureButtons "1" rep1],
-    [PureButtons "2" rep2],
-    [PureButtons "3" rep3],
-    [PureButtons "4" rep4],
-    [PureButtons "5" rep5]
+buttons :: [[PureButtons]]
+buttons =
+  [ [PureButtons "1" setRepeat1],
+    [PureButtons "2" setRepeat2],
+    [PureButtons "3" setRepeat3],
+    [PureButtons "4" setRepeat4],
+    [PureButtons "5" setRepeat5]
   ]
 
-rep1 :: CallbackText
-rep1 = "/setRepetition1"
+setRepeat1 :: CallbackText
+setRepeat1 = "/setRepetition1"
 
-rep2 :: CallbackText
-rep2 = "/setRepetition2"
+setRepeat2 :: CallbackText
+setRepeat2 = "/setRepetition2"
 
-rep3 :: CallbackText
-rep3 = "/setRepetition3"
+setRepeat3 :: CallbackText
+setRepeat3 = "/setRepetition3"
 
-rep4 :: CallbackText
-rep4 = "/setRepetition4"
+setRepeat4 :: CallbackText
+setRepeat4 = "/setRepetition4"
 
-rep5 :: CallbackText
-rep5 = "/setRepetition5"
+setRepeat5 :: CallbackText
+setRepeat5 = "/setRepetition5"
 
-getNewRep :: CallbackText -> Env.RepeatNumber
-getNewRep txt
-  | txt == rep1 = 1
-  | txt == rep2 = 2
-  | txt == rep3 = 3
-  | txt == rep4 = 4
+getNewRepeatNumber :: CallbackText -> Env.RepeatNumber
+getNewRepeatNumber txt
+  | txt == setRepeat1 = 1
+  | txt == setRepeat2 = 2
+  | txt == setRepeat3 = 3
+  | txt == setRepeat4 = 4
   | otherwise = 5

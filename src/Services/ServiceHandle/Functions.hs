@@ -25,9 +25,9 @@ findUser ::
   SHandle m ->
   PureStructs.ChatID ->
   m (Maybe Env.RepeatNumber)
-findUser handle userId = do
+findUser handle chatId = do
   hDbHandle <- hDB handle
-  DBHandle.findUser hDbHandle userId
+  DBHandle.findUser hDbHandle chatId
 
 addUser ::
   Monad m =>
@@ -35,9 +35,9 @@ addUser ::
   PureStructs.ChatID ->
   Env.RepeatNumber ->
   m ()
-addUser handle userId rep = do
+addUser handle chatId repeatNumber = do
   hDbHandle <- hDB handle
-  DBHandle.addUser hDbHandle userId rep
+  DBHandle.addUser hDbHandle chatId repeatNumber
 
 updateUser ::
   Monad m =>
@@ -45,6 +45,6 @@ updateUser ::
   PureStructs.ChatID ->
   Env.RepeatNumber ->
   m ()
-updateUser handle userId rep = do
+updateUser handle chatId repeatNumber = do
   hDbHandle <- hDB handle
-  DBHandle.updateUser hDbHandle userId rep
+  DBHandle.updateUser hDbHandle chatId repeatNumber

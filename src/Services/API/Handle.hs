@@ -17,5 +17,5 @@ new env =
   pure $
     Handle
       { hGetUpdates = Wrapper.getPureMessageList env,
-        hSendMessage = Wrapper.sendM env
+        hSendMessage = Wrapper.sendMessage env
       }

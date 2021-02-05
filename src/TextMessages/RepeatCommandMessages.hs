@@ -7,4 +7,4 @@ repeatText :: T.Text
 repeatText = "Please, choose how many times you want to get your messages back: "
 
 newRepeatText :: Env.RepeatNumber -> T.Text
-newRepeatText rep = "You chose: " <> (T.pack . show) rep
+newRepeatText repeatNumber = "You chose: " <> (T.pack . show) repeatNumber

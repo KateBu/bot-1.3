@@ -4,7 +4,7 @@ import qualified API.VK.Structs.Exports as VKStructs
 import qualified Logic.PureStructs as PureStructs
 
 mbTextMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-mbTextMsg vkMsg = case VKStructs.msgText vkMsg of
+mbTextMsg vkMsg = case VKStructs.msg_text vkMsg of
   Nothing -> Nothing
   Just "" -> Nothing
-  _ -> pure $ PureStructs.MTCommon "Message"
+  _ -> pure $ PureStructs.MsgTypeCommon "Message"

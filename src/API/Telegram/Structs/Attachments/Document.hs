@@ -6,7 +6,7 @@ import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
 newtype TelDocument = TelDocument
-  { doc_file_id :: T.Text
+  { document_file_id :: T.Text
   }
   deriving (Show)
 

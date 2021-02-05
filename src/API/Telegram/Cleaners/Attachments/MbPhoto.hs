@@ -9,9 +9,9 @@ mbPhoto ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbPhoto uid chid mInfo = do
-  photoInfo <- TStructs.photo mInfo
-  mbPhoto' uid chid mInfo photoInfo
+mbPhoto updateId chatId msgInfo = do
+  photoInfo <- TStructs.photo msgInfo
+  mbPhoto' updateId chatId msgInfo photoInfo
 
 mbPhoto' ::
   PureStructs.UpdateID ->
@@ -19,18 +19,18 @@ mbPhoto' ::
   TStructs.MessageInfo ->
   [TStructs.TelPhoto] ->
   Maybe PureStructs.PureMessage
-mbPhoto' uid chid mInfo photo =
+mbPhoto' updateId chatId msgInfo photoInfo =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Photo")
-      uid
-      (Just chid)
+      (PureStructs.MsgTypeCommon "Photo")
+      updateId
+      (Just chatId)
       photoParams
   where
     photoParams =
       Just $
-        basicParams chid mInfo
-          <> getPhotoParams photo
+        basicParams chatId msgInfo
+          <> getPhotoParams photoInfo
 
 getPhotoParams :: [TStructs.TelPhoto] -> [PureStructs.Params]
 getPhotoParams [] = []

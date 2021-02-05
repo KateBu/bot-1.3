@@ -4,8 +4,8 @@ import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
-import Logic.ProcMsgs.Callback (processMsgsCallback)
-import Logic.ProcMsgs.Common (processMsgsCommon)
+import Logic.ProcMsgs.Callback (processCallbackMsgs)
+import Logic.ProcMsgs.Common (processCommonMsgs)
 import qualified Logic.PureStructs as PureStructs
 import qualified Services.Exports as Handle
 import qualified TextMessages.LoggerMessages as LoggerMsgs
@@ -17,45 +17,53 @@ processMsgs ::
   [PureStructs.PureMessage] ->
   m (Env.Environment m)
 processMsgs env _ [] = pure env
-processMsgs env handle (x : xs) = do
-  env' <- processMsgs_ env handle x
-  processMsgs env' handle xs
+processMsgs env handle (msg : msgs) = do
+  env' <- processMsg env handle msg
+  processMsgs env' handle msgs
 
-processMsgs_ ::
+processMsg ::
   (BotEx.MonadThrow m) =>
   Env.Environment m ->
   Handle.SHandle m ->
   PureStructs.PureMessage ->
   m (Env.Environment m)
-processMsgs_ env handle msg = do
+processMsg env handle msg = do
   logger <- runReaderT Env.eLogger env
+  let mbChatId = PureStructs.mbChatID msg
   case PureStructs.messageType msg of
-    PureStructs.MTEmpty -> do
-      Logger.botLog logger LoggerMsgs.emptyMsg
+    PureStructs.MsgTypeEmpty -> do
+      Logger.botLog logger logEmptyMsg
       Env.eSetOffset env ((succ . PureStructs.updateID) msg)
-    PureStructs.MTUserCommand PureStructs.Help -> do
-      Logger.botLog logger LoggerMsgs.helpCmd
+    PureStructs.MsgTypeUserCommand PureStructs.Help -> do
+      Logger.botLog logger logHelpCommandMsg
       Handle.sendMessage handle msg
-    PureStructs.MTUserCommand PureStructs.Repeat -> do
-      Logger.botLog logger LoggerMsgs.repeatCmd
+    PureStructs.MsgTypeUserCommand PureStructs.Repeat -> do
+      Logger.botLog logger logRepeatCommandMsg
       Handle.sendMessage handle (makeRepeatMsg msg)
-    PureStructs.MTCallbackQuery callbackData -> do
-      Logger.botLog logger LoggerMsgs.callbackMsg
-      let mbChid = PureStructs.mbChatID msg
-      maybe processMsgsErr (processMsgsCallback handle msg callbackData) mbChid
-    PureStructs.MTCommon _ -> do
-      let mbChid = PureStructs.mbChatID msg
-      maybe processMsgsErr (processMsgsCommon env handle msg) mbChid
+    PureStructs.MsgTypeCallbackQuery callbackData -> do
+      Logger.botLog logger logCallbackMsg
+      maybe processMsgErr (processCallbackMsgs handle msg callbackData) mbChatId
+    PureStructs.MsgTypeCommon _ -> do
+      maybe processMsgErr (processCommonMsgs env handle msg) mbChatId
+  where
+    logEmptyMsg = LoggerMsgs.emptyMsgProcessingInProgress
+    logHelpCommandMsg = LoggerMsgs.helpCommandProcessingInProgress
+    logRepeatCommandMsg = LoggerMsgs.repeatCommandProcessingInProgress
+    logCallbackMsg = LoggerMsgs.callbackMsgProcessingInProgress
 
-processMsgsErr :: BotEx.MonadThrow m => m (Env.Environment m)
-processMsgsErr = BotEx.throwOtherException LoggerMsgs.chidNotFound
+processMsgErr :: BotEx.MonadThrow m => m (Env.Environment m)
+processMsgErr = BotEx.throwOtherException LoggerMsgs.chatIdNotFound
 
 makeRepeatMsg :: PureStructs.PureMessage -> PureStructs.PureMessage
 makeRepeatMsg msg =
   PureStructs.PureMessage
-    (PureStructs.MTCommon "Message")
+    (PureStructs.MsgTypeCommon "Message")
     (PureStructs.updateID msg)
     (PureStructs.mbChatID msg)
     repeatParams
   where
-    repeatParams = mconcat [PureStructs.mbParams msg, Just [PureStructs.ParamsText "text" PureStructs.repeatText]]
+    repeatParams =
+      mconcat
+        [ PureStructs.mbParams msg,
+          Just [PureStructs.ParamsText "text" PureStructs.repeatText]
+        ]

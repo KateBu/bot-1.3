@@ -18,21 +18,21 @@ updateParams (Config.TBot (Config.Telegram _ offset)) =
 updateParams _ = []
 
 sendHostPath :: Config.Config -> PureStructs.MessageType -> Maybe WrapStructs.HostPath
-sendHostPath (Config.TBot (Config.Telegram tok _)) (PureStructs.MTUserCommand PureStructs.Help) =
+sendHostPath (Config.TBot (Config.Telegram tok _)) (PureStructs.MsgTypeUserCommand PureStructs.Help) =
   pure $
     WrapStructs.HostPath
       "api.telegram.org"
       [ "bot" <> tok,
         "sendMessage"
       ]
-sendHostPath (Config.TBot (Config.Telegram tok _)) (PureStructs.MTUserCommand PureStructs.Repeat) =
+sendHostPath (Config.TBot (Config.Telegram tok _)) (PureStructs.MsgTypeUserCommand PureStructs.Repeat) =
   pure $
     WrapStructs.HostPath
       "api.telegram.org"
       [ "bot" <> tok,
         "sendMessage"
       ]
-sendHostPath (Config.TBot (Config.Telegram tok _)) (PureStructs.MTCommon mType) =
+sendHostPath (Config.TBot (Config.Telegram tok _)) (PureStructs.MsgTypeCommon mType) =
   pure $
     WrapStructs.HostPath
       "api.telegram.org"

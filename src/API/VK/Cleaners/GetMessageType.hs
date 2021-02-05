@@ -1,7 +1,7 @@
 module API.VK.Cleaners.GetMessageType where
 
 import API.VK.Cleaners.MsgTypes.Attachment (mbAttachmentMsg)
-import API.VK.Cleaners.MsgTypes.Callback (mbCallBackMsg)
+import API.VK.Cleaners.MsgTypes.Callback (mbCallbackMsg)
 import API.VK.Cleaners.MsgTypes.Fwd (mbFwd)
 import API.VK.Cleaners.MsgTypes.Geo (mbGeo)
 import API.VK.Cleaners.MsgTypes.TextMsg (mbTextMsg)
@@ -14,10 +14,11 @@ import qualified Logic.PureStructs as PureStructs
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 getMessageType :: VKStructs.VKMessage -> PureStructs.MessageType
-getMessageType vkMsg = fromMaybe (BotEx.throwOtherExceptionUnwrapped LoggerMsgs.notImplemented) msgType
+getMessageType vkMsg = fromMaybe (BotEx.throwOtherExceptionUnwrapped errMsg) msgType
   where
+    errMsg = LoggerMsgs.vkMsgTypeNotImplemented
     msgType =
-      mbCallBackMsg vkMsg
+      mbCallbackMsg vkMsg
         <|> mbUserCommand vkMsg
         <|> mbAttachmentMsg vkMsg
         <|> mbGeo vkMsg

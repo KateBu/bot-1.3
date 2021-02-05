@@ -24,42 +24,47 @@ import Network.HTTP.Req
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 getPureMessageList :: Env.Environment IO -> IO [PureStructs.PureMessage]
-getPureMessageList env = getU env >>= byteStringToPureMessageList env
+getPureMessageList env = do
+  updates <- getUpdates env
+  byteStringToPureMessageList env updates
 
-getU :: Env.Environment IO -> IO BSL.ByteString
-getU env = do
+getUpdates :: Env.Environment IO -> IO BSL.ByteString
+getUpdates env = do
   config <- runReaderT Env.eConfig env
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.getUpdInProcess
+  Logger.botLog logger LoggerMsgs.getUpdatesInProcess
   let params = WrapFunctions.updateParam config
-  let url = WrapFunctions.mkHostPath config WrapStructs.Update Nothing
+  let url = WrapFunctions.makeHostPath config WrapStructs.Update Nothing
   lbsResp <-
     if any WrapFunctions.isMultipart params
       then do
-        Logger.botLog logger LoggerMsgs.getRespMulti
+        Logger.botLog logger logMsgMultipart
         getResponseMultipart url params mempty
       else do
-        Logger.botLog logger LoggerMsgs.getRespUrl
+        Logger.botLog logger logMsgUrl
         getResponseUrl url params mempty
   responseToLbsByteString lbsResp
+  where
+    logMsgMultipart = LoggerMsgs.getResponseMultipartInProgress
+    logMsgUrl = LoggerMsgs.getResponseUrlInProgress
 
 responseToLbsByteString ::
   LbsResponse ->
   IO BSL.ByteString
 responseToLbsByteString response = case responseStatusCode response of
   200 -> pure (responseBody response :: BSL.ByteString)
-  err ->
-    BotEx.throwOtherException
-      (Logger.makeLogMessage LoggerMsgs.badServerResponse ((T.pack . show) err))
+  err -> BotEx.throwOtherException logMsg
+    where
+      logMsg = Logger.makeLogMessage LoggerMsgs.badServerResponse ((T.pack . show) err)
 
 byteStringToPureMessageList ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
-byteStringToPureMessageList env bs = do
-  currentConfig <- runReaderT Env.eConfig env
-  case currentConfig of
+byteStringToPureMessageList env bytestring = do
+  config <- runReaderT Env.eConfig env
+  case config of
     (Config.VKBot _) ->
-      VKCleaners.vkByteStringToPureMessageList env bs
+      VKCleaners.vkByteStringToPureMessageList env bytestring
     (Config.TBot _) ->
-      TelCleaners.telByteStringToPureMessageList env bs
+      TelCleaners.telByteStringToPureMessageList env bytestring

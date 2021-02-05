@@ -30,7 +30,7 @@ data Updates = Updates
 
 data UpdateErr = UpdateErr
   { failed :: Int,
-    curTs :: Maybe Int
+    err_current_ts :: Maybe Int
   }
   deriving (Show)
 

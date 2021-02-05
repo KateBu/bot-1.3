@@ -6,29 +6,29 @@ import GHC.Generics (Generic)
 
 data VKKeyBoard = VKKeyBoard
   { inline :: Bool,
-    buttons :: [[BtnAction]]
+    buttons :: [[ButtonAction]]
   }
   deriving (Show, Generic)
 
 instance ToJSON VKKeyBoard
 
-newtype BtnAction = BtnAction VKButtons
+newtype ButtonAction = ButtonAction VKButtons
   deriving (Show)
 
-instance ToJSON BtnAction where
-  toJSON (BtnAction btns) = object ["action" .= btns]
+instance ToJSON ButtonAction where
+  toJSON (ButtonAction btns) = object ["action" .= btns]
 
 data VKButtons = VKButtons
-  { butType :: T.Text,
-    payload :: T.Text,
-    label :: T.Text
+  { button_type :: T.Text,
+    button_payload :: T.Text,
+    button_label :: T.Text
   }
   deriving (Show)
 
 instance ToJSON VKButtons where
-  toJSON (VKButtons btnType pld btnLab) =
+  toJSON (VKButtons buttonType payload label) =
     object
-      [ "type" .= btnType,
-        "payload" .= pld,
-        "label" .= btnLab
+      [ "type" .= buttonType,
+        "payload" .= payload,
+        "label" .= label
       ]

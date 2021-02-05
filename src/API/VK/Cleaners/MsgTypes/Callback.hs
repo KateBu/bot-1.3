@@ -6,44 +6,44 @@ import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 
-mbCallBackMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-mbCallBackMsg vkMsg =
-  PureStructs.MTCallbackQuery <$> mbNewRep (fromMaybe "" $ VKStructs.cbPayload vkMsg)
+mbCallbackMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
+mbCallbackMsg vkMsg =
+  PureStructs.MsgTypeCallbackQuery <$> mbNewRepeat (fromMaybe "" $ VKStructs.callback_payload vkMsg)
 
-mbNewRep :: T.Text -> Maybe PureStructs.CallbackText
-mbNewRep callback =
-  mbRep1 callback
-    <|> mbRep2 callback
-    <|> mbRep3 callback
-    <|> mbRep4 callback
-    <|> mbRep5 callback
+mbNewRepeat :: T.Text -> Maybe PureStructs.CallbackText
+mbNewRepeat callback =
+  mbRepeatNumber1 callback
+    <|> mbRepeatNumber2 callback
+    <|> mbRepeatNumber3 callback
+    <|> mbRepeatNumber4 callback
+    <|> mbRepeatNumber5 callback
 
-mbRep1 :: T.Text -> Maybe PureStructs.CallbackText
-mbRep1 txt =
-  if T.isInfixOf PureStructs.rep1 txt
-    then pure PureStructs.rep1
+mbRepeatNumber1 :: T.Text -> Maybe PureStructs.CallbackText
+mbRepeatNumber1 txt =
+  if T.isInfixOf PureStructs.setRepeat1 txt
+    then pure PureStructs.setRepeat1
     else Nothing
 
-mbRep2 :: T.Text -> Maybe PureStructs.CallbackText
-mbRep2 txt =
-  if T.isInfixOf PureStructs.rep2 txt
-    then pure PureStructs.rep2
+mbRepeatNumber2 :: T.Text -> Maybe PureStructs.CallbackText
+mbRepeatNumber2 txt =
+  if T.isInfixOf PureStructs.setRepeat2 txt
+    then pure PureStructs.setRepeat2
     else Nothing
 
-mbRep3 :: T.Text -> Maybe PureStructs.CallbackText
-mbRep3 txt =
-  if T.isInfixOf PureStructs.rep3 txt
-    then pure PureStructs.rep3
+mbRepeatNumber3 :: T.Text -> Maybe PureStructs.CallbackText
+mbRepeatNumber3 txt =
+  if T.isInfixOf PureStructs.setRepeat3 txt
+    then pure PureStructs.setRepeat3
     else Nothing
 
-mbRep4 :: T.Text -> Maybe PureStructs.CallbackText
-mbRep4 txt =
-  if T.isInfixOf PureStructs.rep4 txt
-    then pure PureStructs.rep4
+mbRepeatNumber4 :: T.Text -> Maybe PureStructs.CallbackText
+mbRepeatNumber4 txt =
+  if T.isInfixOf PureStructs.setRepeat4 txt
+    then pure PureStructs.setRepeat4
     else Nothing
 
-mbRep5 :: T.Text -> Maybe PureStructs.CallbackText
-mbRep5 txt =
-  if T.isInfixOf PureStructs.rep5 txt
-    then pure PureStructs.rep5
+mbRepeatNumber5 :: T.Text -> Maybe PureStructs.CallbackText
+mbRepeatNumber5 txt =
+  if T.isInfixOf PureStructs.setRepeat5 txt
+    then pure PureStructs.setRepeat5
     else Nothing

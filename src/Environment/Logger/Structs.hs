@@ -16,7 +16,7 @@ data LogMessage = LogMessage
   deriving (Eq)
 
 instance Show LogMessage where
-  show (LogMessage prior txt) = T.unpack $ startText prior <> txt
+  show (LogMessage priority txt) = T.unpack $ startText priority <> txt
 
 newtype Logger m = Logger
   { botLog :: LogMessage -> m ()

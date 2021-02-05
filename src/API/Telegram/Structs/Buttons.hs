@@ -7,10 +7,10 @@ data Button = Button T.Text T.Text
   deriving (Show)
 
 instance ToJSON Button where
-  toJSON (Button btn cbd) = object ["text" .= btn, "callback_data" .= cbd]
+  toJSON (Button button callbackData) = object ["text" .= button, "callback_data" .= callbackData]
 
 newtype InlineKeyBoard = InlineKeyBoard [[Button]]
   deriving (Show)
 
 instance ToJSON InlineKeyBoard where
-  toJSON (InlineKeyBoard btns) = object ["inline_keyboard" .= btns]
+  toJSON (InlineKeyBoard buttons) = object ["inline_keyboard" .= buttons]

@@ -7,17 +7,17 @@ import Database.PostgreSQL.Simple (Query)
 import qualified Logic.PureStructs as PureStructs
 
 userId :: Config.Config -> PureStructs.ChatID -> Query
-userId (Config.VKBot _) usid = "\'" <> "vk" <> (fromString . show) usid <> "\'"
-userId (Config.TBot _) usid = "\'" <> "tel" <> (fromString . show) usid <> "\'"
+userId (Config.VKBot _) chatId = "\'" <> "vk" <> (fromString . show) chatId <> "\'"
+userId (Config.TBot _) chatId = "\'" <> "tel" <> (fromString . show) chatId <> "\'"
 
 userIdText :: Config.Config -> PureStructs.ChatID -> T.Text
-userIdText (Config.VKBot _) usid = "vk" <> (T.pack . show) usid
-userIdText (Config.TBot _) usid = "tel" <> (T.pack . show) usid
+userIdText (Config.VKBot _) chatId = "vk" <> (T.pack . show) chatId
+userIdText (Config.TBot _) chatId = "tel" <> (T.pack . show) chatId
 
 findUserQuery :: Config.Config -> PureStructs.ChatID -> Query
-findUserQuery bType usid =
+findUserQuery config chatId =
   "SELECT repeats FROM UserRepeats WHERE userId = "
-    <> userId bType usid
+    <> userId config chatId
 
 addUserQuery :: Query
 addUserQuery = "INSERT INTO UserRepeats (userId, repeats) VALUES (?,?) returning userId, repeats"

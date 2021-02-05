@@ -6,192 +6,192 @@ import qualified Logic.Main as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
-testProcessMsgs_ :: [Test]
-testProcessMsgs_ =
-  [ testProcessMsgs_1,
-    testProcessMsgs_2,
-    testProcessMsgs_3,
-    testProcessMsgs_4,
-    testProcessMsgs_5,
-    testProcessMsgs_6,
-    testProcessMsgs_7,
-    testProcessMsgs_8,
-    testProcessMsgs_9
+testProcessMsg :: [Test]
+testProcessMsg =
+  [ testProcessMsg_1,
+    testProcessMsg_2,
+    testProcessMsg_3,
+    testProcessMsg_4,
+    testProcessMsg_5,
+    testProcessMsg_6,
+    testProcessMsg_7,
+    testProcessMsg_8,
+    testProcessMsg_9
   ]
 
-testProcessMsgs_1 :: Test
-testProcessMsgs_1 =
+testProcessMsg_1 :: Test
+testProcessMsg_1 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs_1"
-        expectedTestProcessMsgs_1
-        actualTestProcessMsgs_1
+        "Logic.testProcessMsg_1"
+        expectedTestProcessMsg_1
+        actualTestProcessMsg_1
     )
 
-actualTestProcessMsgs_1 :: Maybe Config.Config
-actualTestProcessMsgs_1 =
+actualTestProcessMsg_1 :: Maybe Config.Config
+actualTestProcessMsg_1 =
   Env.config
-    <$> Logic.processMsgs_
+    <$> Logic.processMsg
       TestData.testEnvTelegram
       TestData.servicesTel1
       TestData.emptyMsg1
 
-expectedTestProcessMsgs_1 :: Maybe Config.Config
-expectedTestProcessMsgs_1 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 1
+expectedTestProcessMsg_1 :: Maybe Config.Config
+expectedTestProcessMsg_1 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 1
 
-testProcessMsgs_2 :: Test
-testProcessMsgs_2 =
+testProcessMsg_2 :: Test
+testProcessMsg_2 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs_2"
-        expectedTestProcessMsgs_2
-        actualTestProcessMsgs_2
+        "Logic.testProcessMsg_2"
+        expectedTestProcessMsg_2
+        actualTestProcessMsg_2
     )
 
-actualTestProcessMsgs_2 :: Maybe Config.Config
-actualTestProcessMsgs_2 =
+actualTestProcessMsg_2 :: Maybe Config.Config
+actualTestProcessMsg_2 =
   Env.config
-    <$> Logic.processMsgs_
+    <$> Logic.processMsg
       TestData.testEnvVK
       TestData.servicesVk1
       TestData.emptyMsg2
 
-expectedTestProcessMsgs_2 :: Maybe Config.Config
-expectedTestProcessMsgs_2 = Env.config <$> Env.eSetOffset TestData.testEnvVK 2
+expectedTestProcessMsg_2 :: Maybe Config.Config
+expectedTestProcessMsg_2 = Env.config <$> Env.eSetOffset TestData.testEnvVK 2
 
-testProcessMsgs_3 :: Test
-testProcessMsgs_3 =
+testProcessMsg_3 :: Test
+testProcessMsg_3 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs_3"
-        expectedTestProcessMsgs_3
-        actualTestProcessMsgs_3
+        "Logic.testProcessMsg_3"
+        expectedTestProcessMsg_3
+        actualTestProcessMsg_3
     )
 
-actualTestProcessMsgs_3 :: Maybe Config.Config
-actualTestProcessMsgs_3 =
+actualTestProcessMsg_3 :: Maybe Config.Config
+actualTestProcessMsg_3 =
   Env.config
-    <$> Logic.processMsgs_
+    <$> Logic.processMsg
       TestData.testEnvTelegram
       TestData.servicesTel1
       TestData.commandMsg1
 
-expectedTestProcessMsgs_3 :: Maybe Config.Config
-expectedTestProcessMsgs_3 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 1
+expectedTestProcessMsg_3 :: Maybe Config.Config
+expectedTestProcessMsg_3 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 1
 
-testProcessMsgs_4 :: Test
-testProcessMsgs_4 =
+testProcessMsg_4 :: Test
+testProcessMsg_4 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs_4"
-        expectedTestProcessMsgs_4
-        actualTestProcessMsgs_4
+        "Logic.testProcessMsg_4"
+        expectedTestProcessMsg_4
+        actualTestProcessMsg_4
     )
 
-actualTestProcessMsgs_4 :: Maybe Config.Config
-actualTestProcessMsgs_4 =
+actualTestProcessMsg_4 :: Maybe Config.Config
+actualTestProcessMsg_4 =
   Env.config
-    <$> Logic.processMsgs_
+    <$> Logic.processMsg
       TestData.testEnvVK
       TestData.servicesVk1
       TestData.commandMsg5
 
-expectedTestProcessMsgs_4 :: Maybe Config.Config
-expectedTestProcessMsgs_4 = Env.config <$> Env.eSetOffset TestData.testEnvVK 3
+expectedTestProcessMsg_4 :: Maybe Config.Config
+expectedTestProcessMsg_4 = Env.config <$> Env.eSetOffset TestData.testEnvVK 3
 
-testProcessMsgs_5 :: Test
-testProcessMsgs_5 =
+testProcessMsg_5 :: Test
+testProcessMsg_5 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs_5"
-        expectedTestProcessMsgs_5
-        actualTestProcessMsgs_5
+        "Logic.testProcessMsg_5"
+        expectedTestProcessMsg_5
+        actualTestProcessMsg_5
     )
 
-actualTestProcessMsgs_5 :: Maybe Config.Config
-actualTestProcessMsgs_5 =
+actualTestProcessMsg_5 :: Maybe Config.Config
+actualTestProcessMsg_5 =
   Env.config
-    <$> Logic.processMsgs_
+    <$> Logic.processMsg
       TestData.testEnvVK
       TestData.servicesVk1
       TestData.cbMsg2
 
-expectedTestProcessMsgs_5 :: Maybe Config.Config
-expectedTestProcessMsgs_5 = Env.config <$> Env.eSetOffset TestData.testEnvVK 3
+expectedTestProcessMsg_5 :: Maybe Config.Config
+expectedTestProcessMsg_5 = Env.config <$> Env.eSetOffset TestData.testEnvVK 3
 
-testProcessMsgs_6 :: Test
-testProcessMsgs_6 =
+testProcessMsg_6 :: Test
+testProcessMsg_6 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs_6"
-        expectedTestProcessMsgs_6
-        actualTestProcessMsgs_6
+        "Logic.testProcessMsg_6"
+        expectedTestProcessMsg_6
+        actualTestProcessMsg_6
     )
 
-actualTestProcessMsgs_6 :: Maybe Config.Config
-actualTestProcessMsgs_6 =
+actualTestProcessMsg_6 :: Maybe Config.Config
+actualTestProcessMsg_6 =
   Env.config
-    <$> Logic.processMsgs_
+    <$> Logic.processMsg
       TestData.testEnvVK
       TestData.servicesVk1
       TestData.cmnMsg3
 
-expectedTestProcessMsgs_6 :: Maybe Config.Config
-expectedTestProcessMsgs_6 = Env.config <$> Env.eSetOffset TestData.testEnvVK 43
+expectedTestProcessMsg_6 :: Maybe Config.Config
+expectedTestProcessMsg_6 = Env.config <$> Env.eSetOffset TestData.testEnvVK 43
 
-testProcessMsgs_7 :: Test
-testProcessMsgs_7 =
+testProcessMsg_7 :: Test
+testProcessMsg_7 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs_7"
-        expectedTestProcessMsgs_7
-        actualTestProcessMsgs_7
+        "Logic.testProcessMsg_7"
+        expectedTestProcessMsg_7
+        actualTestProcessMsg_7
     )
 
-actualTestProcessMsgs_7 :: Maybe Config.Config
-actualTestProcessMsgs_7 =
+actualTestProcessMsg_7 :: Maybe Config.Config
+actualTestProcessMsg_7 =
   Env.config
-    <$> Logic.processMsgs_
+    <$> Logic.processMsg
       TestData.testEnvTelegram
       TestData.servicesTel1
       TestData.cmnMsg5
 
-expectedTestProcessMsgs_7 :: Maybe Config.Config
-expectedTestProcessMsgs_7 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 16
+expectedTestProcessMsg_7 :: Maybe Config.Config
+expectedTestProcessMsg_7 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 16
 
-testProcessMsgs_8 :: Test
-testProcessMsgs_8 =
+testProcessMsg_8 :: Test
+testProcessMsg_8 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs_8"
-        expectedTestProcessMsgs_8
-        actualTestProcessMsgs_8
+        "Logic.testProcessMsg_8"
+        expectedTestProcessMsg_8
+        actualTestProcessMsg_8
     )
 
-actualTestProcessMsgs_8 :: Maybe Config.Config
-actualTestProcessMsgs_8 =
+actualTestProcessMsg_8 :: Maybe Config.Config
+actualTestProcessMsg_8 =
   Env.config
-    <$> Logic.processMsgs_
+    <$> Logic.processMsg
       TestData.testEnvVK
       TestData.servicesVk1
       TestData.cmnMsg4
 
-expectedTestProcessMsgs_8 :: Maybe Config.Config
-expectedTestProcessMsgs_8 = Env.config <$> Env.eSetOffset TestData.testEnvVK 3
+expectedTestProcessMsg_8 :: Maybe Config.Config
+expectedTestProcessMsg_8 = Env.config <$> Env.eSetOffset TestData.testEnvVK 3
 
-testProcessMsgs_9 :: Test
-testProcessMsgs_9 =
+testProcessMsg_9 :: Test
+testProcessMsg_9 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs_9"
+        "Logic.testProcessMsg_9"
         Nothing
-        actualTestProcessMsgs_9
+        actualTestProcessMsg_9
     )
 
-actualTestProcessMsgs_9 :: Maybe Config.Config
-actualTestProcessMsgs_9 =
+actualTestProcessMsg_9 :: Maybe Config.Config
+actualTestProcessMsg_9 =
   Env.config
-    <$> Logic.processMsgs_
+    <$> Logic.processMsg
       TestData.testEnvVK
       TestData.servicesVk1
       TestData.cmnMsg1

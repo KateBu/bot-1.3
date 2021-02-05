@@ -9,9 +9,9 @@ mbVoice ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbVoice uid chid mInfo = do
-  voiceInfo <- TStructs.voice mInfo
-  mbVoice' uid chid mInfo voiceInfo
+mbVoice updateId chatId msgInfo = do
+  voiceInfo <- TStructs.voice msgInfo
+  mbVoice' updateId chatId msgInfo voiceInfo
 
 mbVoice' ::
   PureStructs.UpdateID ->
@@ -19,15 +19,15 @@ mbVoice' ::
   TStructs.MessageInfo ->
   TStructs.TelVoice ->
   Maybe PureStructs.PureMessage
-mbVoice' uid chid mInfo voice =
+mbVoice' updateId chatId msgInfo voiceInfo =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Voice")
-      uid
-      (Just chid)
+      (PureStructs.MsgTypeCommon "Voice")
+      updateId
+      (Just chatId)
       voiceParams
   where
     voiceParams =
       Just $
-        basicParams chid mInfo
-          <> [PureStructs.ParamsText "voice" (TStructs.voice_file_id voice)]
+        basicParams chatId msgInfo
+          <> [PureStructs.ParamsText "voice" (TStructs.voice_file_id voiceInfo)]

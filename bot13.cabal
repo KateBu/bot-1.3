@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1f0893c01686f8edb6d2a43a38d171f6cbadbb46f60f1bdb18492bb266d1f316
+-- hash: f9aa8ba7efc2d4d1ae4e4a22ec411c2b45c3034f5e37badb753156063ba89a3f
 
 name:           bot13
 version:        0.1.0.0
@@ -32,7 +32,7 @@ library
       API.Telegram.Cleaners.Attachments.MbAnimation
       API.Telegram.Cleaners.Attachments.MbAudio
       API.Telegram.Cleaners.Attachments.MbContact
-      API.Telegram.Cleaners.Attachments.MbDoc
+      API.Telegram.Cleaners.Attachments.MbDocument
       API.Telegram.Cleaners.Attachments.MbLocation
       API.Telegram.Cleaners.Attachments.MbPhoto
       API.Telegram.Cleaners.Attachments.MbPoll
@@ -126,9 +126,9 @@ library
       TextMessages.LoggerMessages
       TextMessages.LoggerMessages.Bot
       TextMessages.LoggerMessages.DB
+      TextMessages.LoggerMessages.Exceptions
       TextMessages.LoggerMessages.ProcMsgs
       TextMessages.LoggerMessages.Telegram
-      TextMessages.LoggerMessages.Tests
       TextMessages.LoggerMessages.VK
       TextMessages.LoggerMessages.Wrapper
       TextMessages.ParseFailMessage

@@ -7,4 +7,4 @@ mbAttachmentMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
 mbAttachmentMsg vkMsg = VKStructs.attachments vkMsg >>= mbAttachmentMsg'
   where
     mbAttachmentMsg' [] = Nothing
-    mbAttachmentMsg' _ = pure $ PureStructs.MTCommon "Attachment"
+    mbAttachmentMsg' _ = pure $ PureStructs.MsgTypeCommon "Attachment"

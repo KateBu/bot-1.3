@@ -9,9 +9,9 @@ mbAnimation ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbAnimation uid chid mInfo = do
-  animInfo <- TStructs.animation mInfo
-  mbAnimation' uid chid mInfo animInfo
+mbAnimation updateId chatId msgInfo = do
+  animationInfo <- TStructs.animation msgInfo
+  mbAnimation' updateId chatId msgInfo animationInfo
 
 mbAnimation' ::
   PureStructs.UpdateID ->
@@ -19,15 +19,15 @@ mbAnimation' ::
   TStructs.MessageInfo ->
   TStructs.TelAmination ->
   Maybe PureStructs.PureMessage
-mbAnimation' uid chid mInfo anim =
+mbAnimation' updateId chatId msgInfo animationInfo =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Animation")
-      uid
-      (Just chid)
+      (PureStructs.MsgTypeCommon "Animation")
+      updateId
+      (Just chatId)
       animParams
   where
     animParams =
       Just $
-        basicParams chid mInfo
-          <> [PureStructs.ParamsText "animation" (TStructs.animation_file_id anim)]
+        basicParams chatId msgInfo
+          <> [PureStructs.ParamsText "animation" (TStructs.animation_file_id animationInfo)]

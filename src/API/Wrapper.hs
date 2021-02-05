@@ -4,5 +4,5 @@ import API.Wrapper.GetUpdate as Wrapper
   ( getPureMessageList,
   )
 import API.Wrapper.SendMessage as Wrapper
-  ( sendM,
+  ( sendMessage,
   )

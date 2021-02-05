@@ -12,17 +12,17 @@ import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
 data VKResult
-  = SendMsgScs SendSuccess
+  = SendMsgSuccess SendSuccess
   | SendMsgError SendError
   deriving (Show)
 
 newtype SendSuccess = SendSuccess
-  { newTs :: Int
+  { new_ts :: Int
   }
   deriving (Show)
 
 newtype SendError = SendError
-  { resError :: VKResultError
+  { res_error :: VKResultError
   }
   deriving (Show)
 
@@ -31,11 +31,11 @@ instance FromJSON VKResult where
     isError <- obj .:? "error"
     case isError of
       Just val -> pure $ SendMsgError (SendError val)
-      Nothing -> SendMsgScs <$> (SendSuccess <$> obj .: "response")
+      Nothing -> SendMsgSuccess <$> (SendSuccess <$> obj .: "response")
 
 data VKResultError = VKResultError
-  { errCode :: Int,
-    errMsg :: T.Text
+  { err_code :: Int,
+    err_msg :: T.Text
   }
   deriving (Show)
 

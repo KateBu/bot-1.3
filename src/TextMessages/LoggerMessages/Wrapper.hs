@@ -2,11 +2,8 @@ module TextMessages.LoggerMessages.Wrapper where
 
 import qualified Environment.Logger.Structs as Logger
 
-httpEx :: Logger.LogMessage
-httpEx = Logger.LogMessage Logger.Error "Http exception: "
-
-sndMsgFld :: Logger.LogMessage
-sndMsgFld =
+sendMsgFailed :: Logger.LogMessage
+sendMsgFailed =
   Logger.LogMessage
     Logger.Error
     "sendMessage function failed: "
@@ -23,29 +20,20 @@ badServerResponse =
     Logger.Error
     "Got bad server response, response status code: "
 
-noUpd :: Logger.LogMessage
-noUpd =
-  Logger.LogMessage
-    Logger.Error
-    "No updates were found"
-
-parseErr :: Logger.LogMessage
-parseErr = Logger.LogMessage Logger.Error "Parsing bytestring into struct failed: "
-
-getUpdInProcess :: Logger.LogMessage
-getUpdInProcess =
+getUpdatesInProcess :: Logger.LogMessage
+getUpdatesInProcess =
   Logger.LogMessage
     Logger.Debug
     "getU function: trying to get updates..."
 
-getRespMulti :: Logger.LogMessage
-getRespMulti =
+getResponseMultipartInProgress :: Logger.LogMessage
+getResponseMultipartInProgress =
   Logger.LogMessage
     Logger.Debug
     "Trying to get response with multipart body..."
 
-getRespUrl :: Logger.LogMessage
-getRespUrl =
+getResponseUrlInProgress :: Logger.LogMessage
+getResponseUrlInProgress =
   Logger.LogMessage
     Logger.Debug
     "Trying to get response with url-encoded body..."

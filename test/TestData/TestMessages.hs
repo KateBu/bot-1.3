@@ -46,7 +46,7 @@ commonMessages = [cmnMsg1, cmnMsg2, cmnMsg3, cmnMsg4, cmnMsg5]
 emptyMsg1 :: PureStructs.PureMessage
 emptyMsg1 =
   PureStructs.PureMessage
-    PureStructs.MTEmpty
+    PureStructs.MsgTypeEmpty
     0
     Nothing
     Nothing
@@ -54,7 +54,7 @@ emptyMsg1 =
 emptyMsg2 :: PureStructs.PureMessage
 emptyMsg2 =
   PureStructs.PureMessage
-    PureStructs.MTEmpty
+    PureStructs.MsgTypeEmpty
     1
     Nothing
     (Just [])
@@ -62,7 +62,7 @@ emptyMsg2 =
 emptyMsg3 :: PureStructs.PureMessage
 emptyMsg3 =
   PureStructs.PureMessage
-    PureStructs.MTEmpty
+    PureStructs.MsgTypeEmpty
     1
     (Just 0)
     (Just [])
@@ -70,7 +70,7 @@ emptyMsg3 =
 emptyMsg4 :: PureStructs.PureMessage
 emptyMsg4 =
   PureStructs.PureMessage
-    PureStructs.MTEmpty
+    PureStructs.MsgTypeEmpty
     1
     (Just 0)
     Nothing
@@ -78,7 +78,7 @@ emptyMsg4 =
 commandMsg1 :: PureStructs.PureMessage
 commandMsg1 =
   PureStructs.PureMessage
-    (PureStructs.MTUserCommand PureStructs.Help)
+    (PureStructs.MsgTypeUserCommand PureStructs.Help)
     0
     Nothing
     Nothing
@@ -86,7 +86,7 @@ commandMsg1 =
 commandMsg2 :: PureStructs.PureMessage
 commandMsg2 =
   PureStructs.PureMessage
-    (PureStructs.MTUserCommand PureStructs.Help)
+    (PureStructs.MsgTypeUserCommand PureStructs.Help)
     2
     (Just 0)
     Nothing
@@ -94,7 +94,7 @@ commandMsg2 =
 commandMsg3 :: PureStructs.PureMessage
 commandMsg3 =
   PureStructs.PureMessage
-    (PureStructs.MTUserCommand PureStructs.Help)
+    (PureStructs.MsgTypeUserCommand PureStructs.Help)
     2
     (Just 0)
     msgParams
@@ -102,7 +102,7 @@ commandMsg3 =
 commandMsg4 :: PureStructs.PureMessage
 commandMsg4 =
   PureStructs.PureMessage
-    (PureStructs.MTUserCommand PureStructs.Help)
+    (PureStructs.MsgTypeUserCommand PureStructs.Help)
     2
     Nothing
     msgParams
@@ -110,7 +110,7 @@ commandMsg4 =
 commandMsg5 :: PureStructs.PureMessage
 commandMsg5 =
   PureStructs.PureMessage
-    (PureStructs.MTUserCommand PureStructs.Repeat)
+    (PureStructs.MsgTypeUserCommand PureStructs.Repeat)
     2
     Nothing
     msgParams
@@ -118,7 +118,7 @@ commandMsg5 =
 commandMsg6 :: PureStructs.PureMessage
 commandMsg6 =
   PureStructs.PureMessage
-    (PureStructs.MTUserCommand PureStructs.Repeat)
+    (PureStructs.MsgTypeUserCommand PureStructs.Repeat)
     2
     (Just 1)
     msgParams
@@ -126,7 +126,7 @@ commandMsg6 =
 commandMsg7 :: PureStructs.PureMessage
 commandMsg7 =
   PureStructs.PureMessage
-    (PureStructs.MTUserCommand PureStructs.Repeat)
+    (PureStructs.MsgTypeUserCommand PureStructs.Repeat)
     2
     Nothing
     Nothing
@@ -134,7 +134,7 @@ commandMsg7 =
 commandMsg8 :: PureStructs.PureMessage
 commandMsg8 =
   PureStructs.PureMessage
-    (PureStructs.MTUserCommand PureStructs.Repeat)
+    (PureStructs.MsgTypeUserCommand PureStructs.Repeat)
     2
     Nothing
     (Just [])
@@ -142,7 +142,7 @@ commandMsg8 =
 cbMsg1 :: PureStructs.PureMessage
 cbMsg1 =
   PureStructs.PureMessage
-    (PureStructs.MTCallbackQuery PureStructs.rep1)
+    (PureStructs.MsgTypeCallbackQuery PureStructs.setRepeat1)
     2
     Nothing
     (Just [])
@@ -150,7 +150,7 @@ cbMsg1 =
 cbMsg2 :: PureStructs.PureMessage
 cbMsg2 =
   PureStructs.PureMessage
-    (PureStructs.MTCallbackQuery PureStructs.rep2)
+    (PureStructs.MsgTypeCallbackQuery PureStructs.setRepeat2)
     2
     (Just 11)
     Nothing
@@ -158,7 +158,7 @@ cbMsg2 =
 cbMsg3 :: PureStructs.PureMessage
 cbMsg3 =
   PureStructs.PureMessage
-    (PureStructs.MTCallbackQuery PureStructs.rep3)
+    (PureStructs.MsgTypeCallbackQuery PureStructs.setRepeat3)
     2
     (Just 11)
     msgParams
@@ -166,7 +166,7 @@ cbMsg3 =
 cbMsg4 :: PureStructs.PureMessage
 cbMsg4 =
   PureStructs.PureMessage
-    (PureStructs.MTCallbackQuery PureStructs.rep4)
+    (PureStructs.MsgTypeCallbackQuery PureStructs.setRepeat4)
     2
     Nothing
     msgParams
@@ -174,7 +174,7 @@ cbMsg4 =
 cbMsg5 :: PureStructs.PureMessage
 cbMsg5 =
   PureStructs.PureMessage
-    (PureStructs.MTCallbackQuery PureStructs.rep5)
+    (PureStructs.MsgTypeCallbackQuery PureStructs.setRepeat5)
     (-11)
     Nothing
     msgParams
@@ -182,7 +182,7 @@ cbMsg5 =
 cbMsg6 :: PureStructs.PureMessage
 cbMsg6 =
   PureStructs.PureMessage
-    (PureStructs.MTCallbackQuery "somethingElse")
+    (PureStructs.MsgTypeCallbackQuery "somethingElse")
     2
     Nothing
     msgParams
@@ -190,7 +190,7 @@ cbMsg6 =
 cmnMsg1 :: PureStructs.PureMessage
 cmnMsg1 =
   PureStructs.PureMessage
-    (PureStructs.MTCommon "Message")
+    (PureStructs.MsgTypeCommon "Message")
     2
     Nothing
     msgParams
@@ -198,7 +198,7 @@ cmnMsg1 =
 cmnMsg2 :: PureStructs.PureMessage
 cmnMsg2 =
   PureStructs.PureMessage
-    (PureStructs.MTCommon "Message")
+    (PureStructs.MsgTypeCommon "Message")
     2
     Nothing
     Nothing
@@ -206,7 +206,7 @@ cmnMsg2 =
 cmnMsg3 :: PureStructs.PureMessage
 cmnMsg3 =
   PureStructs.PureMessage
-    (PureStructs.MTCommon "Message")
+    (PureStructs.MsgTypeCommon "Message")
     42
     (Just 11)
     Nothing
@@ -214,7 +214,7 @@ cmnMsg3 =
 cmnMsg4 :: PureStructs.PureMessage
 cmnMsg4 =
   PureStructs.PureMessage
-    (PureStructs.MTCommon "Message")
+    (PureStructs.MsgTypeCommon "Message")
     2
     (Just 33)
     msgParams
@@ -222,7 +222,7 @@ cmnMsg4 =
 cmnMsg5 :: PureStructs.PureMessage
 cmnMsg5 =
   PureStructs.PureMessage
-    (PureStructs.MTCommon "Message")
+    (PureStructs.MsgTypeCommon "Message")
     15
     (Just 42)
     msgParams

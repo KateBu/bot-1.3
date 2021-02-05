@@ -10,9 +10,9 @@ mbContact ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbContact uid chid mInfo = do
-  contactInfo <- TStructs.contact mInfo
-  mbContact' uid chid mInfo contactInfo
+mbContact updatId chatId msgInfo = do
+  contactInfo <- TStructs.contact msgInfo
+  mbContact' updatId chatId msgInfo contactInfo
 
 mbContact' ::
   PureStructs.UpdateID ->
@@ -20,20 +20,20 @@ mbContact' ::
   TStructs.MessageInfo ->
   TStructs.TelContact ->
   Maybe PureStructs.PureMessage
-mbContact' uid chid mInfo contact =
+mbContact' updatId chatId msgInfo contactInfo =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Contact")
-      uid
-      (Just chid)
-      (contactParams chid mInfo contact)
+      (PureStructs.MsgTypeCommon "Contact")
+      updatId
+      (Just chatId)
+      (contactParams chatId msgInfo contactInfo)
 
 contactParams :: PureStructs.ChatID -> TStructs.MessageInfo -> TStructs.TelContact -> Maybe [PureStructs.Params]
-contactParams chid mInfo contact =
+contactParams chatiId msgInfo contactInfo =
   Just $
-    basicParams chid mInfo
-      <> [ PureStructs.ParamsText "phone_number" (TStructs.phone_number contact),
-           PureStructs.ParamsText "first_name" (TStructs.first_name contact)
+    basicParams chatiId msgInfo
+      <> [ PureStructs.ParamsText "phone_number" (TStructs.phone_number contactInfo),
+           PureStructs.ParamsText "first_name" (TStructs.first_name contactInfo)
          ]
-      <> makeMaybeTextParams "last_name" (TStructs.last_name contact)
-      <> makeMaybeTextParams "vcard" (TStructs.vcard contact)
+      <> makeMaybeTextParams "last_name" (TStructs.last_name contactInfo)
+      <> makeMaybeTextParams "vcard" (TStructs.vcard contactInfo)

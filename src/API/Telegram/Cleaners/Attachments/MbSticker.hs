@@ -9,9 +9,9 @@ mbSticker ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbSticker uid chid mInfo = do
-  stickerInfo <- TStructs.sticker mInfo
-  mbSticker' uid chid mInfo stickerInfo
+mbSticker updateId chatId msgInfo = do
+  stickerInfo <- TStructs.sticker msgInfo
+  mbSticker' updateId chatId msgInfo stickerInfo
 
 mbSticker' ::
   PureStructs.UpdateID ->
@@ -19,16 +19,16 @@ mbSticker' ::
   TStructs.MessageInfo ->
   TStructs.TelSticker ->
   Maybe PureStructs.PureMessage
-mbSticker' uid chid mInfo sticker =
+mbSticker' updateId chatId msgInfo stickerInfo =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Sticker")
-      uid
-      (Just chid)
+      (PureStructs.MsgTypeCommon "Sticker")
+      updateId
+      (Just chatId)
       stickerParams
   where
     stickerParams =
       Just $
-        basicParams chid mInfo
-          <> [ PureStructs.ParamsText "sticker" (TStructs.s_file_id sticker)
+        basicParams chatId msgInfo
+          <> [ PureStructs.ParamsText "sticker" (TStructs.sticker_file_id stickerInfo)
              ]

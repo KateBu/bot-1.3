@@ -27,15 +27,15 @@ instance MonadThrow Maybe where
   throwBotExcept = const Nothing
 
 handleBotException :: BotException -> IO ()
-handleBotException ex = do
-  print ex
+handleBotException exception = do
+  print exception
   putStrLn "Program terminated"
 
 throwInitConfigExcept :: MonadThrow m => m a
 throwInitConfigExcept = throwBotExcept $ InitConfigExcept LoggerMsgs.initConfigExcept
 
 throwParseExcept :: MonadThrow m => String -> m a
-throwParseExcept err = throwBotExcept $ ParseExcept (Logger.makeLogMessage LoggerMsgs.parseErr (T.pack err))
+throwParseExcept err = throwBotExcept $ ParseExcept (Logger.makeLogMessage LoggerMsgs.parseError (T.pack err))
 
 throwUpdateExcept :: MonadThrow m => Logger.LogMessage -> m a
 throwUpdateExcept = throwBotExcept . UpdateExcept
@@ -56,7 +56,9 @@ throwOtherExceptionUnwrapped :: Logger.LogMessage -> a
 throwOtherExceptionUnwrapped = throw . OtherExcept
 
 throwHttpException :: MonadThrow m => HttpException -> m a
-throwHttpException err = throwBotExcept . HttpExcept $ Logger.makeLogMessage LoggerMsgs.httpEx (T.pack . show $ err)
+throwHttpException err = throwBotExcept . HttpExcept $ logMsg
+  where
+    logMsg = Logger.makeLogMessage LoggerMsgs.httpException (T.pack . show $ err)
 
 throwSQLException :: MonadThrow m => SqlError -> m a
 throwSQLException = throwBotExcept . DBSqlError
@@ -70,6 +72,6 @@ throwDBResultError = throwBotExcept . DBResultError
 dbErrorsHandlers :: [Handler a]
 dbErrorsHandlers =
   [ Handler $ \sqlErr -> throwSQLException (sqlErr :: SqlError),
-    Handler $ \fErr -> throwDBFormatExceptions (fErr :: FormatError),
-    Handler $ \rErr -> throwDBResultError (rErr :: ResultError)
+    Handler $ \formatErr -> throwDBFormatExceptions (formatErr :: FormatError),
+    Handler $ \resultErr -> throwDBResultError (resultErr :: ResultError)
   ]

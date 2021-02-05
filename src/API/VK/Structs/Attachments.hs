@@ -12,8 +12,8 @@ import GHC.Generics (Generic)
 import TextMessages.ParseFailMessage (parseFailMessage)
 
 data Attachment = Attachment
-  { aType :: T.Text,
-    aObject :: AObject
+  { attacnment_type :: T.Text,
+    attachment_object :: AObject
   }
   deriving (Show)
 
@@ -80,7 +80,7 @@ data AObject
   deriving (Show)
 
 newtype Geo = Geo
-  { gCoordinates :: Coordinates
+  { geo_coordinates :: Coordinates
   }
   deriving (Show)
 

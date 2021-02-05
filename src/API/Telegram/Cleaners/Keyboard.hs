@@ -6,7 +6,7 @@ import qualified Logic.PureStructs as PureStructs
 newtype TButtons = TButtons PureStructs.PureButtons
 
 instance ToJSON TButtons where
-  toJSON (TButtons (PureStructs.PureButtons lbl txt)) = object ["text" .= lbl, "callback_data" .= txt]
+  toJSON (TButtons (PureStructs.PureButtons label txt)) = object ["text" .= label, "callback_data" .= txt]
 
 makeKeyboard :: [[TButtons]] -> Value
-makeKeyboard btns = object ["inline_keyboard" .= btns]
+makeKeyboard buttons = object ["inline_keyboard" .= buttons]

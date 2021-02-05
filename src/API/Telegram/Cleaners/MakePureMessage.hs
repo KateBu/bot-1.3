@@ -4,7 +4,7 @@ import API.Telegram.Cleaners.MbMsgType
   ( mbAnimation,
     mbAudio,
     mbContact,
-    mbDoc,
+    mbDocument,
     mbLocation,
     mbPhoto,
     mbPoll,
@@ -26,43 +26,47 @@ telUpdateToPureMessage ::
   Env.HelpMessage ->
   TStructs.TelUpdateResult ->
   PureStructs.PureMessage
-telUpdateToPureMessage hMsg res = do
-  let uid = TStructs.update_id res
-  let mbPureMessage = mbMakeCallbackPureMessage res uid <|> mbMakePureMessage hMsg res uid
-  fromMaybe (BotEx.throwUpdateExceptUnwrapped LoggerMsgs.noUpd) mbPureMessage
+telUpdateToPureMessage helpMsg telUpdateResult = do
+  let updateId = TStructs.update_id telUpdateResult
+  let mbPureMessage =
+        mbMakeCallbackPureMessage telUpdateResult updateId
+          <|> mbMakePureMessage helpMsg telUpdateResult updateId
+  fromMaybe (BotEx.throwUpdateExceptUnwrapped LoggerMsgs.noUpdates) mbPureMessage
 
 mbMakeCallbackPureMessage ::
   TStructs.TelUpdateResult ->
   PureStructs.UpdateID ->
   Maybe PureStructs.PureMessage
-mbMakeCallbackPureMessage res uid = case TStructs.callback_query res of
-  Just (TStructs.Callback callback cbData) -> do
-    let chid = (TStructs.cb_chid . TStructs.cb_chat) callback
-    pure
-      ( PureStructs.PureMessage
-          (PureStructs.MTCallbackQuery cbData)
-          uid
-          (Just chid)
-          (callbackParams chid)
-      )
-    where
-      callbackParams chid =
-        Just
-          [ PureStructs.ParamsText "text" (PureStructs.newRepeatText (PureStructs.getNewRep cbData)),
-            PureStructs.ParamsNum "chat_id" chid
-          ]
-  _ -> Nothing
+mbMakeCallbackPureMessage telUpdateResult updateId =
+  case TStructs.callback_query telUpdateResult of
+    Just (TStructs.Callback callbackMsg callbackData) -> do
+      let chatId = (TStructs.callback_chat_id . TStructs.callback_chat) callbackMsg
+      pure
+        ( PureStructs.PureMessage
+            (PureStructs.MsgTypeCallbackQuery callbackData)
+            updateId
+            (Just chatId)
+            (callbackParams chatId)
+        )
+      where
+        callbackParams chatId =
+          Just
+            [ PureStructs.ParamsText "text" $ PureStructs.newRepeatText (PureStructs.getNewRepeatNumber callbackData),
+              PureStructs.ParamsNum "chat_id" chatId
+            ]
+    _ -> Nothing
 
 mbMakePureMessage ::
   Env.HelpMessage ->
   TStructs.TelUpdateResult ->
   PureStructs.UpdateID ->
   Maybe PureStructs.PureMessage
-mbMakePureMessage hMsg res uid = case TStructs.messageInfo res of
-  Nothing -> pure $ PureStructs.PureMessage PureStructs.MTEmpty uid Nothing Nothing
-  Just mInfo -> do
-    let chid = TStructs.chat_id $ TStructs.chat mInfo
-    makeCommonMessage hMsg uid chid mInfo
+mbMakePureMessage helpMsg telUpdateResult updateId =
+  case TStructs.message_info telUpdateResult of
+    Nothing -> pure $ PureStructs.PureMessage PureStructs.MsgTypeEmpty updateId Nothing Nothing
+    Just msgInfo -> do
+      let chatId = TStructs.chat_id $ TStructs.chat msgInfo
+      makeCommonMessage helpMsg updateId chatId msgInfo
 
 makeCommonMessage ::
   Env.HelpMessage ->
@@ -70,16 +74,16 @@ makeCommonMessage ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-makeCommonMessage hMsg uid chid mInfo =
-  mbAnimation uid chid mInfo
-    <|> mbAudio uid chid mInfo
-    <|> mbDoc uid chid mInfo
-    <|> mbVideo uid chid mInfo
-    <|> mbVoice uid chid mInfo
-    <|> mbPhoto uid chid mInfo
-    <|> mbContact uid chid mInfo
-    <|> mbVenue uid chid mInfo
-    <|> mbLocation uid chid mInfo
-    <|> mbSticker uid chid mInfo
-    <|> mbPoll uid chid mInfo
-    <|> mbTextMessage hMsg uid chid mInfo
+makeCommonMessage helpMsg updateId chatId msgInfo =
+  mbAnimation updateId chatId msgInfo
+    <|> mbAudio updateId chatId msgInfo
+    <|> mbDocument updateId chatId msgInfo
+    <|> mbVideo updateId chatId msgInfo
+    <|> mbVoice updateId chatId msgInfo
+    <|> mbPhoto updateId chatId msgInfo
+    <|> mbContact updateId chatId msgInfo
+    <|> mbVenue updateId chatId msgInfo
+    <|> mbLocation updateId chatId msgInfo
+    <|> mbSticker updateId chatId msgInfo
+    <|> mbPoll updateId chatId msgInfo
+    <|> mbTextMessage helpMsg updateId chatId msgInfo

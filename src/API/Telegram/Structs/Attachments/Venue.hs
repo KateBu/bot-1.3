@@ -6,10 +6,10 @@ import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
 data TelVenue = TelVenue
-  { v_latitude :: Double,
-    v_longitude :: Double,
-    v_title :: T.Text,
-    v_address :: T.Text
+  { venue_latitude :: Double,
+    venue_longitude :: Double,
+    venue_title :: T.Text,
+    venue_address :: T.Text
   }
   deriving (Show)
 

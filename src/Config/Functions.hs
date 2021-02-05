@@ -8,11 +8,11 @@ import Config.Struct
   )
 
 configSetOffset :: Config -> Offset -> Config
-configSetOffset (TBot (Telegram tok _)) newOffset =
-  TBot $ Telegram tok newOffset
-configSetOffset (VKBot (VK tok group key serv _)) newOffset =
-  VKBot $ VK tok group key serv newOffset
+configSetOffset (TBot (Telegram token _)) newOffset =
+  TBot $ Telegram token newOffset
+configSetOffset (VKBot (VK token group key server _)) newOffset =
+  VKBot $ VK token group key server newOffset
 
 configGetUid :: Config -> Offset
-configGetUid (VKBot (VK _ _ _ _ uid)) = uid
-configGetUid (TBot (Telegram _ uid)) = uid
+configGetUid (VKBot (VK _ _ _ _ updateId)) = updateId
+configGetUid (TBot (Telegram _ updateId)) = updateId

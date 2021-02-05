@@ -2,23 +2,23 @@ module TextMessages.LoggerMessages.DB where
 
 import qualified Environment.Logger.Structs as Logger
 
-addUserQueryFld :: Logger.LogMessage
-addUserQueryFld = Logger.LogMessage Logger.Error "Impossible to insert User into Database"
+addUserQueryFailed :: Logger.LogMessage
+addUserQueryFailed = Logger.LogMessage Logger.Error "Impossible to insert User into Database"
 
-findUserQueryFld :: Logger.LogMessage
-findUserQueryFld = Logger.LogMessage Logger.Error "Impossible to find User in Database"
+findUserQueryFailed :: Logger.LogMessage
+findUserQueryFailed = Logger.LogMessage Logger.Error "Impossible to find User in Database"
 
-updUserRepeatFld :: Logger.LogMessage
-updUserRepeatFld = Logger.LogMessage Logger.Error "Impossible to update User repeat in Database"
+updateUserRepeatFailed :: Logger.LogMessage
+updateUserRepeatFailed = Logger.LogMessage Logger.Error "Impossible to update User repeat in Database"
 
-updUserRepeatNoUser :: Logger.LogMessage
-updUserRepeatNoUser = Logger.LogMessage Logger.Warning "Impossible to find userId in Database to update repeats"
+updateUserRepeatNoUser :: Logger.LogMessage
+updateUserRepeatNoUser = Logger.LogMessage Logger.Warning "Impossible to find userId in Database to update repeats"
 
-addUserRepeatScs :: Logger.LogMessage
-addUserRepeatScs = Logger.LogMessage Logger.Info "New User was inserted into Database"
+addUserRepeatSuccess :: Logger.LogMessage
+addUserRepeatSuccess = Logger.LogMessage Logger.Info "New User was inserted into Database"
 
-updUserRepeatScs :: Logger.LogMessage
-updUserRepeatScs = Logger.LogMessage Logger.Info "New repeat value for User was set in Database"
+updateUserRepeatSuccess :: Logger.LogMessage
+updateUserRepeatSuccess = Logger.LogMessage Logger.Info "New repeat value for User was set in Database"
 
-findUserScs :: Logger.LogMessage
-findUserScs = Logger.LogMessage Logger.Debug "User was found in Database..."
+findUserSuccess :: Logger.LogMessage
+findUserSuccess = Logger.LogMessage Logger.Debug "User was found in Database..."

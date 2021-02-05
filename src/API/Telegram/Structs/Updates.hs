@@ -5,9 +5,9 @@ module API.Telegram.Structs.Updates
 where
 
 import API.Telegram.Structs.Callback as Structs
-  ( CBChat (..),
-    CBMsg (..),
-    Callback (..),
+  ( Callback (..),
+    CallbackChat (..),
+    CallbackMsg (..),
   )
 import API.Telegram.Structs.MessageInfo as Structs
   ( MessageInfo (..),
@@ -48,7 +48,7 @@ instance FromJSON TelegramUpdates
 
 data TelUpdateResult = TelUpdateResult
   { update_id :: Int,
-    messageInfo :: Maybe MessageInfo,
+    message_info :: Maybe MessageInfo,
     callback_query :: Maybe Callback
   }
   deriving (Show)

@@ -10,9 +10,9 @@ mbVenue ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbVenue uid chid mInfo = do
-  venueInfo <- TStructs.venue mInfo
-  mbVenue' uid chid mInfo venueInfo
+mbVenue updateId chatId msgInfo = do
+  venueInfo <- TStructs.venue msgInfo
+  mbVenue' updateId chatId msgInfo venueInfo
 
 mbVenue' ::
   PureStructs.UpdateID ->
@@ -20,20 +20,20 @@ mbVenue' ::
   TStructs.MessageInfo ->
   TStructs.TelVenue ->
   Maybe PureStructs.PureMessage
-mbVenue' uid chid mInfo venue =
+mbVenue' updateId chatId msgInfo venueInfo =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Venue")
-      uid
-      (Just chid)
-      (venueParams chid mInfo venue)
+      (PureStructs.MsgTypeCommon "Venue")
+      updateId
+      (Just chatId)
+      (venueParams chatId msgInfo venueInfo)
 
 venueParams :: PureStructs.ChatID -> TStructs.MessageInfo -> TStructs.TelVenue -> Maybe [PureStructs.Params]
-venueParams chid mInfo venue =
+venueParams chatId msgInfo venueInfo =
   Just $
-    basicParams chid mInfo
-      <> [ PureStructs.ParamsText "latitude" ((T.pack . show) $ TStructs.v_latitude venue),
-           PureStructs.ParamsText "longitude" ((T.pack . show) $ TStructs.v_longitude venue),
-           PureStructs.ParamsText "title" (TStructs.v_title venue),
-           PureStructs.ParamsText "address" (TStructs.v_address venue)
+    basicParams chatId msgInfo
+      <> [ PureStructs.ParamsText "latitude" ((T.pack . show) $ TStructs.venue_latitude venueInfo),
+           PureStructs.ParamsText "longitude" ((T.pack . show) $ TStructs.venue_longitude venueInfo),
+           PureStructs.ParamsText "title" (TStructs.venue_title venueInfo),
+           PureStructs.ParamsText "address" (TStructs.venue_address venueInfo)
          ]

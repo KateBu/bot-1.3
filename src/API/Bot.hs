@@ -1,6 +1,6 @@
 module API.Bot where
 
-import Control.Exception (handle)
+import qualified Control.Exception as Ex
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
@@ -13,9 +13,9 @@ runBot :: Env.Environment IO -> IO ()
 runBot env =
   withBotExceptionWrapped $
     do
-      let hdl = Handle.new env
-      Handle.getUpdates hdl
-        >>= Logic.processMsgs env hdl
+      let handle = Handle.new env
+      Handle.getUpdates handle
+        >>= Logic.processMsgs env handle
         >>= nextLoop
 
 nextLoop :: Env.Environment IO -> IO ()
@@ -24,4 +24,4 @@ nextLoop env = do
   Logger.botLog logger LoggerMsgs.nextLoop >> runBot env
 
 withBotExceptionWrapped :: IO () -> IO ()
-withBotExceptionWrapped = handle BotEx.handleBotException
+withBotExceptionWrapped = Ex.handle BotEx.handleBotException

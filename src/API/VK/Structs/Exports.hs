@@ -4,7 +4,7 @@ module API.VK.Structs.Exports
 where
 
 import API.VK.Structs.Buttons as Structs
-  ( BtnAction (..),
+  ( ButtonAction (..),
     VKButtons (..),
     VKKeyBoard (..),
   )

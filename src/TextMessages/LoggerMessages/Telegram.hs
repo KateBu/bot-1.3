@@ -2,38 +2,44 @@ module TextMessages.LoggerMessages.Telegram where
 
 import qualified Environment.Logger.Structs as Logger
 
-chidNotFound :: Logger.LogMessage
-chidNotFound =
+chatIdNotFound :: Logger.LogMessage
+chatIdNotFound =
   Logger.LogMessage
     Logger.Error
     "Chat ID not found"
 
-tDecBS :: Logger.LogMessage
-tDecBS =
+telegramBytestringDecodingInProgress :: Logger.LogMessage
+telegramBytestringDecodingInProgress =
   Logger.LogMessage
     Logger.Debug
     "Telegram bot is trying to decode bytestring into TelegramUpdates..."
 
-telDecBsScs :: Logger.LogMessage
-telDecBsScs =
+telegramBytestringDecodingSuccess :: Logger.LogMessage
+telegramBytestringDecodingSuccess =
   Logger.LogMessage
     Logger.Debug
     "Bytestring decoded into TelegramUpdates..."
 
-getTelUpdScs :: Logger.LogMessage
-getTelUpdScs =
+getTelegramUpdatesSuccess :: Logger.LogMessage
+getTelegramUpdatesSuccess =
   Logger.LogMessage
     Logger.Debug
     "Telegram bot got updates successfully..."
 
-sndMsgScsTel :: Logger.LogMessage
-sndMsgScsTel =
+sendTelegramMsgSuccess :: Logger.LogMessage
+sendTelegramMsgSuccess =
   Logger.LogMessage
     Logger.Debug
     "Telegram bot sent message successfully..."
 
-parseTelMsgScs :: Logger.LogMessage
-parseTelMsgScs =
+parseTelelegramMsgSuccess :: Logger.LogMessage
+parseTelelegramMsgSuccess =
   Logger.LogMessage
     Logger.Debug
     "Telegram messages were parsed to PureMessages successfully..."
+
+noUpdates :: Logger.LogMessage
+noUpdates =
+  Logger.LogMessage
+    Logger.Error
+    "No updates were found"

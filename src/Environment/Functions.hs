@@ -3,38 +3,30 @@ module Environment.Functions where
 import qualified Config.Exports as Config
 import Control.Monad.Reader (ReaderT (runReaderT), asks)
 import qualified Environment.Logger.Exports as Logger
-import Environment.Structs
-  ( DBConnectString,
-    Environment (..),
-    HelpMessage,
-    RepeatNumber,
-  )
+import qualified Environment.Structs as Env
 
-type REnv m a = ReaderT (Environment m) m a
+type REnv m a = ReaderT (Env.Environment m) m a
 
 eConfig :: Monad m => REnv m Config.Config
-eConfig = asks config
+eConfig = asks Env.config
 
-eRep :: Monad m => REnv m RepeatNumber
-eRep = asks repetition
+eRep :: Monad m => REnv m Env.RepeatNumber
+eRep = asks Env.repetition
 
-eHelpMsg :: Monad m => REnv m HelpMessage
-eHelpMsg = asks helpMsg
+eHelpMsg :: Monad m => REnv m Env.HelpMessage
+eHelpMsg = asks Env.helpMsg
 
 eLogger :: Monad m => REnv m (Logger.Logger m)
-eLogger = asks logger
+eLogger = asks Env.logger
 
-eDBConnectionString :: Monad m => REnv m DBConnectString
-eDBConnectionString = asks dbConnectString
+eDBConnectionString :: Monad m => REnv m Env.DBConnectString
+eDBConnectionString = asks Env.dbConnectString
 
-eGetUid :: Monad m => REnv m Config.Offset
-eGetUid = asks $ Config.configGetUid . config
+updateConfig :: Monad m => Env.Environment m -> Config.Config -> m (Env.Environment m)
+updateConfig (Env.Environment _ repeatNimber helpMsg logger dbConnectString) newConfig =
+  pure $ Env.Environment newConfig repeatNimber helpMsg logger dbConnectString
 
-updateConfig :: Monad m => Environment m -> Config.Config -> m (Environment m)
-updateConfig (Environment _ rep hm lgr dbCnt) newConfig =
-  pure $ Environment newConfig rep hm lgr dbCnt
-
-eSetOffset :: Monad m => Environment m -> Config.Offset -> m (Environment m)
+eSetOffset :: Monad m => Env.Environment m -> Config.Offset -> m (Env.Environment m)
 eSetOffset env newOffset = do
   conf <- runReaderT eConfig env
   let newConfig = Config.configSetOffset conf newOffset

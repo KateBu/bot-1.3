@@ -6,7 +6,7 @@ import qualified Data.Text as T
 getFwdMsgIds :: Maybe [VKStructs.VKMessage] -> T.Text
 getFwdMsgIds Nothing = ""
 getFwdMsgIds (Just []) = ""
-getFwdMsgIds (Just [x]) = T.pack . show $ VKStructs.id x
-getFwdMsgIds (Just (x : xs)) =
-  (T.pack . show $ VKStructs.id x) <> ","
-    <> getFwdMsgIds (Just xs)
+getFwdMsgIds (Just [msg]) = T.pack . show $ VKStructs.id msg
+getFwdMsgIds (Just (msg : msgs)) =
+  (T.pack . show $ VKStructs.id msg) <> ","
+    <> getFwdMsgIds (Just msgs)

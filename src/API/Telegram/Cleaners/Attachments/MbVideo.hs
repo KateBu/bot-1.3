@@ -9,9 +9,9 @@ mbVideo ::
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbVideo uid chid mInfo = do
-  videoInfo <- TStructs.video mInfo
-  mbVideo' uid chid mInfo videoInfo
+mbVideo updateId chatId msgInfo = do
+  videoInfo <- TStructs.video msgInfo
+  mbVideo' updateId chatId msgInfo videoInfo
 
 mbVideo' ::
   PureStructs.UpdateID ->
@@ -19,15 +19,15 @@ mbVideo' ::
   TStructs.MessageInfo ->
   TStructs.TelVideo ->
   Maybe PureStructs.PureMessage
-mbVideo' uid chid mInfo video =
+mbVideo' updateId chatId msgInfo videoInfo =
   pure $
     PureStructs.PureMessage
-      (PureStructs.MTCommon "Video")
-      uid
-      (Just chid)
+      (PureStructs.MsgTypeCommon "Video")
+      updateId
+      (Just chatId)
       videoParams
   where
     videoParams =
       Just $
-        basicParams chid mInfo
-          <> [PureStructs.ParamsText "video" (TStructs.video_file_id video)]
+        basicParams chatId msgInfo
+          <> [PureStructs.ParamsText "video" (TStructs.video_file_id videoInfo)]

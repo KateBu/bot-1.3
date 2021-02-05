@@ -5,7 +5,7 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data Callback = Callback CBMsg T.Text
+data Callback = Callback CallbackMsg T.Text
   deriving (Show)
 
 instance FromJSON Callback where
@@ -14,22 +14,22 @@ instance FromJSON Callback where
       <*> v .: "data"
   parseJSON _ = parseFail parseFailMessage
 
-newtype CBMsg = CBMsg
-  { cb_chat :: CBChat
+newtype CallbackMsg = CallbackMsg
+  { callback_chat :: CallbackChat
   }
   deriving (Show)
 
-instance FromJSON CBMsg where
+instance FromJSON CallbackMsg where
   parseJSON (Object v) =
-    CBMsg <$> v .: "chat"
+    CallbackMsg <$> v .: "chat"
   parseJSON _ = parseFail parseFailMessage
 
-newtype CBChat = CBChat
-  { cb_chid :: Int
+newtype CallbackChat = CallbackChat
+  { callback_chat_id :: Int
   }
   deriving (Show)
 
-instance FromJSON CBChat where
+instance FromJSON CallbackChat where
   parseJSON (Object v) =
-    CBChat <$> v .: "id"
+    CallbackChat <$> v .: "id"
   parseJSON _ = parseFail parseFailMessage

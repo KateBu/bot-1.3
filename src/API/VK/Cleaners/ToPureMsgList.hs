@@ -1,6 +1,6 @@
 module API.VK.Cleaners.ToPureMsgList (vkByteStringToPureMessageList) where
 
-import API.VK.Cleaners.ToPureMessages (mkPureMessage)
+import API.VK.Cleaners.ToPureMessages (makePureMessage)
 import qualified API.VK.Structs.Exports as VKStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (eitherDecode)
@@ -17,72 +17,74 @@ vkByteStringToPureMessageList ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
-vkByteStringToPureMessageList env bs = do
-  decodedPair <- decByteString env bs
-  vkUpdInfoToPureMessageList env decodedPair
+vkByteStringToPureMessageList env vkByteString = do
+  decodedUpdateIdUpdateInfo <- decodeByteString env vkByteString
+  vkUpdateInfoToPureMessageList env decodedUpdateIdUpdateInfo
 
-decByteString ::
+decodeByteString ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
-decByteString env bs = do
+decodeByteString env vkByteString = do
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.vkDecBS
-  let eiUpdates = eitherDecode bs :: Either String VKStructs.VKUpdates
-  either decodeUpdErr (decodeUpdScs logger) eiUpdates
+  Logger.botLog logger LoggerMsgs.vkByteStringDecodingInProgress
+  let eiVKUpdates = eitherDecode vkByteString :: Either String VKStructs.VKUpdates
+  either decodeUpdateError (decodeUpdateSuccess logger) eiVKUpdates
 
-decodeUpdErr ::
+decodeUpdateError ::
   String ->
   IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
-decodeUpdErr err =
-  BotEx.throwUpdateExcept (Logger.makeLogMessage LoggerMsgs.vkDecUpdatesFailed $ T.pack err)
+decodeUpdateError err =
+  BotEx.throwUpdateExcept (Logger.makeLogMessage LoggerMsgs.vkUpdatesDecodingFailed $ T.pack err)
 
-decodeUpdScs ::
+decodeUpdateSuccess ::
   Logger.Logger IO ->
   VKStructs.VKUpdates ->
   IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
-decodeUpdScs _ (VKStructs.VKUpdateError (VKStructs.UpdateErr errCode _)) = case errCode of
-  1 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed1
-  2 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed2
-  3 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed3
-  _ -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed4
-decodeUpdScs logger (VKStructs.VKUpdates upd) = do
-  Logger.botLog logger LoggerMsgs.vkDecBsScs
-  let mbOffset = readMaybe $ VKStructs.ts upd :: Maybe Int
+decodeUpdateSuccess _ (VKStructs.VKUpdateError (VKStructs.UpdateErr errCode _)) = case errCode of
+  1 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailedCode1
+  2 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailedCode2
+  3 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailedCode3
+  _ -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailedCode4
+decodeUpdateSuccess logger (VKStructs.VKUpdates updates) = do
+  Logger.botLog logger logMsg
+  let mbUpdateId = readMaybe $ VKStructs.ts updates :: Maybe Int
   maybe
-    (BotEx.throwOtherException LoggerMsgs.readValueFld)
-    (\offset -> pure (offset, VKStructs.updates upd))
-    mbOffset
+    (BotEx.throwOtherException LoggerMsgs.readUpdateIdFailed)
+    (\updateId -> pure (updateId, VKStructs.updates updates))
+    mbUpdateId
+  where
+    logMsg = LoggerMsgs.vkDecodeByteStringSuccess
 
-vkUpdInfoToPureMessageList ::
+vkUpdateInfoToPureMessageList ::
   Env.Environment IO ->
   (PureStructs.UpdateID, [VKStructs.VKUpdInfo]) ->
   IO [PureStructs.PureMessage]
-vkUpdInfoToPureMessageList env (uid, upds) = do
+vkUpdateInfoToPureMessageList env (updateId, updates) = do
   logger <- runReaderT Env.eLogger env
-  hMsg <- runReaderT Env.eHelpMsg env
-  Logger.botLog logger LoggerMsgs.parseVKMsgScs
-  pure $ vkUpdInfoToPureMessage hMsg uid <$> upds
+  helpMsg <- runReaderT Env.eHelpMsg env
+  Logger.botLog logger LoggerMsgs.parseVKMsgSuccess
+  pure $ vkUpdInfoToPureMessage helpMsg updateId <$> updates
 
 vkUpdInfoToPureMessage ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKUpdInfo ->
   PureStructs.PureMessage
-vkUpdInfoToPureMessage hMsg uid updInfo = case VKStructs.updType updInfo of
-  VKStructs.OtherEvent -> BotEx.throwOtherExceptionUnwrapped LoggerMsgs.unexpVKEvent
+vkUpdInfoToPureMessage helpMsg updateId updateInfo = case VKStructs.update_type updateInfo of
+  VKStructs.OtherEvent -> BotEx.throwOtherExceptionUnwrapped LoggerMsgs.unexpectedVKEvent
   _ -> do
-    let mbUpdObj = VKStructs.updObj updInfo
-    maybe (noUpdObj uid) (justUpdObj hMsg uid) mbUpdObj
+    let mbUpdateObject = VKStructs.update_object updateInfo
+    maybe (makeEmptyMsg updateId) (makeMsgWithParams helpMsg updateId) mbUpdateObject
 
-noUpdObj :: PureStructs.UpdateID -> PureStructs.PureMessage
-noUpdObj uid = PureStructs.PureMessage PureStructs.MTEmpty uid Nothing Nothing
+makeEmptyMsg :: PureStructs.UpdateID -> PureStructs.PureMessage
+makeEmptyMsg updateId = PureStructs.PureMessage PureStructs.MsgTypeEmpty updateId Nothing Nothing
 
-justUpdObj ::
+makeMsgWithParams ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   VKStructs.VKObject ->
   PureStructs.PureMessage
-justUpdObj hMsg uid obj = do
-  let vkMessage = VKStructs.vkMessage obj
-  mkPureMessage hMsg uid vkMessage
+makeMsgWithParams helpMsg updateId object = do
+  let vkMessage = VKStructs.vkMessage object
+  makePureMessage helpMsg updateId vkMessage

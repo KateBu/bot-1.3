@@ -19,8 +19,8 @@ telByteStringToPureMessageList ::
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
 telByteStringToPureMessageList env bytestring = do
-  tUpdates <- decodeByteString env bytestring
-  telUpdatesToPureMessageList env tUpdates
+  telegramUpdates <- decodeByteString env bytestring
+  telUpdatesToPureMessageList env telegramUpdates
 
 decodeByteString ::
   Env.Environment IO ->
@@ -28,38 +28,43 @@ decodeByteString ::
   IO TStructs.TelegramUpdates
 decodeByteString env bytestring = do
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.tDecBS
+  Logger.botLog logger logMsg
   let mbTelegramUpdates = decode bytestring :: Maybe TStructs.TelegramUpdates
-  maybe (getUpdErr bytestring) (decodeScs logger) mbTelegramUpdates
+  maybe (getUpdateError bytestring) (decodeSuccess logger) mbTelegramUpdates
+  where
+    logMsg = LoggerMsgs.telegramBytestringDecodingInProgress
 
-decodeScs ::
+decodeSuccess ::
   Logger.Logger IO ->
   TStructs.TelegramUpdates ->
   IO TStructs.TelegramUpdates
-decodeScs logger tUpd =
-  Logger.botLog logger LoggerMsgs.telDecBsScs
-    >> pure tUpd
+decodeSuccess logger telegramUpdates =
+  Logger.botLog logger logMsg >> pure telegramUpdates
+  where
+    logMsg = LoggerMsgs.telegramBytestringDecodingSuccess
 
 telUpdatesToPureMessageList ::
   Env.Environment IO ->
   TStructs.TelegramUpdates ->
   IO [PureStructs.PureMessage]
-telUpdatesToPureMessageList env tUpd = do
-  hMsg <- runReaderT Env.eHelpMsg env
+telUpdatesToPureMessageList env telegramUpdates = do
+  helpMsg <- runReaderT Env.eHelpMsg env
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.parseTelMsgScs
-  pure $ telUpdateToPureMessage hMsg <$> TStructs.result tUpd
+  Logger.botLog logger logMsg
+  pure $ telUpdateToPureMessage helpMsg <$> TStructs.result telegramUpdates
+  where
+    logMsg = LoggerMsgs.parseTelelegramMsgSuccess
 
-getUpdErr :: BSL.ByteString -> IO TStructs.TelegramUpdates
-getUpdErr bytestring = do
-  let eiTelegramErr = eitherDecode bytestring :: Either String TStructs.TelegramUpdatesError
-  either BotEx.throwParseExcept telError eiTelegramErr
+getUpdateError :: BSL.ByteString -> IO TStructs.TelegramUpdates
+getUpdateError bytestring = do
+  let eiTelegramError = eitherDecode bytestring :: Either String TStructs.TelegramUpdatesError
+  either BotEx.throwParseExcept telegramError eiTelegramError
 
-telError :: TStructs.TelegramUpdatesError -> IO TStructs.TelegramUpdates
-telError err =
+telegramError :: TStructs.TelegramUpdatesError -> IO TStructs.TelegramUpdates
+telegramError err =
   BotEx.throwUpdateExcept
     ( Logger.makeLogMessage
-        LoggerMsgs.getUpdFld
+        LoggerMsgs.getUpdateFailed
         errMessage
     )
   where

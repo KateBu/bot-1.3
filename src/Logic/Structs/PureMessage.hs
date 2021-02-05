@@ -12,10 +12,10 @@ type MbCaption = Maybe T.Text
 type CallbackText = T.Text
 
 data MessageType
-  = MTEmpty
-  | MTUserCommand UCommand
-  | MTCallbackQuery CallbackText
-  | MTCommon T.Text
+  = MsgTypeEmpty
+  | MsgTypeUserCommand UserCommand
+  | MsgTypeCallbackQuery CallbackText
+  | MsgTypeCommon T.Text
   deriving (Show, Eq)
 
 data PureMessage = PureMessage
@@ -26,7 +26,7 @@ data PureMessage = PureMessage
   }
   deriving (Show, Eq)
 
-data UCommand = Help | Repeat
+data UserCommand = Help | Repeat
   deriving (Show, Eq)
 
 data Params

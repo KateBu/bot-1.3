@@ -18,12 +18,12 @@ makeAttachParams ::
 makeAttachParams vkMsg [] = pure $ setMsgParamNotEmpty vkMsg <> baseParams vkMsg
 makeAttachParams vkMsg _ =
   pure $
-    setMessageParam (VKStructs.msgText vkMsg)
+    setMessageParam (VKStructs.msg_text vkMsg)
       <> baseParams vkMsg
       <> attachmentListParams vkMsg (VKStructs.attachments vkMsg)
 
 setMsgParamNotEmpty :: VKStructs.VKMessage -> [PureStructs.Params]
-setMsgParamNotEmpty vkMsg = case setMessageParam (VKStructs.msgText vkMsg) of
+setMsgParamNotEmpty vkMsg = case setMessageParam (VKStructs.msg_text vkMsg) of
   [] -> [PureStructs.ParamsText "message" "The attachment you sent is not supperted by this bot"]
   params -> params
 
@@ -31,16 +31,16 @@ attachmentListParams :: VKStructs.VKMessage -> Maybe [VKStructs.Attachment] -> [
 attachmentListParams _ Nothing = []
 attachmentListParams _ (Just []) = []
 attachmentListParams vkMsg (Just attachments) =
-  let links = filter isLink (VKStructs.aObject <$> attachments)
-      stickers = filter isSticker (VKStructs.aObject <$> attachments)
-      media = filter isMedia (VKStructs.aObject <$> attachments)
+  let links = filter isLink (VKStructs.attachment_object <$> attachments)
+      stickers = filter isSticker (VKStructs.attachment_object <$> attachments)
+      media = filter isMedia (VKStructs.attachment_object <$> attachments)
    in makeLinkParams vkMsg links
         <> makeStickerParams stickers
         <> makeMediaParams media
 
 makeLinkParams :: VKStructs.VKMessage -> [VKStructs.AObject] -> [PureStructs.Params]
 makeLinkParams _ [] = []
-makeLinkParams vkMsg links = case VKStructs.msgText vkMsg of
+makeLinkParams vkMsg links = case VKStructs.msg_text vkMsg of
   Nothing -> [PureStructs.ParamsText "message" $ getLinks links]
   Just "" -> [PureStructs.ParamsText "message" $ getLinks links]
   _ -> []

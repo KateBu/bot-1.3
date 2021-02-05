@@ -14,10 +14,10 @@ main = do
   putStrLn "Logic.ProcMsgs.Common.repeatMsg function tests:"
   mapM_ runTestTT Tests.testsRepeatMsg
   putStrLn "Logic.ProcMsgs.Common.processMsgsCommon function tests:"
-  mapM_ runTestTT Tests.testProcessMsgsCommon
+  mapM_ runTestTT Tests.testProcessCommonMsgs
   putStrLn "Logic.ProcMsgs.Callback.processMsgsCallback function tests:"
-  mapM_ runTestTT Tests.testProcessMsgsCallback
+  mapM_ runTestTT Tests.testProcessCallbackMsgs
   putStrLn "Logic.processMsgs_ function tests:"
-  mapM_ runTestTT Tests.testProcessMsgs_
+  mapM_ runTestTT Tests.testProcessMsg
   putStrLn "Logic.processMsgs function tests:"
   mapM_ runTestTT Tests.testProcessMsgs

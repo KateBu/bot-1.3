@@ -24,26 +24,26 @@ import Network.HTTP.Req
   )
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
-sendM ::
+sendMessage ::
   Env.Environment IO ->
   PureStructs.PureMessage ->
   IO (Env.Environment IO)
-sendM env msg = do
+sendMessage env msg = do
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.sendMsg
+  Logger.botLog logger LoggerMsgs.sendMsgInProgress
   let mbParams = PureStructs.mbParams msg
-  maybe (pure env) (mkSendConfig env msg) mbParams
+  maybe (pure env) (sendMessage' env msg) mbParams
 
-mkSendConfig ::
+sendMessage' ::
   Env.Environment IO ->
   PureStructs.PureMessage ->
   [PureStructs.Params] ->
   IO (Env.Environment IO)
-mkSendConfig env msg params = do
+sendMessage' env msg params = do
   config <- runReaderT Env.eConfig env
   basicParams <- WrapFunctions.mbSendOption config
-  lResponse <- getApiResponse env basicParams params msg
-  checkApiResponse env msg lResponse
+  apiResponse <- getApiResponse env basicParams params msg
+  checkApiResponse env msg apiResponse
 
 getApiResponse ::
   Env.Environment IO ->
@@ -54,8 +54,8 @@ getApiResponse ::
 getApiResponse env basicParams params msg = do
   logger <- runReaderT Env.eLogger env
   config <- runReaderT Env.eConfig env
-  Logger.botLog logger LoggerMsgs.getApiResp
-  let hostPath = WrapFunctions.mkHostPath config WrapStructs.Send (Just msg)
+  Logger.botLog logger LoggerMsgs.getApiResponseInProgress
+  let hostPath = WrapFunctions.makeHostPath config WrapStructs.Send (Just msg)
   if any WrapFunctions.isMultipart params
     then getResponseMultipart hostPath params basicParams
     else getResponseUrl hostPath params basicParams
@@ -65,35 +65,40 @@ checkApiResponse ::
   PureStructs.PureMessage ->
   LbsResponse ->
   IO (Env.Environment IO)
-checkApiResponse env msg lbsResp = case responseStatusCode lbsResp of
-  200 -> newBotConfig env msg lbsResp
-  err -> BotEx.throwSendExcept $ Logger.makeLogMessage LoggerMsgs.sndMsgFld ((T.pack . show) err)
+checkApiResponse env msg apiResponse =
+  case responseStatusCode apiResponse of
+    200 -> updateEnvironment env msg apiResponse
+    err -> BotEx.throwSendExcept $ Logger.makeLogMessage LoggerMsgs.sendMsgFailed ((T.pack . show) err)
 
-newBotConfig ::
+updateEnvironment ::
   Env.Environment IO ->
   PureStructs.PureMessage ->
   LbsResponse ->
   IO (Env.Environment IO)
-newBotConfig env msg lbsResp = do
+updateEnvironment env msg lbsResp = do
   logger <- runReaderT Env.eLogger env
   config <- runReaderT Env.eConfig env
   case config of
     Config.VKBot _ -> do
-      let sndMsgResult = eitherDecode (responseBody lbsResp) :: Either String VKStructs.VKResult
-      checkResult env msg sndMsgResult
+      let sendMsgResult = eitherDecode (responseBody lbsResp) :: Either String VKStructs.VKResult
+      checkVKUpdateResult env msg sendMsgResult
     Config.TBot _ -> do
-      Logger.botLog logger LoggerMsgs.sndMsgScsTel
+      Logger.botLog logger LoggerMsgs.sendTelegramMsgSuccess
       Env.eSetOffset env $ succ (PureStructs.updateID msg)
 
-checkResult ::
+checkVKUpdateResult ::
   Env.Environment IO ->
   PureStructs.PureMessage ->
   Either String VKStructs.VKResult ->
   IO (Env.Environment IO)
-checkResult _ _ (Left err) = BotEx.throwSendExcept (Logger.makeLogMessage LoggerMsgs.sndMsgFld (T.pack err))
-checkResult _ _ (Right (VKStructs.SendMsgError (VKStructs.SendError err))) =
-  BotEx.throwSendExcept (Logger.makeLogMessage LoggerMsgs.sndMsgFld (VKStructs.errMsg err))
-checkResult env msg (Right (VKStructs.SendMsgScs _)) = do
+checkVKUpdateResult _ _ (Left err) = BotEx.throwSendExcept logMsg
+  where
+    logMsg = Logger.makeLogMessage LoggerMsgs.sendMsgFailed (T.pack err)
+checkVKUpdateResult _ _ (Right (VKStructs.SendMsgError (VKStructs.SendError err))) =
+  BotEx.throwSendExcept logMsg
+  where
+    logMsg = Logger.makeLogMessage LoggerMsgs.sendMsgFailed (VKStructs.err_msg err)
+checkVKUpdateResult env msg (Right (VKStructs.SendMsgSuccess _)) = do
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.sndMsgScsVK
+  Logger.botLog logger LoggerMsgs.sendVkMsgSuccess
   Env.eSetOffset env $ PureStructs.updateID msg

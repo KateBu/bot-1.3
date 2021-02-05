@@ -6,47 +6,47 @@ import qualified Logic.ProcMsgs.Common as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData
 
-testProcessMsgsCommon :: [Test]
-testProcessMsgsCommon = [testProcessMsgsCommon1, testProcessMsgsCommon2]
+testProcessCommonMsgs :: [Test]
+testProcessCommonMsgs = [testProcessCommonMsgs1, testProcessCommonMsgs2]
 
-testProcessMsgsCommon1 :: Test
-testProcessMsgsCommon1 =
+testProcessCommonMsgs1 :: Test
+testProcessCommonMsgs1 =
   TestCase
     ( assertEqual
-        "Logic.processMsgsCommon1"
-        expectedProcessMsgsCommon1
-        actualProcessMsgsCommon1
+        "Logic.processCommonMsgs1"
+        expectedProcessCommonMsgs1
+        actualProcessCommonMsgs1
     )
 
-actualProcessMsgsCommon1 :: Maybe Config.Config
-actualProcessMsgsCommon1 =
+actualProcessCommonMsgs1 :: Maybe Config.Config
+actualProcessCommonMsgs1 =
   Env.config
-    <$> Logic.processMsgsCommon
+    <$> Logic.processCommonMsgs
       TestData.testEnvTelegram
       TestData.servicesTel1
       TestData.cmnMsg4
       11
 
-expectedProcessMsgsCommon1 :: Maybe Config.Config
-expectedProcessMsgsCommon1 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 3
+expectedProcessCommonMsgs1 :: Maybe Config.Config
+expectedProcessCommonMsgs1 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 3
 
-testProcessMsgsCommon2 :: Test
-testProcessMsgsCommon2 =
+testProcessCommonMsgs2 :: Test
+testProcessCommonMsgs2 =
   TestCase
     ( assertEqual
-        "Logic.processMsgsCommon2"
-        expectedProcessMsgsCommon2
-        actualProcessMsgsCommon2
+        "Logic.processCommonMsgs2"
+        expectedProcessCommonMsgs2
+        actualProcessCommonMsgs2
     )
 
-actualProcessMsgsCommon2 :: Maybe Config.Config
-actualProcessMsgsCommon2 =
+actualProcessCommonMsgs2 :: Maybe Config.Config
+actualProcessCommonMsgs2 =
   Env.config
-    <$> Logic.processMsgsCommon
+    <$> Logic.processCommonMsgs
       TestData.testEnvVK
       TestData.servicesVk1
       TestData.cmnMsg5
       42
 
-expectedProcessMsgsCommon2 :: Maybe Config.Config
-expectedProcessMsgsCommon2 = Env.config <$> Env.eSetOffset TestData.testEnvVK 16
+expectedProcessCommonMsgs2 :: Maybe Config.Config
+expectedProcessCommonMsgs2 = Env.config <$> Env.eSetOffset TestData.testEnvVK 16

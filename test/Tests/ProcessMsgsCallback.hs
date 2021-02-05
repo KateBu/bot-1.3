@@ -7,27 +7,27 @@ import qualified Logic.PureStructs as PureStructs
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData as TestData
 
-testProcessMsgsCallback :: [Test]
-testProcessMsgsCallback =
-  [testProcessMsgsCallback1]
+testProcessCallbackMsgs :: [Test]
+testProcessCallbackMsgs =
+  [testProcessCallbackMsgs1]
 
-testProcessMsgsCallback1 :: Test
-testProcessMsgsCallback1 =
+testProcessCallbackMsgs1 :: Test
+testProcessCallbackMsgs1 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgsCallback1"
-        expectedProcessMsgsCallback1
-        actualProcessMsgsCallback1
+        "Logic.testProcessCallbackMsgs1"
+        expectedProcessCallbackMsgs1
+        actualProcessCallbackMsgs1
     )
 
-actualProcessMsgsCallback1 :: Maybe Config.Config
-actualProcessMsgsCallback1 =
+actualProcessCallbackMsgs1 :: Maybe Config.Config
+actualProcessCallbackMsgs1 =
   Env.config
-    <$> Logic.processMsgsCallback
+    <$> Logic.processCallbackMsgs
       TestData.servicesTel1
       TestData.cbMsg2
-      PureStructs.rep5
+      PureStructs.setRepeat5
       11
 
-expectedProcessMsgsCallback1 :: Maybe Config.Config
-expectedProcessMsgsCallback1 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 3
+expectedProcessCallbackMsgs1 :: Maybe Config.Config
+expectedProcessCallbackMsgs1 = Env.config <$> Env.eSetOffset TestData.testEnvTelegram 3

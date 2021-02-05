@@ -4,6 +4,6 @@ import qualified API.VK.Structs.Exports as VKStructs
 import qualified Logic.PureStructs as PureStructs
 
 mbFwd :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-mbFwd vkMsg = case VKStructs.fwdMessages vkMsg of
+mbFwd vkMsg = case VKStructs.fwd_msgs vkMsg of
   Nothing -> Nothing
-  _ -> pure $ PureStructs.MTCommon "Fwd"
+  _ -> pure $ PureStructs.MsgTypeCommon "Fwd"

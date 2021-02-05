@@ -4,7 +4,6 @@ import Environment.Functions as Env
   ( REnv,
     eConfig,
     eDBConnectionString,
-    eGetUid,
     eHelpMsg,
     eLogger,
     eRep,

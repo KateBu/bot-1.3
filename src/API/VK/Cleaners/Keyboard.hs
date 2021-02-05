@@ -11,12 +11,16 @@ keyboard :: Value
 keyboard =
   object
     [ "inline" .= True,
-      "buttons" .= (fmap . fmap) pureBtnToVKBtnAct PureStructs.buttons'
+      "buttons" .= (fmap . fmap) pureButtonsToVKButtonAction PureStructs.buttons
     ]
 
-pureBtnToVKBtnAct :: PureStructs.PureButtons -> VKStructs.BtnAction
-pureBtnToVKBtnAct btn@(PureStructs.PureButtons btnLabel _) =
-  VKStructs.BtnAction $ VKStructs.VKButtons "callback" ((T.pack . C8.unpack) $ mkLBS btn) btnLabel
+pureButtonsToVKButtonAction :: PureStructs.PureButtons -> VKStructs.ButtonAction
+pureButtonsToVKButtonAction btn@(PureStructs.PureButtons btnLabel _) =
+  VKStructs.ButtonAction $
+    VKStructs.VKButtons
+      "callback"
+      ((T.pack . C8.unpack) $ pureButtonsToBytestring btn)
+      btnLabel
 
-mkLBS :: PureStructs.PureButtons -> BSL.ByteString
-mkLBS (PureStructs.PureButtons btnLabel btnData) = encode $ object [btnLabel .= btnData]
+pureButtonsToBytestring :: PureStructs.PureButtons -> BSL.ByteString
+pureButtonsToBytestring (PureStructs.PureButtons btnLabel btnData) = encode $ object [btnLabel .= btnData]

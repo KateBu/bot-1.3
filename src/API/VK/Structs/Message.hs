@@ -27,11 +27,11 @@ import TextMessages.ParseFailMessage (parseFailMessage)
 data VKMessage = VKMessage
   { id :: Int,
     from_id :: Int,
-    msgText :: Maybe T.Text,
+    msg_text :: Maybe T.Text,
     attachments :: Maybe [Attachment],
     geo :: Maybe Geo,
-    cbPayload :: Maybe T.Text,
-    fwdMessages :: Maybe [VKMessage]
+    callback_payload :: Maybe T.Text,
+    fwd_msgs :: Maybe [VKMessage]
   }
   deriving (Show)
 

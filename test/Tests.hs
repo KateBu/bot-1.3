@@ -16,13 +16,13 @@ import Tests.ProcessMsgs as Tests
   ( testProcessMsgs,
   )
 import Tests.ProcessMsgsCallback as Tests
-  ( testProcessMsgsCallback,
+  ( testProcessCallbackMsgs,
   )
 import Tests.ProcessMsgsCommon as Tests
-  ( testProcessMsgsCommon,
+  ( testProcessCommonMsgs,
   )
 import Tests.ProcessMsgs_ as Tests
-  ( testProcessMsgs_,
+  ( testProcessMsg,
   )
 import Tests.RepeatMsgs as Tests
   ( testsRepeatMsg,

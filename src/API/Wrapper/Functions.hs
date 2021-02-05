@@ -24,7 +24,7 @@ import Network.HTTP.Req
   )
 
 hostPathToUrlScheme :: Maybe WrapStructs.HostPath -> Maybe (Url 'Https)
-hostPathToUrlScheme (Just (WrapStructs.HostPath hpHost hpPath)) = pure $ makeUrlScheme (https hpHost) hpPath
+hostPathToUrlScheme (Just (WrapStructs.HostPath host path)) = pure $ makeUrlScheme (https host) path
 hostPathToUrlScheme _ = Nothing
 
 makeUrlScheme :: Url 'Https -> [T.Text] -> Url 'Https
@@ -70,19 +70,19 @@ mbSendOption _ = mempty
 
 updateParam :: Config.Config -> [PureStructs.Params]
 updateParam vk@(Config.VKBot _) = VKData.updateParams vk
-updateParam tel@(Config.TBot _) = TelData.updateParams tel
+updateParam telegram@(Config.TBot _) = TelData.updateParams telegram
 
-mkHostPath :: Config.Config -> WrapStructs.Method -> Maybe PureStructs.PureMessage -> Maybe (Url 'Https)
-mkHostPath config WrapStructs.Update _ = mkUpdHostPath config
-mkHostPath config WrapStructs.Send (Just msg) = mkSndHostPath config msg
-mkHostPath _ _ _ = Nothing
+makeHostPath :: Config.Config -> WrapStructs.Method -> Maybe PureStructs.PureMessage -> Maybe (Url 'Https)
+makeHostPath config WrapStructs.Update _ = makeUpdateHostPath config
+makeHostPath config WrapStructs.Send (Just msg) = makeSendHostPath config msg
+makeHostPath _ _ _ = Nothing
 
-mkUpdHostPath :: Config.Config -> Maybe (Url 'Https)
-mkUpdHostPath vk@(Config.VKBot _) = hostPathToUrlScheme (VKData.updateHostPath vk)
-mkUpdHostPath tel@(Config.TBot _) = hostPathToUrlScheme (TelData.updateHostPath tel)
+makeUpdateHostPath :: Config.Config -> Maybe (Url 'Https)
+makeUpdateHostPath vk@(Config.VKBot _) = hostPathToUrlScheme (VKData.updateHostPath vk)
+makeUpdateHostPath telegram@(Config.TBot _) = hostPathToUrlScheme (TelData.updateHostPath telegram)
 
-mkSndHostPath :: Config.Config -> PureStructs.PureMessage -> Maybe (Url 'Https)
-mkSndHostPath (Config.VKBot _) _ = hostPathToUrlScheme VKData.sendHostPath
-mkSndHostPath tel@(Config.TBot _) msg =
+makeSendHostPath :: Config.Config -> PureStructs.PureMessage -> Maybe (Url 'Https)
+makeSendHostPath (Config.VKBot _) _ = hostPathToUrlScheme VKData.sendHostPath
+makeSendHostPath telegram@(Config.TBot _) msg =
   hostPathToUrlScheme $
-    TelData.sendHostPath tel (PureStructs.messageType msg)
+    TelData.sendHostPath telegram (PureStructs.messageType msg)
