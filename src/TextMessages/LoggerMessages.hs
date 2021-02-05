@@ -37,6 +37,7 @@ import TextMessages.LoggerMessages.Telegram as Messages
     sendTelegramMsgSuccess,
     telegramBytestringDecodingInProgress,
     telegramBytestringDecodingSuccess,
+    telegramUpdatesFailed,
   )
 import TextMessages.LoggerMessages.VK as Messages
   ( getVKUpdatesSuccess,

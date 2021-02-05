@@ -43,3 +43,9 @@ noUpdates =
   Logger.LogMessage
     Logger.Error
     "No updates were found"
+
+telegramUpdatesFailed :: Logger.LogMessage
+telegramUpdatesFailed =
+  Logger.LogMessage
+    Logger.Error
+    "Telegram bot couldn't get updates"
