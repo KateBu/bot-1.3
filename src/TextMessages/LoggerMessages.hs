@@ -1,5 +1,9 @@
 module TextMessages.LoggerMessages (module Messages) where
 
+import TextMessages.LoggerMessages.API as Messages
+  ( apiHandleCloseMsg,
+    apiHandleCreateMsg,
+  )
 import TextMessages.LoggerMessages.Bot as Messages
   ( getUpdateFailed,
     initConfigExcept,
@@ -11,6 +15,8 @@ import TextMessages.LoggerMessages.Bot as Messages
 import TextMessages.LoggerMessages.DB as Messages
   ( addUserQueryFailed,
     addUserRepeatSuccess,
+    dbHandleCloseMsg,
+    dbHandleCreateMsg,
     findUserQueryFailed,
     findUserSuccess,
     updateUserRepeatFailed,

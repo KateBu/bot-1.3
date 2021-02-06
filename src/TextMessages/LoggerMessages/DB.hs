@@ -22,3 +22,9 @@ updateUserRepeatSuccess = Logger.LogMessage Logger.Info "New repeat value for Us
 
 findUserSuccess :: Logger.LogMessage
 findUserSuccess = Logger.LogMessage Logger.Debug "User was found in Database..."
+
+dbHandleCloseMsg :: Logger.LogMessage
+dbHandleCloseMsg = Logger.LogMessage Logger.Debug "DB handle closed..."
+
+dbHandleCreateMsg :: Logger.LogMessage
+dbHandleCreateMsg = Logger.LogMessage Logger.Debug "DB handle created..."
