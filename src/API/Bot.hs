@@ -11,13 +11,16 @@ import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 runBot :: Env.Environment IO -> IO ()
 runBot env =
-  withBotExceptionWrapped $
-    Services.getUpdates env >>= Logic.processMsgs env >>= nextLoop
+  withBotExceptionWrapped $ do
+    pureMsgList <- Services.getUpdates env 
+    currentEnvironment <- Logic.processMsgs env pureMsgList
+    nextLoop currentEnvironment
 
 nextLoop :: Env.Environment IO -> IO ()
 nextLoop env = do
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.nextLoop >> runBot env
+  Logger.botLog logger LoggerMsgs.nextLoop 
+  runBot env
 
 withBotExceptionWrapped :: IO () -> IO ()
 withBotExceptionWrapped = Ex.handle BotEx.handleBotException

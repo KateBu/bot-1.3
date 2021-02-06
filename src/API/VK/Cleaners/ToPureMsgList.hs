@@ -64,9 +64,9 @@ vkUpdateInfoToPureMessageList env (updateId, updates) = do
   logger <- runReaderT Env.eLogger env
   helpMsg <- runReaderT Env.eHelpMsg env
   Logger.botLog logger LoggerMsgs.parseVKMsgSuccess
-  maybe (BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed) pure (pureMsg helpMsg)
+  maybe (BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed) pure (mbPureMsgs helpMsg)
   where
-    pureMsg helpMsg = sequence $ vkUpdInfoToPureMessage helpMsg updateId <$> updates
+    mbPureMsgs helpMsg = sequence $ vkUpdInfoToPureMessage helpMsg updateId <$> updates
 
 vkUpdInfoToPureMessage ::
   Env.HelpMessage ->

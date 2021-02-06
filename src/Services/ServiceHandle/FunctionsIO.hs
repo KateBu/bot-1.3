@@ -26,9 +26,9 @@ addUserIO ::
   Env.RepeatNumber ->
   IO ()
 addUserIO env chatId repeatNumber =
-  DBHandle.withDBHandle env function
+  DBHandle.withDBHandle env addFunction
   where
-    function = \handle -> DBHandle.addUser handle chatId repeatNumber
+    addFunction = \handle -> DBHandle.addUser handle chatId repeatNumber
 
 updateUserIO ::
   Env.Environment IO ->
@@ -36,6 +36,6 @@ updateUserIO ::
   Env.RepeatNumber ->
   IO ()
 updateUserIO env chatId repeatNumber =
-  DBHandle.withDBHandle env function
+  DBHandle.withDBHandle env updateFunction
   where
-    function = \handle -> DBHandle.updateUser handle chatId repeatNumber
+    updateFunction = \handle -> DBHandle.updateUser handle chatId repeatNumber

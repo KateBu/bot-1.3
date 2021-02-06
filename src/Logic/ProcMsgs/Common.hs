@@ -26,5 +26,5 @@ repeatMsg ::
   m (Env.Environment m)
 repeatMsg _ 0 env = pure env
 repeatMsg msg repeatNumber env = do
-  Handle.sendMessage env msg
-    >>= repeatMsg msg (repeatNumber -1)
+  currentEnvironment <- Handle.sendMessage env msg
+  repeatMsg msg (repeatNumber -1) currentEnvironment
