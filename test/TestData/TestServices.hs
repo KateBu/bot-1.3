@@ -3,50 +3,18 @@ module TestData.TestServices where
 import qualified Data.Map as Map
 import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
-import qualified Services.API.Handle as API
-import qualified Services.DB.Handle as DB
 import qualified Services.Exports as Services
-import TestData.TestEnvironment (testEnvTelegram, testEnvVK)
 import qualified TestData.TestMessages as Msgs
-
-servicesVk1 :: Services.SHandle Maybe
-servicesVk1 =
-  Services.SHandle
-    { Services.hAPI = pure apiVK1,
-      Services.hDB = pure db
-    }
-
-servicesTel1 :: Services.SHandle Maybe
-servicesTel1 =
-  Services.SHandle
-    { Services.hAPI = pure apiTel1,
-      Services.hDB = pure db
-    }
 
 testDataBase :: Map.Map Int Int
 testDataBase = Map.fromList [(11, 1), (22, 2), (33, 3)]
 
-apiVK1 :: API.Handle Maybe
-apiVK1 =
-  API.Handle
-    { API.hGetUpdates = pure Msgs.allMessages,
-      API.hSendMessage = sendMsg1 testEnvVK
-    }
+instance Services.Services Maybe where
+  getUpdates = \_ -> pure Msgs.allMessages
+  sendMessage = \env msg -> Env.eSetOffset env $ succ (PureStructs.updateID msg)
+  findUser = findUserMaybe
+  addUser = \_ _ _ -> Just ()
+  updateUser = \_ _ _ -> Just ()
 
-apiTel1 :: API.Handle Maybe
-apiTel1 =
-  API.Handle
-    { API.hGetUpdates = pure Msgs.allMessages,
-      API.hSendMessage = sendMsg1 testEnvTelegram
-    }
-
-db :: DB.Handle Maybe
-db =
-  DB.Handle
-    { DB.findUser = \uid -> pure $ Map.lookup uid testDataBase,
-      DB.addUser = \_ _ -> pure (),
-      DB.updateUser = \_ _ -> pure ()
-    }
-
-sendMsg1 :: Env.Environment Maybe -> PureStructs.PureMessage -> Maybe (Env.Environment Maybe)
-sendMsg1 env msg = Env.eSetOffset env $ succ (PureStructs.updateID msg)
+findUserMaybe :: Env.Environment Maybe -> PureStructs.ChatID -> Maybe (Maybe Env.RepeatNumber)
+findUserMaybe _ chatId = pure $ Map.lookup chatId testDataBase

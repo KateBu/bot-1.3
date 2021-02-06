@@ -1,5 +1,5 @@
 import Test.HUnit (runTestTT)
-import qualified Tests 
+import qualified Tests
 
 main :: IO ()
 main = do

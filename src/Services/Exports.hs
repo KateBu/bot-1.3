@@ -1,3 +1,3 @@
-module Services.Exports (module SHandle) where
+module Services.Exports (module Services) where
 
-import Services.ServiceHandle.Handle as SHandle (Services (..))
+import Services.ServiceHandle.ServicesDefinition as Services (Services (..))

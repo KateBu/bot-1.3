@@ -4,7 +4,7 @@ import qualified Config.Exports as Config
 import qualified Environment.Exports as Env
 import qualified Logic.Main as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
-import qualified TestData as TestData
+import qualified TestData
 
 testProcessMsgs :: [Test]
 testProcessMsgs =
@@ -21,7 +21,7 @@ testProcessMsgs1 :: Test
 testProcessMsgs1 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsgs1"
+        "Logic.Main.testProcessMsgs1"
         expectedTestProcessMsgs1
         actualTestProcessMsgs1
     )
@@ -31,7 +31,6 @@ actualTestProcessMsgs1 =
   Env.config
     <$> Logic.processMsgs
       TestData.testEnvTelegram
-      TestData.servicesTel1
       TestData.messagesWithoutErrors
 
 expectedTestProcessMsgs1 :: Maybe Config.Config
@@ -51,7 +50,6 @@ actualTestProcessMsgs2 =
   Env.config
     <$> Logic.processMsgs
       TestData.testEnvVK
-      TestData.servicesVk1
       TestData.emptyMessages
 
 expectedTestProcessMsgs2 :: Maybe Config.Config
@@ -71,7 +69,6 @@ actualTestProcessMsgs3 =
   Env.config
     <$> Logic.processMsgs
       TestData.testEnvTelegram
-      TestData.servicesTel1
       TestData.cmdWithoutErrors
 
 expectedTestProcessMsgs3 :: Maybe Config.Config
@@ -91,7 +88,6 @@ actualTestProcessMsgs4 =
   Env.config
     <$> Logic.processMsgs
       TestData.testEnvVK
-      TestData.servicesVk1
       TestData.cbWithoutErrors
 
 expectedTestProcessMsgs4 :: Maybe Config.Config
@@ -111,7 +107,6 @@ actualTestProcessMsgs5 =
   Env.config
     <$> Logic.processMsgs
       TestData.testEnvTelegram
-      TestData.servicesTel1
       TestData.cmnWithoutErrors
 
 expectedTestProcessMsgs5 :: Maybe Config.Config
@@ -131,7 +126,6 @@ actualTestProcessMsgs6 =
   Env.config
     <$> Logic.processMsgs
       TestData.testEnvVK
-      TestData.servicesVk1
       []
 
 expectedTestProcessMsgs6 :: Maybe Config.Config
@@ -151,5 +145,4 @@ actualTestProcessMsgs7 =
   Env.config
     <$> Logic.processMsgs
       TestData.testEnvTelegram
-      TestData.servicesTel1
       TestData.allMessages

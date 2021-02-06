@@ -43,12 +43,4 @@ import TestData.TestMessages as Tests
     messagesWithoutErrors,
     newHelp,
   )
-import TestData.TestServices as Tests
-  ( apiTel1,
-    apiVK1,
-    db,
-    sendMsg1,
-    servicesTel1,
-    servicesVk1,
-    testDataBase,
-  )
+import TestData.TestServices as Tests ()

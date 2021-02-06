@@ -5,7 +5,7 @@ import qualified Environment.Exports as Env
 import qualified Logic.ProcMsgs.Callback as Logic
 import qualified Logic.PureStructs as PureStructs
 import Test.HUnit (Test (TestCase), assertEqual)
-import qualified TestData as TestData
+import qualified TestData
 
 testProcessCallbackMsgs :: [Test]
 testProcessCallbackMsgs =
@@ -24,7 +24,7 @@ actualProcessCallbackMsgs1 :: Maybe Config.Config
 actualProcessCallbackMsgs1 =
   Env.config
     <$> Logic.processCallbackMsgs
-      TestData.servicesTel1
+      TestData.testEnvTelegram
       TestData.cbMsg2
       PureStructs.setRepeat5
       11

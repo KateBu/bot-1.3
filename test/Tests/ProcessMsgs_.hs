@@ -4,7 +4,7 @@ import qualified Config.Exports as Config
 import qualified Environment.Exports as Env
 import qualified Logic.Main as Logic
 import Test.HUnit (Test (TestCase), assertEqual)
-import qualified TestData as TestData
+import qualified TestData
 
 testProcessMsg :: [Test]
 testProcessMsg =
@@ -23,7 +23,7 @@ testProcessMsg_1 :: Test
 testProcessMsg_1 =
   TestCase
     ( assertEqual
-        "Logic.testProcessMsg_1"
+        "Logic.Main.ProcessMsg1"
         expectedTestProcessMsg_1
         actualTestProcessMsg_1
     )
@@ -33,7 +33,6 @@ actualTestProcessMsg_1 =
   Env.config
     <$> Logic.processMsg
       TestData.testEnvTelegram
-      TestData.servicesTel1
       TestData.emptyMsg1
 
 expectedTestProcessMsg_1 :: Maybe Config.Config
@@ -53,7 +52,6 @@ actualTestProcessMsg_2 =
   Env.config
     <$> Logic.processMsg
       TestData.testEnvVK
-      TestData.servicesVk1
       TestData.emptyMsg2
 
 expectedTestProcessMsg_2 :: Maybe Config.Config
@@ -73,7 +71,6 @@ actualTestProcessMsg_3 =
   Env.config
     <$> Logic.processMsg
       TestData.testEnvTelegram
-      TestData.servicesTel1
       TestData.commandMsg1
 
 expectedTestProcessMsg_3 :: Maybe Config.Config
@@ -93,7 +90,6 @@ actualTestProcessMsg_4 =
   Env.config
     <$> Logic.processMsg
       TestData.testEnvVK
-      TestData.servicesVk1
       TestData.commandMsg5
 
 expectedTestProcessMsg_4 :: Maybe Config.Config
@@ -113,7 +109,6 @@ actualTestProcessMsg_5 =
   Env.config
     <$> Logic.processMsg
       TestData.testEnvVK
-      TestData.servicesVk1
       TestData.cbMsg2
 
 expectedTestProcessMsg_5 :: Maybe Config.Config
@@ -133,7 +128,6 @@ actualTestProcessMsg_6 =
   Env.config
     <$> Logic.processMsg
       TestData.testEnvVK
-      TestData.servicesVk1
       TestData.cmnMsg3
 
 expectedTestProcessMsg_6 :: Maybe Config.Config
@@ -153,7 +147,6 @@ actualTestProcessMsg_7 =
   Env.config
     <$> Logic.processMsg
       TestData.testEnvTelegram
-      TestData.servicesTel1
       TestData.cmnMsg5
 
 expectedTestProcessMsg_7 :: Maybe Config.Config
@@ -173,7 +166,6 @@ actualTestProcessMsg_8 =
   Env.config
     <$> Logic.processMsg
       TestData.testEnvVK
-      TestData.servicesVk1
       TestData.cmnMsg4
 
 expectedTestProcessMsg_8 :: Maybe Config.Config
@@ -193,7 +185,4 @@ actualTestProcessMsg_9 =
   Env.config
     <$> Logic.processMsg
       TestData.testEnvVK
-      TestData.servicesVk1
       TestData.cmnMsg1
-
-

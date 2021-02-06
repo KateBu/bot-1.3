@@ -23,7 +23,6 @@ actualProcessCommonMsgs1 =
   Env.config
     <$> Logic.processCommonMsgs
       TestData.testEnvTelegram
-      TestData.servicesTel1
       TestData.cmnMsg4
       11
 
@@ -44,7 +43,6 @@ actualProcessCommonMsgs2 =
   Env.config
     <$> Logic.processCommonMsgs
       TestData.testEnvVK
-      TestData.servicesVk1
       TestData.cmnMsg5
       42
 

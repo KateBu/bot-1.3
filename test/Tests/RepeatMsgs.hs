@@ -29,7 +29,6 @@ actualRepeatMsg0 =
     <$> Logic.repeatMsg
       TestData.cmnMsg1
       0
-      TestData.servicesTel1
       TestData.testEnvTelegram
 
 expectedRepeatMsg0 :: Maybe Config.Config
@@ -50,7 +49,6 @@ actualRepeatMsg1 =
     <$> Logic.repeatMsg
       TestData.cmnMsg1
       1
-      TestData.servicesTel1
       TestData.testEnvTelegram
 
 expectedRepeatMsg1 :: Maybe Config.Config
@@ -71,7 +69,6 @@ actualRepeatMsg2 =
     <$> Logic.repeatMsg
       TestData.cmnMsg2
       2
-      TestData.servicesVk1
       TestData.testEnvVK
 
 expectedRepeatMsg2 :: Maybe Config.Config
@@ -92,7 +89,6 @@ actualRepeatMsg3 =
     <$> Logic.repeatMsg
       TestData.cmnMsg3
       5
-      TestData.servicesVk1
       TestData.testEnvVK
 
 expectedRepeatMsg3 :: Maybe Config.Config
