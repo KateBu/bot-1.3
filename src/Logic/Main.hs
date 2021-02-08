@@ -8,7 +8,7 @@ import qualified Exceptions.Exports as BotEx
 import Logic.Functions.Callback (processCallbackMsgs)
 import Logic.Functions.Common (processCommonMsgs)
 import qualified Logic.Structs as PureStructs
-import qualified Services.Exports as Handle
+import qualified Services.ServiceHandle.ServicesDefinition as Handle
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 processMsgs ::

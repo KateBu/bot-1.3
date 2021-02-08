@@ -1,4 +1,4 @@
-module Bot where
+module Bot (runBot) where
 
 import qualified Control.Exception as Ex
 import Control.Monad.Reader (ReaderT (runReaderT))
@@ -6,7 +6,7 @@ import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
 import qualified Logic.Main as Logic
-import qualified Services.Exports as Services
+import qualified Services.ServiceHandle.ServicesDefinition as Services
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 runBot :: Env.Environment IO -> IO ()
