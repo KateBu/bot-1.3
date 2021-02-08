@@ -7,7 +7,7 @@
 
 <p> The project is devided into three parts: app (Main module), src (see the structure of this part below), test (contains unit tests). </p> 
 
-### Src structure (will be updated soon)
+### Src structure 
 
 <p> src part contains the following folders: </p>
 
@@ -20,9 +20,17 @@
 - Wrapper
 
 #### API 
-<p> API folder contains two folders: VK and Telegram. The aim of the functions, actions and structures in these folders is to decode bytestrings to specific data (Telegram data or VK data) and then to PureMessages. </p>
+<p> API folder contains two folders: VK and Telegram. The aim of the functions, actions and structures of these folders is to decode bytestrings into specific structures (Telegram structures or VK ones) and then build PureMessages. </p>
 
-<p>...the information below is outdated and will be updated soon...</p>
+<p>Telegram folder contains the following modules:</p>
+
+- Main module - the module exports decodePureMessageList functions (the function is called in Wrapper.Decoders module), it decodes bytestring into TelegramUpdates and builds PureMessage. There are some other helper functions for decoding, throwing exceptions and building PureMessage list in this module.
+- URL module - contains a set of funtions for building urls.
+- Functions folder - contains Builders module (that exports buildPureMessage function), Params module (contains some functions for building message parameters), Attachments module (exports some functions for builing PureMessages of specific types).
+- Structs folder - contains specific Telegram data structures.
+
+
+<p>...the information below is outdated and will be rewritten soon...</p>
 
 
 <p> The <b>Telegram</b> folder contains module Cleaners (exports telByteStringToPureMessageList function and contains functions for decoding json data Telegram server sends into list of PureMessages), there are some functions for decoding in Cleaners folder. Module Data contains some specific data for connecting to Telegram server and some functions for building Telegram http requests. You can find specific data structures and FromJSON/ToJSON instances of Telegram server responses in Structs folder. </p>
