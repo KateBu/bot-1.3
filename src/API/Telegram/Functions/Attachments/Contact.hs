@@ -1,7 +1,6 @@
 module API.Telegram.Functions.Attachments.Contact where
 
-import API.Telegram.Functions.BasicParams (basicParams)
-import API.Telegram.Functions.Params (buildTextParams)
+import API.Telegram.Functions.Params (basicParams, buildTextParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.Structs as PureStructs
 

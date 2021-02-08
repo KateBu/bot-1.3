@@ -1,6 +1,6 @@
 module API.Telegram.Functions.Attachments.Venue where
 
-import API.Telegram.Functions.BasicParams (basicParams)
+import API.Telegram.Functions.Params (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Data.Text as T
 import qualified Logic.Structs as PureStructs

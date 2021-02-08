@@ -1,6 +1,6 @@
 module API.Telegram.Functions.Attachments.Txt where
 
-import API.Telegram.Functions.BasicParams (basicParams)
+import API.Telegram.Functions.Params (basicParams)
 import API.Telegram.Structs.Attachments.Keyboard (TButtons (TButtons))
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import Data.Aeson (KeyValue ((.=)), Value, object)
