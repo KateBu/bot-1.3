@@ -1,10 +1,10 @@
 module API.VK.Data where
 
-import qualified API.Wrapper.Structs as WrapStructs
 import qualified Data.Text as T
 import qualified Environment.Config.Exports as Config
 import qualified Logic.PureStructs as PureStructs
 import System.Random (Random (random), newStdGen)
+import qualified Wrapper.Structs as WrapStructs
 
 updateParams :: Config.Config -> [PureStructs.Params]
 updateParams (Config.VKBot (Config.VK _ _ key _ ts)) =

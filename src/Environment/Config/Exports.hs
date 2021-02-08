@@ -6,7 +6,7 @@ import Environment.Config.Data as Config
     vkLongPollUrl,
   )
 import Environment.Config.Functions as Config
-  ( configSetOffset,
+  ( setOffset,
   )
 import Environment.Config.Struct as Config
   ( Config (..),

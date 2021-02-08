@@ -25,14 +25,14 @@ setBotSettings ::
   Maybe Config.Token ->
   IO Config.Config
 setBotSettings (Just "VK") (Just group) (Just vkToken) _ = do
-  vkSettings <- getVKSettings group vkToken
+  vkSettings <- buildVKSettings group vkToken
   vkSettingsSuccess group vkToken vkSettings
 setBotSettings (Just "Telegram") _ _ (Just telegramToken) =
   pure $ Config.TBot (Config.Telegram telegramToken 0)
 setBotSettings _ _ _ _ = BotEx.throwInitConfigExcept
 
-getVKSettings :: Config.VKGroup -> Config.Token -> IO (T.Text, T.Text, Int)
-getVKSettings group token = do
+buildVKSettings :: Config.VKGroup -> Config.Token -> IO (T.Text, T.Text, Int)
+buildVKSettings group token = do
   longPollResponse <- getLongPollRequestBody group token
   getLongPollInfo longPollResponse
 
@@ -44,7 +44,7 @@ getLongPollRequestBody group token = do
   either BotEx.throwIOException pure eiLongPollResponse
   where
     request = do
-      request' <- parseRequest (makeVkLonpPollUrl group token)
+      request' <- parseRequest (buildVkLonpPollUrl group token)
       httpLBS request'
 
 getLongPollInfo ::
@@ -52,13 +52,13 @@ getLongPollInfo ::
   IO (Config.VKKey, Config.VKServer, Config.Offset)
 getLongPollInfo longPollResponse = do
   let eiVKResponse = eitherDecode longPollResponse :: Either String VKStructs.VKResponse
-  either BotEx.throwParseExcept makeVKSettings eiVKResponse
+  either BotEx.throwParseExcept buildSettings eiVKResponse
 
-makeVKSettings :: VKStructs.VKResponse -> IO (Config.VKKey, Config.VKServer, Config.Offset)
-makeVKSettings (VKStructs.VKResponse (VKStructs.LongPollResponse key server ts)) = do
+buildSettings :: VKStructs.VKResponse -> IO (Config.VKKey, Config.VKServer, Config.Offset)
+buildSettings (VKStructs.VKResponse (VKStructs.LongPollResponse key server ts)) = do
   let eiTs = readEither ts :: Either String Int
   either BotEx.throwParseExcept (longPollResponseSuccess key server) eiTs
-makeVKSettings (VKStructs.VKError (VKStructs.ResponseError errCode errMsg)) =
+buildSettings (VKStructs.VKError (VKStructs.ResponseError errCode errMsg)) =
   BotEx.throwBotExcept $
     BotEx.InitConfigExcept
       ( Logger.makeLogMessage
@@ -71,7 +71,7 @@ makeVKSettings (VKStructs.VKError (VKStructs.ResponseError errCode errMsg)) =
         <> (T.pack . show) errCode
         <> "error_message: "
         <> errMsg
-makeVKSettings _ = BotEx.throwParseExcept ""
+buildSettings _ = BotEx.throwParseExcept ""
 
 vkSettingsSuccess ::
   Config.VKGroup ->
@@ -82,8 +82,8 @@ vkSettingsSuccess group token (key, server, ts) = do
   let vk = Config.VK token group key server ts
   pure $ Config.VKBot vk
 
-makeVkLonpPollUrl :: Config.VKGroup -> Config.Token -> String
-makeVkLonpPollUrl group server =
+buildVkLonpPollUrl :: Config.VKGroup -> Config.Token -> String
+buildVkLonpPollUrl group server =
   Config.vkLongPollUrl
     <> show group
     <> "&access_token="

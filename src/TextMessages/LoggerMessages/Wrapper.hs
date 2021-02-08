@@ -8,8 +8,8 @@ sendMsgFailed =
     Logger.Error
     "sendMessage function failed: "
 
-invalidHP :: Logger.LogMessage
-invalidHP =
+invalidHostPath :: Logger.LogMessage
+invalidHostPath =
   Logger.LogMessage
     Logger.Error
     "Invalid host path"

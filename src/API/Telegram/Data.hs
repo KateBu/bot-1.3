@@ -1,8 +1,8 @@
 module API.Telegram.Data where
 
-import qualified API.Wrapper.Structs as WrapStructs
 import qualified Environment.Config.Exports as Config
 import qualified Logic.PureStructs as PureStructs
+import qualified Wrapper.Structs as WrapStructs
 
 updateHostPath :: Config.Config -> Maybe WrapStructs.HostPath
 updateHostPath (Config.TBot (Config.Telegram tok _)) =

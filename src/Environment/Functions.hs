@@ -22,12 +22,12 @@ eLogger = asks Env.logger
 eDBConnectionString :: Monad m => REnv m Env.DBConnectString
 eDBConnectionString = asks Env.dbConnectString
 
-updateConfig :: Monad m => Env.Environment m -> Config.Config -> m (Env.Environment m)
-updateConfig (Env.Environment _ repeatNimber helpMsg logger dbConnectString) newConfig =
-  pure $ Env.Environment newConfig repeatNimber helpMsg logger dbConnectString
-
 eSetOffset :: Monad m => Env.Environment m -> Config.Offset -> m (Env.Environment m)
 eSetOffset env newOffset = do
   conf <- runReaderT eConfig env
-  let newConfig = Config.configSetOffset conf newOffset
+  let newConfig = Config.setOffset conf newOffset
   updateConfig env newConfig
+
+updateConfig :: Monad m => Env.Environment m -> Config.Config -> m (Env.Environment m)
+updateConfig (Env.Environment _ repeatNimber helpMsg logger dbConnectString) newConfig =
+  pure $ Env.Environment newConfig repeatNimber helpMsg logger dbConnectString

@@ -7,8 +7,8 @@ import Environment.Config.Struct
     VK (VK),
   )
 
-configSetOffset :: Config -> Offset -> Config
-configSetOffset (TBot (Telegram token _)) newOffset =
+setOffset :: Config -> Offset -> Config
+setOffset (TBot (Telegram token _)) newOffset =
   TBot $ Telegram token newOffset
-configSetOffset (VKBot (VK token group key server _)) newOffset =
+setOffset (VKBot (VK token group key server _)) newOffset =
   VKBot $ VK token group key server newOffset

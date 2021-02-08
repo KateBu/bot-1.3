@@ -1,12 +1,12 @@
 module Services.API.Handle where
 
-import qualified API.Wrapper as Wrapper
 import Control.Exception (bracket)
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
 import qualified Logic.PureStructs as PureStructs
 import qualified TextMessages.LoggerMessages as LoggerMsgs
+import qualified Wrapper.Main as Wrapper
 
 data Handle m = Handle
   { hGetUpdates ::
@@ -22,7 +22,7 @@ new env = do
   Logger.botLog logger LoggerMsgs.apiHandleCreateMsg
   pure $
     Handle
-      { hGetUpdates = Wrapper.getPureMessageList env,
+      { hGetUpdates = Wrapper.getUpdates env,
         hSendMessage = Wrapper.sendMessage env
       }
 

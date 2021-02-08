@@ -1,6 +1,6 @@
 module Main where
 
-import qualified API.Bot as Bot
+import qualified Bot
 import qualified Environment.Exports as Env 
 
 main :: IO ()

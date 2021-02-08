@@ -66,6 +66,6 @@ import TextMessages.LoggerMessages.Wrapper as Messages
     getResponseMultipartInProgress,
     getResponseUrlInProgress,
     getUpdatesInProcess,
-    invalidHP,
+    invalidHostPath,
     sendMsgFailed,
   )

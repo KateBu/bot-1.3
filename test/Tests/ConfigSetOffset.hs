@@ -20,7 +20,7 @@ expectedConfigSetOffset1 :: Config.Config
 expectedConfigSetOffset1 = Config.TBot $ Config.Telegram "token" 5
 
 actualConfigSetOffset1 :: Config.Config
-actualConfigSetOffset1 = Config.configSetOffset TestData.testConfigTelegram 5
+actualConfigSetOffset1 = Config.setOffset TestData.testConfigTelegram 5
 
 testConfigSetOffset2 :: Test
 testConfigSetOffset2 =
@@ -35,4 +35,4 @@ expectedConfigSetOffset2 :: Config.Config
 expectedConfigSetOffset2 = Config.VKBot $ Config.VK "token" 11 "key" "server" 42
 
 actualConfigSetOffset2 :: Config.Config
-actualConfigSetOffset2 = Config.configSetOffset TestData.testConfigVK 42
+actualConfigSetOffset2 = Config.setOffset TestData.testConfigVK 42

@@ -1,4 +1,4 @@
-module API.Bot where
+module Bot where
 
 import qualified Control.Exception as Ex
 import Control.Monad.Reader (ReaderT (runReaderT))
