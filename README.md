@@ -39,11 +39,12 @@
 #### Environment
 <p>Environment is a data structure that holds all the necessary information such as current bot settings, logger, and some other data from .config file. The Environment folder contains the following: </p>
 
-- Initialization module - the module export the setEnvironment functions (called in Main functions) and some other helping functions for getting information from .config file and initialize Environment.
+- Initialization module - the module exports the setEnvironment function (called in Main module), it also holds some other helping functions for getting information from .config file and initializing Environment.
 - Functions module - it contains getters for some data stored in Environment wrapped in ReaderT monad. 
 - Structs module - contains the Environment data structure and some aliases. 
 - Exports module - exports some functions and constructors.
 - Config folder - it holds all needed things to initialize Config. Initialization module exports setBotSettings function (it builds Config based on information from .config file), the module also contains some other helping functions. Function module holds setOffset functions for updating Config. Data module contains some data for building urls. Exports module exports functions, constructors and data. 
+- Logger folder - 
 
 
 
