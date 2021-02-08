@@ -12,15 +12,18 @@
 <p> src part contains the following folders: </p>
 
 - API  
-- Config  
 - Environment 
 - Exceptions  
 - Logic  
 - Services  
 - TextMessages
+- Wrapper
 
 #### API 
-<p> API folder contains modules Bot (runBot and nextLoop functions) and Wrapper (exports getPureMessageList and sendM functions) </p>
+<p> API folder contains two folders: VK and Telegram. The aim of the functions, actions and structures in these folders is to decode bytestrings to specific data (Telegram data or VK data) and then to PureMessages. </p>
+
+<p>...the information below is outdated and will be updated soon...</p>
+
 
 <p> The <b>Telegram</b> folder contains module Cleaners (exports telByteStringToPureMessageList function and contains functions for decoding json data Telegram server sends into list of PureMessages), there are some functions for decoding in Cleaners folder. Module Data contains some specific data for connecting to Telegram server and some functions for building Telegram http requests. You can find specific data structures and FromJSON/ToJSON instances of Telegram server responses in Structs folder. </p>
 
