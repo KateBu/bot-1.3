@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0343e69ac70bc824772e4b4ecdefb11c7e13ecd44acdcdbb5bb2a6311b747920
+-- hash: 2d1fd9e6e883a134eb26014348f2aa3475e446330a25193e5267515d66418972
 
 name:           bot13
 version:        0.1.0.0
@@ -71,10 +71,10 @@ library
       API.VK.Functions.MsgTypes.TextMsg
       API.VK.Functions.MsgTypes.UserCommand
       API.VK.Functions.Params
-      API.VK.Functions.Params.AttachmentParams
-      API.VK.Functions.Params.FwdParams
-      API.VK.Functions.Params.KeyboardParams
-      API.VK.Functions.Params.MessageParams
+      API.VK.Functions.Params.Attachment
+      API.VK.Functions.Params.Fwd
+      API.VK.Functions.Params.Keyboard
+      API.VK.Functions.Params.Message
       API.VK.Main
       API.VK.Structs.Attachments
       API.VK.Structs.Buttons
@@ -112,7 +112,6 @@ library
       Services.DB.Database.Functions
       Services.DB.Database.Queries
       Services.DB.Handle
-      Services.Exports
       Services.ServiceHandle.FunctionsIO
       Services.ServiceHandle.ServicesDefinition
       TextMessages.LoggerMessages

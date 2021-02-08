@@ -1,4 +1,4 @@
-module API.VK.Functions.Params.FwdParams where
+module API.VK.Functions.Params.Fwd where
 
 import qualified API.VK.Structs.Exports as VKStructs
 import qualified Data.Text as T

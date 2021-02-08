@@ -1,10 +1,10 @@
-module API.VK.Functions.Params.AttachmentParams
+module API.VK.Functions.Params.Attachment
   ( buildAttachmentListParams,
     buildAttachmentParams,
   )
 where
 
-import API.VK.Functions.Params.MessageParams (basicParams, buildMessageParam)
+import API.VK.Functions.Params.Message (basicParams, buildMessageParam)
 import qualified API.VK.Structs.Exports as VKStructs
 import qualified Data.Text as T
 import qualified Logic.Structs as PureStructs

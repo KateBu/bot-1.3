@@ -1,4 +1,4 @@
-module API.VK.Functions.Params.KeyboardParams (keyboardParams) where
+module API.VK.Functions.Params.Keyboard (keyboardParams) where
 
 import qualified API.VK.Structs.Exports as VKStructs
 import Data.Aeson (KeyValue ((.=)), Value, encode, object)
