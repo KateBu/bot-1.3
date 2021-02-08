@@ -22,12 +22,19 @@
 #### API 
 <p> API folder contains two folders: VK and Telegram. The aim of the functions, actions and structures of these folders is to decode bytestrings into specific structures (Telegram structures or VK ones) and then build PureMessages. </p>
 
-<p>Telegram folder contains the following modules:</p>
+<p>Telegram folder contains the following:</p>
 
-- Main module - the module exports decodePureMessageList functions (the function is called in Wrapper.Decoders module), it decodes bytestring into TelegramUpdates and builds PureMessage. There are some other helper functions for decoding, throwing exceptions and building PureMessage list in this module.
+- Main module - the module exports decodePureMessageList function (the function is called in Wrapper.Decoders module), it decodes bytestring into TelegramUpdates and builds PureMessage. There are some other helper functions for decoding, throwing exceptions and building PureMessage list in this module.
 - URL module - contains a set of funtions for building urls.
 - Functions folder - contains Builders module (that exports buildPureMessage function), Params module (contains some functions for building message parameters), Attachments module (exports some functions for builing PureMessages of specific types).
 - Structs folder - contains specific Telegram data structures.
+
+<p>VK folder contains the following:</p>
+
+- Main module - it does contains just the same: the decodePureMessageList function (called in Wrapper.Decoders module), that decodes bytestring into VKUpdates and then builds PureMessage. And there are some other helping functions.
+- URL module - contains a set of funtions for building urls.
+- Functions folder - contains Builders module (that exports buildPureMessage function), Params module contains some functions for building PureMEssage parameters (the module imports functions for building parameters from Params folder), MsgTypes module contains buildMessageType functions (it imports some functions from MsgTypes folder for builing the correct message type).
+
 
 
 <p>...the information below is outdated and will be rewritten soon...</p>
