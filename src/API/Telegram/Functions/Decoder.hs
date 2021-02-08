@@ -19,22 +19,22 @@ import Control.Applicative (Alternative ((<|>)))
 import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 
-decodePureMessage ::
+buildPureMessage ::
   Env.HelpMessage ->
   TStructs.TelUpdateResult ->
   Maybe PureStructs.PureMessage
-decodePureMessage helpMsg telUpdateResult =
+buildPureMessage helpMsg telUpdateResult =
   buildCallbackMessage telUpdateResult updateId
-    <|> buildPureMessage helpMsg telUpdateResult updateId
+    <|> buildPureMessage' helpMsg telUpdateResult updateId
   where
     updateId = TStructs.update_id telUpdateResult
 
-buildPureMessage ::
+buildPureMessage' ::
   Env.HelpMessage ->
   TStructs.TelUpdateResult ->
   PureStructs.UpdateID ->
   Maybe PureStructs.PureMessage
-buildPureMessage helpMsg telUpdateResult updateId =
+buildPureMessage' helpMsg telUpdateResult updateId =
   case TStructs.message_info telUpdateResult of
     Nothing -> pure $ PureStructs.PureMessage PureStructs.MsgTypeEmpty updateId Nothing Nothing
     Just msgInfo -> do

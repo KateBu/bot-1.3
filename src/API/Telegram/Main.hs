@@ -1,6 +1,6 @@
 module API.Telegram.Main (decodePureMessageList) where
 
-import API.Telegram.Functions.Decoder (decodePureMessage)
+import API.Telegram.Functions.Decoder (buildPureMessage)
 import qualified API.Telegram.Structs.Updates as TStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (decode, eitherDecode)
@@ -18,7 +18,7 @@ decodePureMessageList ::
   IO [PureStructs.PureMessage]
 decodePureMessageList env bytestring = do
   telegramUpdates <- decodeTelegramUpdates env bytestring
-  decodePureMessageList' env telegramUpdates
+  buildPureMessageList env telegramUpdates
 
 decodeTelegramUpdates ::
   Env.Environment IO ->
@@ -41,18 +41,18 @@ decodeSuccess logger telegramUpdates =
   where
     logMsg = LoggerMsgs.telegramBytestringDecodingSuccess
 
-decodePureMessageList' ::
+buildPureMessageList ::
   Env.Environment IO ->
   TStructs.TelegramUpdates ->
   IO [PureStructs.PureMessage]
-decodePureMessageList' env telegramUpdates = do
+buildPureMessageList env telegramUpdates = do
   helpMsg <- runReaderT Env.eHelpMsg env
   logger <- runReaderT Env.eLogger env
   Logger.botLog logger logMsg
   maybe (BotEx.throwUpdateExcept LoggerMsgs.telegramUpdatesFailed) pure (mbPureMsgs helpMsg)
   where
     logMsg = LoggerMsgs.parseTelelegramMsgSuccess
-    mbPureMsgs helpMsg = sequence $ decodePureMessage helpMsg <$> TStructs.result telegramUpdates
+    mbPureMsgs helpMsg = sequence $ buildPureMessage helpMsg <$> TStructs.result telegramUpdates
 
 throwUpdateError :: BSL.ByteString -> IO TStructs.TelegramUpdates
 throwUpdateError bytestring = do
