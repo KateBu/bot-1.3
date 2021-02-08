@@ -1,4 +1,4 @@
-module Services.ServiceHandle.ServicesDefinition where
+module Services.ServiceHandle.ServicesDefinition (Services (..)) where
 
 import qualified Environment.Exports as Env
 import qualified Logic.Structs as PureStructs

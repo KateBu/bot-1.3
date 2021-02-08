@@ -1,7 +1,7 @@
 module Exceptions.Exports (module Exceptions) where
 
 import Exceptions.Functions as Exceptions
-  ( MonadThrow (..),
+  ( MonadThrow (),
     dbErrorsHandlers,
     handleBotException,
     throwDBFormatExceptions,
@@ -9,10 +9,11 @@ import Exceptions.Functions as Exceptions
     throwHttpException,
     throwIOException,
     throwInitConfigExcept,
+    throwInitConfigExceptWithMessage,
     throwOtherException,
     throwParseExcept,
     throwSQLException,
     throwSendExcept,
     throwUpdateExcept,
   )
-import Exceptions.Structs as Exceptions (BotException (..))
+import Exceptions.Structs as Exceptions (BotException)

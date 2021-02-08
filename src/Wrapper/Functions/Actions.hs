@@ -1,4 +1,4 @@
-module Wrapper.Functions.Actions where
+module Wrapper.Functions.Actions (updateEnvironment) where
 
 import qualified API.VK.Structs.Exports as VKStructs
 import Control.Monad.Reader (ReaderT (runReaderT))

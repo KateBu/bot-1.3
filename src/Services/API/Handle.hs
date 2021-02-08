@@ -1,4 +1,4 @@
-module Services.API.Handle where
+module Services.API.Handle (Handle (..), withApiHandle) where
 
 import Control.Exception (bracket)
 import Control.Monad.Reader (ReaderT (runReaderT))

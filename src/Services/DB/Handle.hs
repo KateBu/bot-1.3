@@ -1,4 +1,4 @@
-module Services.DB.Handle where
+module Services.DB.Handle (withDBHandle, Handle (..)) where
 
 import Control.Exception (bracket)
 import Control.Monad.Reader (ReaderT (runReaderT))

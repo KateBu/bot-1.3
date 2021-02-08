@@ -1,4 +1,4 @@
-module Environment.Initialization where
+module Environment.Initialization (setEnvironment) where
 
 import Control.Exception (IOException, try)
 import qualified Data.Configurator as Configurator

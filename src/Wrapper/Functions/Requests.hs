@@ -1,4 +1,4 @@
-module Wrapper.Functions.Requests where
+module Wrapper.Functions.Requests (sendMessageRequest, getUpdatesRequest) where
 
 import Control.Exception (handle)
 import Control.Monad.Reader (ReaderT (runReaderT))

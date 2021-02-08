@@ -1,4 +1,4 @@
-module Environment.Config.Initialization where
+module Environment.Config.Initialization (setBotSettings) where
 
 import qualified API.VK.Structs.Exports as VKStructs
 import Control.Exception (IOException, try)
@@ -59,12 +59,10 @@ buildSettings (VKStructs.VKResponse (VKStructs.LongPollResponse key server ts)) 
   let eiTs = readEither ts :: Either String Int
   either BotEx.throwParseExcept (longPollResponseSuccess key server) eiTs
 buildSettings (VKStructs.VKError (VKStructs.ResponseError errCode errMsg)) =
-  BotEx.throwBotExcept $
-    BotEx.InitConfigExcept
-      ( Logger.makeLogMessage
-          LoggerMsgs.vkSettingsFatalError
-          errorMessage
-      )
+  BotEx.throwInitConfigExceptWithMessage $
+    Logger.makeLogMessage
+      LoggerMsgs.vkSettingsFatalError
+      errorMessage
   where
     errorMessage =
       "error_code: "
