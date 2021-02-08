@@ -7,7 +7,7 @@
 
 <p> The project is devided into three parts: app (Main module), src (see the structure of this part below), test (contains unit tests). </p> 
 
-### Src structure
+### Src structure (will be updated soon)
 
 <p> src part contains the following folders: </p>
 
@@ -119,14 +119,6 @@
 - that's all
 
 ## How it works
-
-### Step 1 (Environment initialization)
-
-- The bot tries to load .config file. There may be thrown IOException if it is impossible to load the file. 
-- The bot tries to find all the values it needs to initialize Environment.
-- Then the bot tries to set settings to connect to a server. If it is Telegram bot and if all the necessary values were found in .config file (bot type and token), the settings are set successfully. InitConfigException may be thrown if there were some missing values or unexpected bot type. If it is VK bot and if all the values were found (bot type, token and group number), it tries to connect to the VK server to get additional information (key, server and ts). IOException may be thrown if it was impossible to get response from the server... 
-
-- to be continued
 
 <p> You can see some screenshots below. </p>
 
