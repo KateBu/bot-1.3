@@ -1,12 +1,12 @@
 module API.VK.Functions.Params (buildParams, basicParams) where
 
-import API.VK.Functions.Params.AttachmentParams
+import API.VK.Functions.Params.Attachment
   ( buildAttachmentListParams,
     buildAttachmentParams,
   )
-import API.VK.Functions.Params.FwdParams (buildFwdParams)
-import API.VK.Functions.Params.KeyboardParams (keyboardParams)
-import API.VK.Functions.Params.MessageParams
+import API.VK.Functions.Params.Fwd (buildFwdParams)
+import API.VK.Functions.Params.Keyboard (keyboardParams)
+import API.VK.Functions.Params.Message
   ( basicParams,
     buildMaybeDoubleParam,
     buildMessageParam,
