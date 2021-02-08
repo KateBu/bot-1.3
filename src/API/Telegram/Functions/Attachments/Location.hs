@@ -3,7 +3,7 @@ module API.Telegram.Functions.Attachments.Location where
 import API.Telegram.Functions.BasicParams (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Data.Text as T
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildLocationMessage ::
   PureStructs.UpdateID ->

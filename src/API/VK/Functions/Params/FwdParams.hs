@@ -2,7 +2,7 @@ module API.VK.Functions.Params.FwdParams where
 
 import qualified API.VK.Structs.Exports as VKStructs
 import qualified Data.Text as T
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildFwdParams :: VKStructs.VKMessage -> [PureStructs.Params]
 buildFwdParams msgs = [PureStructs.ParamsText "forward_messages" msgIds]

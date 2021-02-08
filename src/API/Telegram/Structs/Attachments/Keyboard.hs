@@ -1,7 +1,7 @@
 module API.Telegram.Structs.Attachments.Keyboard where
 
 import Data.Aeson (KeyValue ((.=)), ToJSON (toJSON), object)
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 newtype TButtons = TButtons PureStructs.PureButtons
 

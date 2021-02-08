@@ -2,7 +2,7 @@ module API.Telegram.Functions.Attachments.Document where
 
 import API.Telegram.Functions.BasicParams (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildDocumentMessage ::
   PureStructs.UpdateID ->

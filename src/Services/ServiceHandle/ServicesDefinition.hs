@@ -1,7 +1,7 @@
 module Services.ServiceHandle.ServicesDefinition where
 
 import qualified Environment.Exports as Env
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import Services.ServiceHandle.FunctionsIO
   ( addUserIO,
     findUserIO,

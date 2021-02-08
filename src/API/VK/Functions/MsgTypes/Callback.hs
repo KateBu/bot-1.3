@@ -4,7 +4,7 @@ import qualified API.VK.Structs.Exports as VKStructs
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildCallbackMessage :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
 buildCallbackMessage vkMsg =

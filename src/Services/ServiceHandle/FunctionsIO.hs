@@ -1,7 +1,7 @@
 module Services.ServiceHandle.FunctionsIO where
 
 import qualified Environment.Exports as Env
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import qualified Services.API.Handle as APIHandle
 import qualified Services.DB.Handle as DBHandle
 

@@ -1,4 +1,4 @@
-module Logic.PureStructs (module PureStructs) where
+module Logic.Structs (module PureStructs) where
 
 import Logic.Structs.Buttons as PureStructs
   ( PureButtons (..),

@@ -1,7 +1,7 @@
 module API.Telegram.Functions.Params where
 
 import qualified Data.Text as T
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 type Key = T.Text
 

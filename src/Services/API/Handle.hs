@@ -4,7 +4,7 @@ import Control.Exception (bracket)
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Wrapper.Main as Wrapper
 

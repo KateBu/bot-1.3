@@ -2,7 +2,7 @@ module API.VK.Data where
 
 import qualified Data.Text as T
 import qualified Environment.Config.Exports as Config
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import System.Random (Random (random), newStdGen)
 import qualified Wrapper.Structs as WrapStructs
 

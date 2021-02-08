@@ -3,7 +3,7 @@ module Wrapper.Main (getUpdates, sendMessage) where
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Wrapper.Functions.Actions as WrapFunctions
 import qualified Wrapper.Functions.Decoders as WrapFunctions

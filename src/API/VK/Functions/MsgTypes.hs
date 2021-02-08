@@ -8,7 +8,7 @@ import API.VK.Functions.MsgTypes.TextMsg (buildTextMessage)
 import API.VK.Functions.MsgTypes.UserCommand (buildCommandMessage)
 import qualified API.VK.Structs.Exports as VKStructs
 import Control.Applicative (Alternative ((<|>)))
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 getMessageType :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
 getMessageType vkMsg =

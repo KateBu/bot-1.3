@@ -3,7 +3,7 @@ module API.Telegram.Functions.Attachments.Contact where
 import API.Telegram.Functions.BasicParams (basicParams)
 import API.Telegram.Functions.Params (buildTextParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildContactMessage ::
   PureStructs.UpdateID ->

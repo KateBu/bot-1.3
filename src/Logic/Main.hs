@@ -5,9 +5,9 @@ import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
-import Logic.ProcMsgs.Callback (processCallbackMsgs)
-import Logic.ProcMsgs.Common (processCommonMsgs)
-import qualified Logic.PureStructs as PureStructs
+import Logic.Functions.Callback (processCallbackMsgs)
+import Logic.Functions.Common (processCommonMsgs)
+import qualified Logic.Structs as PureStructs
 import qualified Services.Exports as Handle
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
@@ -35,23 +35,23 @@ processMsg env msg = do
       Handle.sendMessage env msg
     PureStructs.MsgTypeUserCommand PureStructs.Repeat -> do
       Logger.botLog logger logRepeatCommandMsg
-      Handle.sendMessage env (makeRepeatMsg msg)
+      Handle.sendMessage env (buildRepeatMsg msg)
     PureStructs.MsgTypeCallbackQuery callbackData -> do
       Logger.botLog logger logCallbackMsg
-      maybe processMsgErr (processCallbackMsgs env msg callbackData) mbChatId
+      maybe throwError (processCallbackMsgs env msg callbackData) mbChatId
     PureStructs.MsgTypeCommon _ -> do
-      maybe processMsgErr (processCommonMsgs env msg) mbChatId
+      maybe throwError (processCommonMsgs env msg) mbChatId
   where
     logEmptyMsg = LoggerMsgs.emptyMsgProcessingInProgress
     logHelpCommandMsg = LoggerMsgs.helpCommandProcessingInProgress
     logRepeatCommandMsg = LoggerMsgs.repeatCommandProcessingInProgress
     logCallbackMsg = LoggerMsgs.callbackMsgProcessingInProgress
 
-processMsgErr :: BotEx.MonadThrow m => m (Env.Environment m)
-processMsgErr = BotEx.throwOtherException LoggerMsgs.chatIdNotFound
+throwError :: BotEx.MonadThrow m => m (Env.Environment m)
+throwError = BotEx.throwOtherException LoggerMsgs.chatIdNotFound
 
-makeRepeatMsg :: PureStructs.PureMessage -> PureStructs.PureMessage
-makeRepeatMsg msg =
+buildRepeatMsg :: PureStructs.PureMessage -> PureStructs.PureMessage
+buildRepeatMsg msg =
   PureStructs.PureMessage
     (PureStructs.MsgTypeCommon "Message")
     (PureStructs.updateID msg)

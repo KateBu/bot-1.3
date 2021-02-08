@@ -13,7 +13,7 @@ import API.VK.Functions.Params.MessageParams
   )
 import qualified API.VK.Structs.Exports as VKStructs
 import qualified Environment.Exports as Env
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildParams ::
   Env.HelpMessage ->

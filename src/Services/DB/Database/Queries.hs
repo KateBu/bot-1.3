@@ -4,7 +4,7 @@ import Data.String (IsString (fromString))
 import qualified Data.Text as T
 import Database.PostgreSQL.Simple (Query)
 import qualified Environment.Config.Exports as Config
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 userId :: Config.Config -> PureStructs.ChatID -> Query
 userId (Config.VKBot _) chatId = "\'" <> "vk" <> (fromString . show) chatId <> "\'"

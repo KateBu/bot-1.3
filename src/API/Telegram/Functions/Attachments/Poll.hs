@@ -7,7 +7,7 @@ import API.Telegram.Functions.Params
     buildTextParams,
   )
 import qualified API.Telegram.Structs.MessageInfo as TStructs
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildPollMessage ::
   PureStructs.UpdateID ->

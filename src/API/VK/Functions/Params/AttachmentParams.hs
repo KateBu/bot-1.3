@@ -7,7 +7,7 @@ where
 import API.VK.Functions.Params.MessageParams (basicParams, buildMessageParam)
 import qualified API.VK.Structs.Exports as VKStructs
 import qualified Data.Text as T
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildAttachmentParams ::
   VKStructs.VKMessage ->

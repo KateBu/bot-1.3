@@ -14,7 +14,7 @@ import Data.Aeson (encode)
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as TE
 import qualified Environment.Config.Exports as Config
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import qualified Network.HTTP.Client.MultipartFormData as LM
 import Network.HTTP.Req
   ( FormUrlEncodedParam,

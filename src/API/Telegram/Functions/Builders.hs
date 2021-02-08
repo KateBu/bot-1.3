@@ -17,7 +17,7 @@ import API.Telegram.Functions.Attachments
 import qualified API.Telegram.Structs.Updates as TStructs
 import Control.Applicative (Alternative ((<|>)))
 import qualified Environment.Exports as Env
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildPureMessage ::
   Env.HelpMessage ->

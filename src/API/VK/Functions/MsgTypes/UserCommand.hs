@@ -2,7 +2,7 @@ module API.VK.Functions.MsgTypes.UserCommand where
 
 import qualified API.VK.Structs.Exports as VKStructs
 import qualified Data.Text as T
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildCommandMessage :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
 buildCommandMessage vkMsg = VKStructs.msg_text vkMsg >>= buildCommandMessage'

@@ -5,7 +5,7 @@ import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import Network.HTTP.Req
   ( LbsResponse,
     Option,

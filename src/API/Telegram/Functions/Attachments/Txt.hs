@@ -6,7 +6,7 @@ import qualified API.Telegram.Structs.MessageInfo as TStructs
 import Data.Aeson (KeyValue ((.=)), Value, object)
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildTextMessage ::
   Env.HelpMessage ->

@@ -1,9 +1,9 @@
-module Logic.ProcMsgs.Callback where
+module Logic.Functions.Callback where
 
 import Data.Maybe (isNothing)
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import qualified Services.Exports as Handle
 
 processCallbackMsgs ::
@@ -19,7 +19,7 @@ processCallbackMsgs env msg callbackData chatId = do
   if isNothing mbUserInDB
     then Handle.addUser env chatId newRepeat
     else Handle.updateUser env chatId newRepeat
-  Handle.sendMessage env $ makeCallbackResponse msg
+  Handle.sendMessage env $ buildCallbackResponse msg
 
-makeCallbackResponse :: PureStructs.PureMessage -> PureStructs.PureMessage
-makeCallbackResponse msg = msg {PureStructs.messageType = PureStructs.MsgTypeCommon "Message"}
+buildCallbackResponse :: PureStructs.PureMessage -> PureStructs.PureMessage
+buildCallbackResponse msg = msg {PureStructs.messageType = PureStructs.MsgTypeCommon "Message"}

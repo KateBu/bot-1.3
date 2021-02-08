@@ -4,7 +4,7 @@ import API.VK.Functions.MsgTypes (getMessageType)
 import API.VK.Functions.Params (basicParams, buildParams)
 import qualified API.VK.Structs.Exports as VKStructs
 import qualified Environment.Exports as Env
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 buildPureMessage ::
   Env.HelpMessage ->
