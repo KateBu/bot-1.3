@@ -1,25 +1,25 @@
-module API.Telegram.Cleaners.Attachments.MbDocument where
+module API.Telegram.Functions.Attachments.Document where
 
-import API.Telegram.Cleaners.GetParams (basicParams)
+import API.Telegram.Functions.BasicParams (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
-mbDocument ::
+buildDocumentMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbDocument updateId chatiId msgInfo = do
+buildDocumentMessage updateId chatiId msgInfo = do
   docInfo <- TStructs.document msgInfo
-  mbDocument' updateId chatiId msgInfo docInfo
+  buildDocumentMessage' updateId chatiId msgInfo docInfo
 
-mbDocument' ::
+buildDocumentMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   TStructs.TelDocument ->
   Maybe PureStructs.PureMessage
-mbDocument' updateId chatiId msgInfo docInfo =
+buildDocumentMessage' updateId chatiId msgInfo docInfo =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeCommon "Document")

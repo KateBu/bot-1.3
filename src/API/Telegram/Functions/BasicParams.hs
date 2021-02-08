@@ -1,4 +1,4 @@
-module API.Telegram.Cleaners.GetParams where
+module API.Telegram.Functions.BasicParams where
 
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs

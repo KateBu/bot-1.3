@@ -1,25 +1,25 @@
-module API.Telegram.Cleaners.Attachments.MbSticker where
+module API.Telegram.Functions.Attachments.Sticker where
 
-import API.Telegram.Cleaners.GetParams (basicParams)
+import API.Telegram.Functions.BasicParams (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
-mbSticker ::
+buildStickerMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbSticker updateId chatId msgInfo = do
+buildStickerMessage updateId chatId msgInfo = do
   stickerInfo <- TStructs.sticker msgInfo
-  mbSticker' updateId chatId msgInfo stickerInfo
+  buildStickerMessage' updateId chatId msgInfo stickerInfo
 
-mbSticker' ::
+buildStickerMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   TStructs.TelSticker ->
   Maybe PureStructs.PureMessage
-mbSticker' updateId chatId msgInfo stickerInfo =
+buildStickerMessage' updateId chatId msgInfo stickerInfo =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeCommon "Sticker")

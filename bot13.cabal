@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 75b35bccc98fcd2ecb5cd74e20a58c7133b06e8a827b20be3faf7e734e55a06e
+-- hash: ab9bbda5391bd244947371b79cdd38eee2e019b2dba4e941b6f1e93042e0e6bf
 
 name:           bot13
 version:        0.1.0.0
@@ -27,29 +27,29 @@ source-repository head
 
 library
   exposed-modules:
-      API.Telegram.Cleaners
-      API.Telegram.Cleaners.Attachments.MbAnimation
-      API.Telegram.Cleaners.Attachments.MbAudio
-      API.Telegram.Cleaners.Attachments.MbContact
-      API.Telegram.Cleaners.Attachments.MbDocument
-      API.Telegram.Cleaners.Attachments.MbLocation
-      API.Telegram.Cleaners.Attachments.MbPhoto
-      API.Telegram.Cleaners.Attachments.MbPoll
-      API.Telegram.Cleaners.Attachments.MbSticker
-      API.Telegram.Cleaners.Attachments.MbTxt
-      API.Telegram.Cleaners.Attachments.MbVenue
-      API.Telegram.Cleaners.Attachments.MbVideo
-      API.Telegram.Cleaners.Attachments.MbVoice
-      API.Telegram.Cleaners.GetParams
-      API.Telegram.Cleaners.Keyboard
-      API.Telegram.Cleaners.MakeMbParams
-      API.Telegram.Cleaners.MakePureMessage
-      API.Telegram.Cleaners.MbMsgType
       API.Telegram.Data
+      API.Telegram.Functions.Attachments
+      API.Telegram.Functions.Attachments.Animation
+      API.Telegram.Functions.Attachments.Audio
+      API.Telegram.Functions.Attachments.Contact
+      API.Telegram.Functions.Attachments.Document
+      API.Telegram.Functions.Attachments.Location
+      API.Telegram.Functions.Attachments.Photo
+      API.Telegram.Functions.Attachments.Poll
+      API.Telegram.Functions.Attachments.Sticker
+      API.Telegram.Functions.Attachments.Txt
+      API.Telegram.Functions.Attachments.Venue
+      API.Telegram.Functions.Attachments.Video
+      API.Telegram.Functions.Attachments.Voice
+      API.Telegram.Functions.BasicParams
+      API.Telegram.Functions.Decoder
+      API.Telegram.Functions.Params
+      API.Telegram.Main
       API.Telegram.Structs.Attachments.Animation
       API.Telegram.Structs.Attachments.Audio
       API.Telegram.Structs.Attachments.Contact
       API.Telegram.Structs.Attachments.Document
+      API.Telegram.Structs.Attachments.Keyboard
       API.Telegram.Structs.Attachments.Location
       API.Telegram.Structs.Attachments.Photo
       API.Telegram.Structs.Attachments.Poll

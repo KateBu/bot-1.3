@@ -1,25 +1,25 @@
-module API.Telegram.Cleaners.Attachments.MbPhoto where
+module API.Telegram.Functions.Attachments.Photo where
 
-import API.Telegram.Cleaners.GetParams (basicParams)
+import API.Telegram.Functions.BasicParams (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
-mbPhoto ::
+buildPhotoMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbPhoto updateId chatId msgInfo = do
+buildPhotoMessage updateId chatId msgInfo = do
   photoInfo <- TStructs.photo msgInfo
-  mbPhoto' updateId chatId msgInfo photoInfo
+  buildPhotoMessage' updateId chatId msgInfo photoInfo
 
-mbPhoto' ::
+buildPhotoMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   [TStructs.TelPhoto] ->
   Maybe PureStructs.PureMessage
-mbPhoto' updateId chatId msgInfo photoInfo =
+buildPhotoMessage' updateId chatId msgInfo photoInfo =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeCommon "Photo")
@@ -30,8 +30,8 @@ mbPhoto' updateId chatId msgInfo photoInfo =
     photoParams =
       Just $
         basicParams chatId msgInfo
-          <> getPhotoParams photoInfo
+          <> buildPhotoParams photoInfo
 
-getPhotoParams :: [TStructs.TelPhoto] -> [PureStructs.Params]
-getPhotoParams [] = []
-getPhotoParams (x : _) = [PureStructs.ParamsText "photo" (TStructs.photo_file_id x)]
+buildPhotoParams :: [TStructs.TelPhoto] -> [PureStructs.Params]
+buildPhotoParams [] = []
+buildPhotoParams (x : _) = [PureStructs.ParamsText "photo" (TStructs.photo_file_id x)]

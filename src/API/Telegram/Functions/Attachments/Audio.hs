@@ -1,25 +1,25 @@
-module API.Telegram.Cleaners.Attachments.MbAudio where
+module API.Telegram.Functions.Attachments.Audio where
 
-import API.Telegram.Cleaners.GetParams (basicParams)
+import API.Telegram.Functions.BasicParams (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
-mbAudio ::
+buildAudioMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbAudio updatId chatId msgInfo = do
+buildAudioMessage updatId chatId msgInfo = do
   audioInfo <- TStructs.audio msgInfo
-  mbAudio' updatId chatId msgInfo audioInfo
+  buildAudioMessage' updatId chatId msgInfo audioInfo
 
-mbAudio' ::
+buildAudioMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   TStructs.TelAudio ->
   Maybe PureStructs.PureMessage
-mbAudio' updatId chatId msgInfo audioInfo =
+buildAudioMessage' updatId chatId msgInfo audioInfo =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeCommon "Audio")

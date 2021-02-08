@@ -1,8 +1,6 @@
-module API.Telegram.Cleaners (telByteStringToPureMessageList) where
+module API.Telegram.Main (decodePureMessageList) where
 
-import API.Telegram.Cleaners.MakePureMessage
-  ( telUpdateToPureMessage,
-  )
+import API.Telegram.Functions.Decoder (decodePureMessage)
 import qualified API.Telegram.Structs.Updates as TStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (decode, eitherDecode)
@@ -14,23 +12,23 @@ import qualified Exceptions.Exports as BotEx
 import qualified Logic.PureStructs as PureStructs
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
-telByteStringToPureMessageList ::
+decodePureMessageList ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
-telByteStringToPureMessageList env bytestring = do
-  telegramUpdates <- decodeByteString env bytestring
-  telUpdatesToPureMessageList env telegramUpdates
+decodePureMessageList env bytestring = do
+  telegramUpdates <- decodeTelegramUpdates env bytestring
+  decodePureMessageList' env telegramUpdates
 
-decodeByteString ::
+decodeTelegramUpdates ::
   Env.Environment IO ->
   BSL.ByteString ->
   IO TStructs.TelegramUpdates
-decodeByteString env bytestring = do
+decodeTelegramUpdates env bytestring = do
   logger <- runReaderT Env.eLogger env
   Logger.botLog logger logMsg
   let mbTelegramUpdates = decode bytestring :: Maybe TStructs.TelegramUpdates
-  maybe (getUpdateError bytestring) (decodeSuccess logger) mbTelegramUpdates
+  maybe (throwUpdateError bytestring) (decodeSuccess logger) mbTelegramUpdates
   where
     logMsg = LoggerMsgs.telegramBytestringDecodingInProgress
 
@@ -43,21 +41,21 @@ decodeSuccess logger telegramUpdates =
   where
     logMsg = LoggerMsgs.telegramBytestringDecodingSuccess
 
-telUpdatesToPureMessageList ::
+decodePureMessageList' ::
   Env.Environment IO ->
   TStructs.TelegramUpdates ->
   IO [PureStructs.PureMessage]
-telUpdatesToPureMessageList env telegramUpdates = do
+decodePureMessageList' env telegramUpdates = do
   helpMsg <- runReaderT Env.eHelpMsg env
   logger <- runReaderT Env.eLogger env
   Logger.botLog logger logMsg
   maybe (BotEx.throwUpdateExcept LoggerMsgs.telegramUpdatesFailed) pure (mbPureMsgs helpMsg)
   where
     logMsg = LoggerMsgs.parseTelelegramMsgSuccess
-    mbPureMsgs helpMsg = sequence $ telUpdateToPureMessage helpMsg <$> TStructs.result telegramUpdates
+    mbPureMsgs helpMsg = sequence $ decodePureMessage helpMsg <$> TStructs.result telegramUpdates
 
-getUpdateError :: BSL.ByteString -> IO TStructs.TelegramUpdates
-getUpdateError bytestring = do
+throwUpdateError :: BSL.ByteString -> IO TStructs.TelegramUpdates
+throwUpdateError bytestring = do
   let eiTelegramError = eitherDecode bytestring :: Either String TStructs.TelegramUpdatesError
   either BotEx.throwParseExcept telegramError eiTelegramError
 

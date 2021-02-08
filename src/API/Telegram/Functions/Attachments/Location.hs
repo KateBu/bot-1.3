@@ -1,26 +1,26 @@
-module API.Telegram.Cleaners.Attachments.MbLocation where
+module API.Telegram.Functions.Attachments.Location where
 
-import API.Telegram.Cleaners.GetParams (basicParams)
+import API.Telegram.Functions.BasicParams (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 
-mbLocation ::
+buildLocationMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbLocation updateId chatId msgInfo = do
+buildLocationMessage updateId chatId msgInfo = do
   locationInfo <- TStructs.location msgInfo
-  mbLocation' updateId chatId msgInfo locationInfo
+  buildLocationMessage' updateId chatId msgInfo locationInfo
 
-mbLocation' ::
+buildLocationMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   TStructs.TelLocation ->
   Maybe PureStructs.PureMessage
-mbLocation' updateId chatId msgInfo locationInfo =
+buildLocationMessage' updateId chatId msgInfo locationInfo =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeCommon "Location")

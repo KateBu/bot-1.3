@@ -1,25 +1,25 @@
-module API.Telegram.Cleaners.Attachments.MbVideo where
+module API.Telegram.Functions.Attachments.Video where
 
-import API.Telegram.Cleaners.GetParams (basicParams)
+import API.Telegram.Functions.BasicParams (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
-mbVideo ::
+buildVideoMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbVideo updateId chatId msgInfo = do
+buildVideoMessage updateId chatId msgInfo = do
   videoInfo <- TStructs.video msgInfo
-  mbVideo' updateId chatId msgInfo videoInfo
+  buildVideoMessage' updateId chatId msgInfo videoInfo
 
-mbVideo' ::
+buildVideoMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   TStructs.TelVideo ->
   Maybe PureStructs.PureMessage
-mbVideo' updateId chatId msgInfo videoInfo =
+buildVideoMessage' updateId chatId msgInfo videoInfo =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeCommon "Video")

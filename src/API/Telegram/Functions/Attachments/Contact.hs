@@ -1,39 +1,39 @@
-module API.Telegram.Cleaners.Attachments.MbContact where
+module API.Telegram.Functions.Attachments.Contact where
 
-import API.Telegram.Cleaners.GetParams (basicParams)
-import API.Telegram.Cleaners.MakeMbParams (makeMaybeTextParams)
+import API.Telegram.Functions.BasicParams (basicParams)
+import API.Telegram.Functions.Params (buildTextParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
-mbContact ::
+buildContactMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbContact updatId chatId msgInfo = do
+buildContactMessage updatId chatId msgInfo = do
   contactInfo <- TStructs.contact msgInfo
-  mbContact' updatId chatId msgInfo contactInfo
+  buildContactMessage' updatId chatId msgInfo contactInfo
 
-mbContact' ::
+buildContactMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   TStructs.TelContact ->
   Maybe PureStructs.PureMessage
-mbContact' updatId chatId msgInfo contactInfo =
+buildContactMessage' updatId chatId msgInfo contactInfo =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeCommon "Contact")
       updatId
       (Just chatId)
-      (contactParams chatId msgInfo contactInfo)
+      (buildContactParams chatId msgInfo contactInfo)
 
-contactParams :: PureStructs.ChatID -> TStructs.MessageInfo -> TStructs.TelContact -> Maybe [PureStructs.Params]
-contactParams chatiId msgInfo contactInfo =
+buildContactParams :: PureStructs.ChatID -> TStructs.MessageInfo -> TStructs.TelContact -> Maybe [PureStructs.Params]
+buildContactParams chatiId msgInfo contactInfo =
   Just $
     basicParams chatiId msgInfo
       <> [ PureStructs.ParamsText "phone_number" (TStructs.phone_number contactInfo),
            PureStructs.ParamsText "first_name" (TStructs.first_name contactInfo)
          ]
-      <> makeMaybeTextParams "last_name" (TStructs.last_name contactInfo)
-      <> makeMaybeTextParams "vcard" (TStructs.vcard contactInfo)
+      <> buildTextParams "last_name" (TStructs.last_name contactInfo)
+      <> buildTextParams "vcard" (TStructs.vcard contactInfo)

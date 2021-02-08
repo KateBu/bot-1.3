@@ -1,25 +1,25 @@
-module API.Telegram.Cleaners.Attachments.MbAnimation where
+module API.Telegram.Functions.Attachments.Animation where
 
-import API.Telegram.Cleaners.GetParams (basicParams)
+import API.Telegram.Functions.BasicParams (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
 import qualified Logic.PureStructs as PureStructs
 
-mbAnimation ::
+buildAnimationMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbAnimation updateId chatId msgInfo = do
+buildAnimationMessage updateId chatId msgInfo = do
   animationInfo <- TStructs.animation msgInfo
-  mbAnimation' updateId chatId msgInfo animationInfo
+  buildAnimationMessage' updateId chatId msgInfo animationInfo
 
-mbAnimation' ::
+buildAnimationMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   TStructs.TelAmination ->
   Maybe PureStructs.PureMessage
-mbAnimation' updateId chatId msgInfo animationInfo =
+buildAnimationMessage' updateId chatId msgInfo animationInfo =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeCommon "Animation")

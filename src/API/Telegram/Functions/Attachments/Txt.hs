@@ -1,33 +1,31 @@
-module API.Telegram.Cleaners.Attachments.MbTxt where
+module API.Telegram.Functions.Attachments.Txt where
 
-import API.Telegram.Cleaners.GetParams (basicParams)
-import API.Telegram.Cleaners.Keyboard
-  ( TButtons (TButtons),
-    makeKeyboard,
-  )
+import API.Telegram.Functions.BasicParams (basicParams)
+import API.Telegram.Structs.Attachments.Keyboard (TButtons (TButtons))
 import qualified API.Telegram.Structs.MessageInfo as TStructs
+import Data.Aeson (KeyValue ((.=)), Value, object)
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
 import qualified Logic.PureStructs as PureStructs
 
-mbTextMessage ::
+buildTextMessage ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   Maybe PureStructs.PureMessage
-mbTextMessage helpMsg updateId chatId msgInfo = do
+buildTextMessage helpMsg updateId chatId msgInfo = do
   textInfo <- TStructs.txt msgInfo
-  makeTxtMsg helpMsg updateId chatId msgInfo textInfo
+  buildTxtMsg helpMsg updateId chatId msgInfo textInfo
 
-makeTxtMsg ::
+buildTxtMsg ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
   TStructs.MessageInfo ->
   T.Text ->
   Maybe PureStructs.PureMessage
-makeTxtMsg helpMsg updateId chatId msgInfo "/help" =
+buildTxtMsg helpMsg updateId chatId msgInfo "/help" =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeUserCommand PureStructs.Help)
@@ -39,7 +37,7 @@ makeTxtMsg helpMsg updateId chatId msgInfo "/help" =
       Just $
         basicParams chatId msgInfo
           <> [PureStructs.ParamsText "text" helpMsg]
-makeTxtMsg _ updateId chatId msgInfo "/repeat" =
+buildTxtMsg _ updateId chatId msgInfo "/repeat" =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeUserCommand PureStructs.Repeat)
@@ -54,7 +52,7 @@ makeTxtMsg _ updateId chatId msgInfo "/repeat" =
                PureStructs.ParamsBool "one_time_keyboard" True
              ]
     keyboard = makeKeyboard $ map (map TButtons) PureStructs.buttons
-makeTxtMsg _ updateId chatId msgInfo text =
+buildTxtMsg _ updateId chatId msgInfo text =
   pure $
     PureStructs.PureMessage
       (PureStructs.MsgTypeCommon "Message")
@@ -66,3 +64,6 @@ makeTxtMsg _ updateId chatId msgInfo text =
       Just $
         basicParams chatId msgInfo
           <> [PureStructs.ParamsText "text" text]
+
+makeKeyboard :: [[TButtons]] -> Value
+makeKeyboard buttons = object ["inline_keyboard" .= buttons]
