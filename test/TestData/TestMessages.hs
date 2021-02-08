@@ -2,7 +2,7 @@ module TestData.TestMessages where
 
 import Data.Aeson (KeyValue ((.=)), object)
 import qualified Data.Text as T
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 
 newHelp :: T.Text
 newHelp = "new help message"

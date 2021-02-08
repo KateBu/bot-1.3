@@ -1,7 +1,7 @@
 module Tests.MakeRepeatMsg where
 
 import qualified Logic.Main as Logic
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import Test.HUnit (Test (TestCase), assertBool)
 import qualified TestData
 
@@ -21,7 +21,7 @@ testMakeRepeatMsgMsgType' =
   all
     (== PureStructs.MsgTypeCommon "Message")
     ( PureStructs.messageType
-        . Logic.makeRepeatMsg
+        . Logic.buildRepeatMsg
         <$> TestData.allMessages
     )
 
@@ -34,7 +34,7 @@ testMakeRepeatMsgText =
     )
 
 testMakeRepeatMsgText' :: Bool
-testMakeRepeatMsgText' = all hasTextParam (Logic.makeRepeatMsg <$> TestData.allMessages)
+testMakeRepeatMsgText' = all hasTextParam (Logic.buildRepeatMsg <$> TestData.allMessages)
 
 hasTextParam :: PureStructs.PureMessage -> Bool
 hasTextParam msg = Just True == hasParam'

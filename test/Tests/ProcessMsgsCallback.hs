@@ -2,8 +2,8 @@ module Tests.ProcessMsgsCallback where
 
 import qualified Environment.Config.Exports as Config
 import qualified Environment.Exports as Env
-import qualified Logic.ProcMsgs.Callback as Logic
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Functions.Callback as Logic
+import qualified Logic.Structs as PureStructs
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData
 

@@ -1,7 +1,7 @@
 module Tests.MakeCallbackResponse where
 
-import qualified Logic.ProcMsgs.Callback as Logic
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Functions.Callback as Logic
+import qualified Logic.Structs as PureStructs
 import Test.HUnit (Test (TestCase), assertBool)
 import qualified TestData
 
@@ -13,6 +13,6 @@ testMakeCallbackResponse' =
   all
     (== PureStructs.MsgTypeCommon "Message")
     ( PureStructs.messageType
-        . Logic.makeCallbackResponse
+        . Logic.buildCallbackResponse
         <$> TestData.allMessages
     )

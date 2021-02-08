@@ -2,7 +2,7 @@ module TestData.TestServices where
 
 import qualified Data.Map as Map
 import qualified Environment.Exports as Env
-import qualified Logic.PureStructs as PureStructs
+import qualified Logic.Structs as PureStructs
 import qualified Services.Exports as Services
 import qualified TestData.TestMessages as Msgs
 
