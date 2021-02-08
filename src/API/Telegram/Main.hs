@@ -1,6 +1,6 @@
 module API.Telegram.Main (decodePureMessageList) where
 
-import API.Telegram.Functions.Decoder (buildPureMessage)
+import API.Telegram.Functions.Builders (buildPureMessage)
 import qualified API.Telegram.Structs.Updates as TStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (decode, eitherDecode)

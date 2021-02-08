@@ -1,4 +1,4 @@
-module API.Telegram.Functions.Decoder where
+module API.Telegram.Functions.Builders where
 
 import API.Telegram.Functions.Attachments
   ( buildAnimationMessage,
