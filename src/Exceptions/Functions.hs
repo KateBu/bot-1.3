@@ -33,6 +33,9 @@ handleBotException exception = do
 throwInitConfigExcept :: MonadThrow m => m a
 throwInitConfigExcept = throwBotExcept $ InitConfigExcept LoggerMsgs.initConfigExcept
 
+throwInitConfigExceptWithMessage :: MonadThrow m => Logger.LogMessage -> m a
+throwInitConfigExceptWithMessage logMsg = throwBotExcept $ InitConfigExcept logMsg
+
 throwParseExcept :: MonadThrow m => String -> m a
 throwParseExcept err = throwBotExcept $ ParseExcept (Logger.makeLogMessage LoggerMsgs.parseError (T.pack err))
 
