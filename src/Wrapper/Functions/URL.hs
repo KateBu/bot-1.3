@@ -8,8 +8,8 @@ module Wrapper.Functions.URL
   )
 where
 
-import qualified API.Telegram.Data as TelData
-import qualified API.VK.Data as VKData
+import qualified API.Telegram.URL as Telegram
+import qualified API.VK.URL as VK
 import Data.Aeson (encode)
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as TE
@@ -70,13 +70,13 @@ buildHttps _ = mempty
 
 mbSendOption :: Config.Config -> IO (Option 'Https)
 mbSendOption vk@(Config.VKBot _) = do
-  params <- VKData.sendBasicParams vk
+  params <- VK.buildSendBasicParams vk
   pure $ mconcat (buildHttps <$> params)
 mbSendOption _ = mempty
 
 updateParam :: Config.Config -> [PureStructs.Params]
-updateParam vk@(Config.VKBot _) = VKData.updateParams vk
-updateParam telegram@(Config.TBot _) = TelData.updateParams telegram
+updateParam vk@(Config.VKBot _) = VK.buildGetUpdatesParams vk
+updateParam telegram@(Config.TBot _) = Telegram.buildGetUpdateParams telegram
 
 buildHostPath :: Config.Config -> WrapStructs.Method -> Maybe PureStructs.PureMessage -> Maybe (Url 'Https)
 buildHostPath config WrapStructs.GetUpdate _ = buildUpdateHostPath config
@@ -84,11 +84,11 @@ buildHostPath config WrapStructs.Send (Just msg) = buildSendHostPath config msg
 buildHostPath _ _ _ = Nothing
 
 buildUpdateHostPath :: Config.Config -> Maybe (Url 'Https)
-buildUpdateHostPath vk@(Config.VKBot _) = buildUrlScheme (VKData.updateHostPath vk)
-buildUpdateHostPath telegram@(Config.TBot _) = buildUrlScheme (TelData.updateHostPath telegram)
+buildUpdateHostPath vk@(Config.VKBot _) = buildUrlScheme (VK.buildGetUpdatesHostPath vk)
+buildUpdateHostPath telegram@(Config.TBot _) = buildUrlScheme (Telegram.buildGetUpdateHostPath telegram)
 
 buildSendHostPath :: Config.Config -> PureStructs.PureMessage -> Maybe (Url 'Https)
-buildSendHostPath (Config.VKBot _) _ = buildUrlScheme VKData.sendHostPath
+buildSendHostPath (Config.VKBot _) _ = buildUrlScheme VK.buildSendHostPath
 buildSendHostPath telegram@(Config.TBot _) msg =
   buildUrlScheme $
-    TelData.sendHostPath telegram (PureStructs.messageType msg)
+    Telegram.buildSendHostPath telegram (PureStructs.messageType msg)
