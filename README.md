@@ -1,7 +1,7 @@
 # Echo bot for Telegram and VK 
 
 <p> Telegram bot works properly and supports any types of messages (with or without attachments).  </p>
-<p> VK bot can process text messages, /repeat and /help commands, map coordinates, links, stickers, audio, video attachments. If there is an attachment the VK bot cannot process, the attachment will be ignored.   </p>
+<p> VK bot can process text messages, /repeat and /help commands, map coordinates, links, stickers, audio, video attachments. If there is an attachment VK bot cannot process, the attachment will be ignored.   </p>
 
 ## Project structure description
 
@@ -31,9 +31,19 @@
 
 <p>VK folder contains the following:</p>
 
-- Main module - it does contains just the same: the decodePureMessageList function (called in Wrapper.Decoders module), that decodes bytestring into VKUpdates and then builds PureMessage. And there are some other helping functions.
+- Main module - it contains just the same: the decodePureMessageList function (called in Wrapper.Decoders module), that decodes bytestring into VKUpdates and then builds PureMessage. And there are some other helping functions.
 - URL module - contains a set of funtions for building urls.
 - Functions folder - contains Builders module (that exports buildPureMessage function), Params module contains some functions for building PureMEssage parameters (the module imports functions for building parameters from Params folder), MsgTypes module contains buildMessageType functions (it imports some functions from MsgTypes folder for builing the correct message type).
+- Structs folder - contains specific VK data structures
+
+#### Environment
+<p>Environment is a data structure that holds all the necessary information such as current bot settings, logger, and some other data from .config file. The Environment folder contains the following: </p>
+
+- Initialization module - the module export the setEnvironment functions (called in Main functions) and some other helping functions for getting information from .config file and initialize Environment.
+- Functions module - it contains getters for some data stored in Environment wrapped in ReaderT monad. 
+- Structs module - contains the Environment data structure and some aliases. 
+- Exports module - exports some functions and constructors.
+- Config folder - it holds all needed things to initialize Config. Initialization module exports setBotSettings function (it builds Config based on information from .config file), the module also contains some other helping functions. Function module holds setOffset functions for updating Config. Data module contains some data for building urls. Exports module exports functions, constructors and data. 
 
 
 
