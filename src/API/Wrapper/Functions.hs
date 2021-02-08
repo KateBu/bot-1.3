@@ -3,11 +3,11 @@ module API.Wrapper.Functions where
 import qualified API.Telegram.Data as TelData
 import qualified API.VK.Data as VKData
 import qualified API.Wrapper.Structs as WrapStructs
-import qualified Config.Exports as Config
 import Data.Aeson (encode)
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as TE
+import qualified Environment.Config.Exports as Config
 import qualified Logic.PureStructs as PureStructs
 import qualified Network.HTTP.Client.MultipartFormData as LM
 import Network.HTTP.Req

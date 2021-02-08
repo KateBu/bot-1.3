@@ -1,7 +1,7 @@
 module TestData.TestEnvironment where
 
-import qualified Config.Exports as Config
 import qualified Data.Text as T
+import qualified Environment.Config.Exports as Config
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
 

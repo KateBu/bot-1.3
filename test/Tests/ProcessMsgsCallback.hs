@@ -1,6 +1,6 @@
 module Tests.ProcessMsgsCallback where
 
-import qualified Config.Exports as Config
+import qualified Environment.Config.Exports as Config
 import qualified Environment.Exports as Env
 import qualified Logic.ProcMsgs.Callback as Logic
 import qualified Logic.PureStructs as PureStructs

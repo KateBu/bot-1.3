@@ -5,8 +5,6 @@ main :: IO ()
 main = do
   putStrLn "Config.configSetOffset function tests:"
   mapM_ runTestTT Tests.testConfigSetOffset
-  putStrLn "Config.configGetUid function tests:"
-  mapM_ runTestTT Tests.testConfigGetUid
   putStrLn "Logic.ProcMsgs.Callback.makeCallbackResponse function tests:"
   runTestTT Tests.testMakeCallbackResponse
   putStrLn "Logic.makeRepeatMsg function tests:"

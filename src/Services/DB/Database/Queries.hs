@@ -1,9 +1,9 @@
 module Services.DB.Database.Queries where
 
-import qualified Config.Exports as Config
 import Data.String (IsString (fromString))
 import qualified Data.Text as T
 import Database.PostgreSQL.Simple (Query)
+import qualified Environment.Config.Exports as Config
 import qualified Logic.PureStructs as PureStructs
 
 userId :: Config.Config -> PureStructs.ChatID -> Query

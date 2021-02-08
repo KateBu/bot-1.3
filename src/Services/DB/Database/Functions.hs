@@ -1,6 +1,5 @@
 module Services.DB.Database.Functions where
 
-import qualified Config.Exports as Config
 import Control.Exception (bracket, catches)
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Data.Text as T
@@ -12,6 +11,7 @@ import Database.PostgreSQL.Simple
     query,
     query_,
   )
+import qualified Environment.Config.Exports as Config
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx

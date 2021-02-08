@@ -8,9 +8,8 @@ import Environment.Functions as Env
     eLogger,
     eRep,
     eSetOffset,
-    updateConfig,
   )
-import Environment.SetEnvironment as Env
+import Environment.Initialization as Env
   ( setEnvironment,
   )
 import Environment.Structs as Env

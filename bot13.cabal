@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ea5b0be6e55c4bc5f4540a11ec38f075764ec75adb56a9bc1d657db41e806ad2
+-- hash: e81f501769938049aa888911c01acb84f3eefbbd4b0a184349dc431f457e3fa9
 
 name:           bot13
 version:        0.1.0.0
@@ -95,17 +95,18 @@ library
       API.Wrapper.GetUpdate
       API.Wrapper.SendMessage
       API.Wrapper.Structs
-      Config.Data
-      Config.Exports
-      Config.Functions
-      Config.Struct
-      Environment.BotSettings.SetBotSettings
+      Environment.Config.Data
+      Environment.Config.Exports
+      Environment.Config.Functions
+      Environment.Config.Initialization
+      Environment.Config.Struct
       Environment.Exports
       Environment.Functions
+      Environment.Initialization
       Environment.Logger.Exports
       Environment.Logger.Functions
+      Environment.Logger.Initialization
       Environment.Logger.Structs
-      Environment.SetEnvironment
       Environment.Structs
       Exceptions.Exports
       Exceptions.Functions
@@ -197,7 +198,6 @@ test-suite bot13-test
       TestData.TestMessages
       TestData.TestServices
       Tests
-      Tests.ConfigGetUid
       Tests.ConfigSetOffset
       Tests.MakeCallbackResponse
       Tests.MakeRepeatMsg

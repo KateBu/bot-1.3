@@ -1,8 +1,5 @@
 module Tests (module Tests) where
 
-import Tests.ConfigGetUid as Tests
-  ( testConfigGetUid,
-  )
 import Tests.ConfigSetOffset as Tests
   ( testConfigSetOffset,
   )

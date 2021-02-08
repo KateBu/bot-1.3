@@ -1,6 +1,6 @@
 module Tests.ProcessMsgs_ where
 
-import qualified Config.Exports as Config
+import qualified Environment.Config.Exports as Config
 import qualified Environment.Exports as Env
 import qualified Logic.Main as Logic
 import Test.HUnit (Test (TestCase), assertEqual)

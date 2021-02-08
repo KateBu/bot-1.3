@@ -1,15 +1,12 @@
-module Environment.BotSettings.SetBotSettings where
+module Environment.Config.Initialization where
 
 import qualified API.VK.Structs.Exports as VKStructs
-import Config.Data
-  ( vkApiVersion,
-    vkLongPollUrl,
-  )
-import qualified Config.Exports as Config
 import Control.Exception (IOException, try)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
+import qualified Environment.Config.Data as Config
+import qualified Environment.Config.Struct as Config
 import qualified Environment.Logger.Exports as Logger
 import qualified Environment.Structs as Env
 import qualified Exceptions.Exports as BotEx
@@ -18,7 +15,7 @@ import Network.HTTP.Simple
     httpLBS,
     parseRequest,
   )
-import Text.Read
+import Text.Read (readEither)
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 setBotSettings ::
@@ -35,8 +32,8 @@ setBotSettings (Just "Telegram") _ _ (Just telegramToken) =
 setBotSettings _ _ _ _ = BotEx.throwInitConfigExcept
 
 getVKSettings :: Config.VKGroup -> Config.Token -> IO (T.Text, T.Text, Int)
-getVKSettings group teoken = do
-  longPollResponse <- getLongPollRequestBody group teoken
+getVKSettings group token = do
+  longPollResponse <- getLongPollRequestBody group token
   getLongPollInfo longPollResponse
 
 getLongPollRequestBody :: Config.VKGroup -> Config.Token -> IO BSL.ByteString
@@ -87,12 +84,12 @@ vkSettingsSuccess group token (key, server, ts) = do
 
 makeVkLonpPollUrl :: Config.VKGroup -> Config.Token -> String
 makeVkLonpPollUrl group server =
-  vkLongPollUrl
+  Config.vkLongPollUrl
     <> show group
     <> "&access_token="
     <> T.unpack server
     <> "&v="
-    <> T.unpack vkApiVersion
+    <> T.unpack Config.vkApiVersion
 
 longPollResponseSuccess ::
   Config.VKKey ->

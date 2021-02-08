@@ -8,10 +8,10 @@ import API.Wrapper.GetResponseFunctions
     getResponseUrl,
   )
 import qualified API.Wrapper.Structs as WrapStructs
-import qualified Config.Exports as Config
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
+import qualified Environment.Config.Exports as Config
 import qualified Environment.Exports as Env
 import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx

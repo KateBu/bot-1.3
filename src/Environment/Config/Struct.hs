@@ -1,4 +1,4 @@
-module Config.Struct where
+module Environment.Config.Struct where
 
 import qualified Data.Text as T
 

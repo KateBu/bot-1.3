@@ -1,10 +1,10 @@
-module Environment.SetEnvironment where
+module Environment.Initialization where
 
-import qualified Config.Exports as Config
 import Control.Exception (IOException, try)
 import qualified Data.Configurator as Configurator
 import qualified Data.Configurator.Types as Configurator
-import Environment.BotSettings.SetBotSettings
+import qualified Environment.Config.Exports as Config
+import Environment.Config.Initialization
   ( setBotSettings,
   )
 import qualified Environment.Logger.Exports as Logger
