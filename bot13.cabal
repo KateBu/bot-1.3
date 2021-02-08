@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ab9bbda5391bd244947371b79cdd38eee2e019b2dba4e941b6f1e93042e0e6bf
+-- hash: 0c41a1d8579bfdd63931866c57a32b54865b4dca84aec628613cd9fa29e43269
 
 name:           bot13
 version:        0.1.0.0
@@ -42,7 +42,7 @@ library
       API.Telegram.Functions.Attachments.Video
       API.Telegram.Functions.Attachments.Voice
       API.Telegram.Functions.BasicParams
-      API.Telegram.Functions.Decoder
+      API.Telegram.Functions.Builders
       API.Telegram.Functions.Params
       API.Telegram.Main
       API.Telegram.Structs.Attachments.Animation
@@ -63,23 +63,21 @@ library
       API.Telegram.Structs.MessageInfo
       API.Telegram.Structs.UpdateErr
       API.Telegram.Structs.Updates
-      API.VK.Cleaners.GetMessageType
-      API.VK.Cleaners.Keyboard
-      API.VK.Cleaners.MakeParams
-      API.VK.Cleaners.MsgTypes.Attachment
-      API.VK.Cleaners.MsgTypes.Callback
-      API.VK.Cleaners.MsgTypes.Fwd
-      API.VK.Cleaners.MsgTypes.Geo
-      API.VK.Cleaners.MsgTypes.TextMsg
-      API.VK.Cleaners.MsgTypes.UserCommand
-      API.VK.Cleaners.Params.AttachParams
-      API.VK.Cleaners.Params.BaseParams
-      API.VK.Cleaners.Params.Fwd
-      API.VK.Cleaners.Params.IsObjFunctions
-      API.VK.Cleaners.Params.SharedFunctions
-      API.VK.Cleaners.ToPureMessages
-      API.VK.Cleaners.ToPureMsgList
       API.VK.Data
+      API.VK.Functions.Builders
+      API.VK.Functions.MsgTypes
+      API.VK.Functions.MsgTypes.Attachment
+      API.VK.Functions.MsgTypes.Callback
+      API.VK.Functions.MsgTypes.Fwd
+      API.VK.Functions.MsgTypes.Geo
+      API.VK.Functions.MsgTypes.TextMsg
+      API.VK.Functions.MsgTypes.UserCommand
+      API.VK.Functions.Params
+      API.VK.Functions.Params.AttachmentParams
+      API.VK.Functions.Params.FwdParams
+      API.VK.Functions.Params.KeyboardParams
+      API.VK.Functions.Params.MessageParams
+      API.VK.Main
       API.VK.Structs.Attachments
       API.VK.Structs.Buttons
       API.VK.Structs.Exports

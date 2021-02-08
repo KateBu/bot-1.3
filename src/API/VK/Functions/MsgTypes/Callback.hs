@@ -1,4 +1,4 @@
-module API.VK.Cleaners.MsgTypes.Callback where
+module API.VK.Functions.MsgTypes.Callback where
 
 import qualified API.VK.Structs.Exports as VKStructs
 import Control.Applicative (Alternative ((<|>)))
@@ -6,8 +6,8 @@ import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Logic.PureStructs as PureStructs
 
-mbCallbackMsg :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-mbCallbackMsg vkMsg =
+buildCallbackMessage :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
+buildCallbackMessage vkMsg =
   PureStructs.MsgTypeCallbackQuery <$> mbNewRepeat (fromMaybe "" $ VKStructs.callback_payload vkMsg)
 
 mbNewRepeat :: T.Text -> Maybe PureStructs.CallbackText

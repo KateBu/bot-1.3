@@ -1,7 +1,7 @@
 module Wrapper.Functions.Decoders where
 
 import qualified API.Telegram.Main as Telegram
-import qualified API.VK.Cleaners.ToPureMsgList as VKCleaners
+import qualified API.VK.Main as VK
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
@@ -34,6 +34,6 @@ decodePureMessages env bytestring = do
   config <- runReaderT Env.eConfig env
   case config of
     (Config.VKBot _) ->
-      VKCleaners.vkByteStringToPureMessageList env bytestring
+      VK.decodePureMessageList env bytestring
     (Config.TBot _) ->
       Telegram.decodePureMessageList env bytestring
