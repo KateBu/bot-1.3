@@ -1,6 +1,6 @@
 module API.VK.Functions.Builders (buildPureMessage) where
 
-import API.VK.Functions.MsgTypes (getMessageType)
+import API.VK.Functions.MsgTypes (buildMessageType)
 import API.VK.Functions.Params (basicParams, buildParams)
 import qualified API.VK.Structs.Exports as VKStructs
 import qualified Environment.Exports as Env
@@ -27,7 +27,7 @@ buildMsgWithParams ::
   Maybe PureStructs.PureMessage
 buildMsgWithParams helpMsg updateId object = do
   let vkMessage = VKStructs.vkMessage object
-  buildMsgWithParams' helpMsg updateId vkMessage <$> getMessageType vkMessage
+  buildMsgWithParams' helpMsg updateId vkMessage <$> buildMessageType vkMessage
 
 buildMsgWithParams' ::
   Env.HelpMessage ->

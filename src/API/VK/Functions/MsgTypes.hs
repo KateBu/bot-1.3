@@ -10,8 +10,8 @@ import qualified API.VK.Structs.Exports as VKStructs
 import Control.Applicative (Alternative ((<|>)))
 import qualified Logic.Structs as PureStructs
 
-getMessageType :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-getMessageType vkMsg =
+buildMessageType :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
+buildMessageType vkMsg =
   buildCallbackMessage vkMsg
     <|> buildCommandMessage vkMsg
     <|> buildAttachmentMessage vkMsg
