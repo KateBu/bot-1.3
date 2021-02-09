@@ -9,8 +9,6 @@ type HelpMessage = T.Text
 
 type RepeatNumber = Int
 
-
-
 type DBConnectString = BS.ByteString
 
 data Environment m = Environment
