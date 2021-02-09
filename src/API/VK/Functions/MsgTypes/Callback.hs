@@ -1,4 +1,4 @@
-module API.VK.Functions.MsgTypes.Callback where
+module API.VK.Functions.MsgTypes.Callback (buildCallbackMessage) where
 
 import qualified API.VK.Structs.Exports as VKStructs
 import Control.Applicative (Alternative ((<|>)))

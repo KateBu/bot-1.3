@@ -1,4 +1,4 @@
-module API.Telegram.Functions.Attachments.Location where
+module API.Telegram.Functions.Attachments.Location (buildLocationMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs

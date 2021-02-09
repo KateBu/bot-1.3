@@ -1,4 +1,4 @@
-module API.Telegram.Functions.Attachments.Poll where
+module API.Telegram.Functions.Attachments.Poll (buildPollMessage) where
 
 import API.Telegram.Functions.Params
   ( basicParams,

@@ -3,7 +3,7 @@ module TestData.TestServices where
 import qualified Data.Map as Map
 import qualified Environment.Exports as Env
 import qualified Logic.Structs as PureStructs
-import qualified Services.ServiceHandle.ServicesDefinition as Services
+import qualified Services.Main as Services
 import qualified TestData.TestMessages as Msgs
 
 testDataBase :: Map.Map Int Int

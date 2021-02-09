@@ -11,9 +11,7 @@ import Database.PostgreSQL.Simple
     query,
     query_,
   )
-import qualified Environment.Config.Exports as Config
 import qualified Environment.Exports as Env
-import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
 import qualified Logic.Structs as PureStructs
 import Services.DB.Database.Queries
@@ -41,12 +39,12 @@ find env userId = do
 
 checkFindResponse ::
   BotEx.MonadThrow m =>
-  Logger.Logger m ->
+  Env.Logger m ->
   [Only (Maybe Env.RepeatNumber)] ->
   m (Maybe Env.RepeatNumber)
 checkFindResponse _ [] = pure Nothing
 checkFindResponse logger [Only repeatNumber] = do
-  Logger.botLog logger LoggerMsgs.findUserSuccess
+  Env.botLog logger LoggerMsgs.findUserSuccess
   pure repeatNumber
 checkFindResponse _ _ = BotEx.throwOtherException LoggerMsgs.findUserQueryFailed
 
@@ -62,13 +60,13 @@ add env chatId repeatNumber = do
 
 checkAddResponse ::
   BotEx.MonadThrow m =>
-  Logger.Logger m ->
+  Env.Logger m ->
   (T.Text, Env.RepeatNumber) ->
   [(T.Text, Env.RepeatNumber)] ->
   m ()
 checkAddResponse logger (chatId, repeatNumber) [(chatId', repeatNumber')] = do
   if chatId `T.isPrefixOf` chatId' && repeatNumber == repeatNumber'
-    then Logger.botLog logger LoggerMsgs.addUserRepeatSuccess
+    then Env.botLog logger LoggerMsgs.addUserRepeatSuccess
     else BotEx.throwOtherException LoggerMsgs.addUserQueryFailed
 checkAddResponse _ _ _ = BotEx.throwOtherException LoggerMsgs.addUserQueryFailed
 
@@ -84,22 +82,22 @@ update env chatId repeatNumber = do
 
 checkUpdateResponse ::
   BotEx.MonadThrow m =>
-  Logger.Logger m ->
+  Env.Logger m ->
   (T.Text, Env.RepeatNumber) ->
   [(T.Text, Env.RepeatNumber)] ->
   m ()
 checkUpdateResponse logger _ [] =
-  Logger.botLog logger LoggerMsgs.updateUserRepeatNoUser
+  Env.botLog logger LoggerMsgs.updateUserRepeatNoUser
 checkUpdateResponse logger (chatId, repeatNumber) [(chatId', repeatNumber')] =
   if chatId `T.isPrefixOf` chatId' && repeatNumber == repeatNumber'
-    then Logger.botLog logger LoggerMsgs.updateUserRepeatSuccess
+    then Env.botLog logger LoggerMsgs.updateUserRepeatSuccess
     else BotEx.throwOtherException LoggerMsgs.updateUserRepeatFailed
 checkUpdateResponse _ _ _ = BotEx.throwOtherException LoggerMsgs.updateUserRepeatFailed
 
 withDBExceptionsWrapped :: IO a -> IO a
 withDBExceptionsWrapped = flip catches BotEx.dbErrorsHandlers
 
-loggerConfigDbString :: Env.Environment IO -> IO (Logger.Logger IO, Config.Config, Env.DBConnectString)
+loggerConfigDbString :: Env.Environment IO -> IO (Env.Logger IO, Env.Config, Env.DBConnectString)
 loggerConfigDbString env = do
   config <- runReaderT Env.eConfig env
   logger <- runReaderT Env.eLogger env

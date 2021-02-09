@@ -3,7 +3,6 @@ module Logic.Main where
 import Control.Monad (foldM)
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
-import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
 import Logic.Functions.Callback (processCallbackMsgs)
 import Logic.Functions.Common (processCommonMsgs)
@@ -28,16 +27,16 @@ processMsg env msg = do
   let mbChatId = PureStructs.mbChatID msg
   case PureStructs.messageType msg of
     PureStructs.MsgTypeEmpty -> do
-      Logger.botLog logger logEmptyMsg
+      Env.botLog logger logEmptyMsg
       Env.eSetOffset env ((succ . PureStructs.updateID) msg)
     PureStructs.MsgTypeUserCommand PureStructs.Help -> do
-      Logger.botLog logger logHelpCommandMsg
+      Env.botLog logger logHelpCommandMsg
       Handle.sendMessage env msg
     PureStructs.MsgTypeUserCommand PureStructs.Repeat -> do
-      Logger.botLog logger logRepeatCommandMsg
+      Env.botLog logger logRepeatCommandMsg
       Handle.sendMessage env (buildRepeatMsg msg)
     PureStructs.MsgTypeCallbackQuery callbackData -> do
-      Logger.botLog logger logCallbackMsg
+      Env.botLog logger logCallbackMsg
       maybe throwError (processCallbackMsgs env msg callbackData) mbChatId
     PureStructs.MsgTypeCommon _ -> do
       maybe throwError (processCommonMsgs env msg) mbChatId

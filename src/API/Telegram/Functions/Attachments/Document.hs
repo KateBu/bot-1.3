@@ -1,4 +1,4 @@
-module API.Telegram.Functions.Attachments.Document where
+module API.Telegram.Functions.Attachments.Document (buildDocumentMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs

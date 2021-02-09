@@ -3,7 +3,6 @@ module Wrapper.Functions.Requests (sendMessageRequest, getUpdatesRequest) where
 import Control.Exception (handle)
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
-import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
 import qualified Logic.Structs as PureStructs
 import Network.HTTP.Req
@@ -30,7 +29,7 @@ sendMessageRequest ::
 sendMessageRequest env basicParams params msg = do
   logger <- runReaderT Env.eLogger env
   config <- runReaderT Env.eConfig env
-  Logger.botLog logger LoggerMsgs.getApiResponseInProgress
+  Env.botLog logger LoggerMsgs.getApiResponseInProgress
   let hostPath = WrapFunctions.buildHostPath config WrapStructs.Send (Just msg)
   if any WrapFunctions.isMultipart params
     then getResponseMultipart hostPath params basicParams
@@ -40,15 +39,15 @@ getUpdatesRequest :: Env.Environment IO -> IO LbsResponse
 getUpdatesRequest env = do
   config <- runReaderT Env.eConfig env
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.getUpdatesInProcess
+  Env.botLog logger LoggerMsgs.getUpdatesInProcess
   let params = WrapFunctions.updateParam config
   let url = WrapFunctions.buildHostPath config WrapStructs.GetUpdate Nothing
   if any WrapFunctions.isMultipart params
     then do
-      Logger.botLog logger logMsgMultipart
+      Env.botLog logger logMsgMultipart
       getResponseMultipart url params mempty
     else do
-      Logger.botLog logger logMsgUrl
+      Env.botLog logger logMsgUrl
       getResponseUrl url params mempty
   where
     logMsgMultipart = LoggerMsgs.getResponseMultipartInProgress

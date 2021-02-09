@@ -7,7 +7,6 @@ import Data.Aeson (decode, eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
-import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
 import qualified Logic.Structs as PureStructs
 import qualified TextMessages.LoggerMessages as LoggerMsgs
@@ -26,18 +25,18 @@ decodeTelegramUpdates ::
   IO TStructs.TelegramUpdates
 decodeTelegramUpdates env bytestring = do
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger logMsg
+  Env.botLog logger logMsg
   let mbTelegramUpdates = decode bytestring :: Maybe TStructs.TelegramUpdates
   maybe (throwUpdateError bytestring) (decodeSuccess logger) mbTelegramUpdates
   where
     logMsg = LoggerMsgs.telegramBytestringDecodingInProgress
 
 decodeSuccess ::
-  Logger.Logger IO ->
+  Env.Logger IO ->
   TStructs.TelegramUpdates ->
   IO TStructs.TelegramUpdates
 decodeSuccess logger telegramUpdates =
-  Logger.botLog logger logMsg >> pure telegramUpdates
+  Env.botLog logger logMsg >> pure telegramUpdates
   where
     logMsg = LoggerMsgs.telegramBytestringDecodingSuccess
 
@@ -48,7 +47,7 @@ buildPureMessageList ::
 buildPureMessageList env telegramUpdates = do
   helpMsg <- runReaderT Env.eHelpMsg env
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger logMsg
+  Env.botLog logger logMsg
   maybe (BotEx.throwUpdateExcept LoggerMsgs.telegramUpdatesFailed) pure (mbPureMsgs helpMsg)
   where
     logMsg = LoggerMsgs.parseTelelegramMsgSuccess
@@ -62,7 +61,7 @@ throwUpdateError bytestring = do
 telegramError :: TStructs.TelegramUpdatesError -> IO TStructs.TelegramUpdates
 telegramError err =
   BotEx.throwUpdateExcept
-    ( Logger.makeLogMessage
+    ( Env.makeLogMessage
         LoggerMsgs.getUpdateFailed
         errMessage
     )

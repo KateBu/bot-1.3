@@ -4,9 +4,6 @@ import Control.Exception (IOException, try)
 import qualified Data.Configurator as Configurator
 import qualified Data.Configurator.Types as Configurator
 import qualified Environment.Config.Exports as Config
-import Environment.Config.Initialization
-  ( setBotSettings,
-  )
 import qualified Environment.Logger.Exports as Logger
 import qualified Environment.Structs as Env
 import qualified Exceptions.Exports as BotEx
@@ -26,7 +23,7 @@ setEnvironment' ::
   Configurator.Config ->
   IO (Env.Environment IO)
 setEnvironment' conf = do
-  botT <- Configurator.lookup conf "bot.botType" :: IO (Maybe Env.BotType)
+  botT <- Configurator.lookup conf "bot.botType" :: IO (Maybe Config.BotType)
   rep <- Configurator.lookup conf "bot.repetition" :: IO (Maybe Env.RepeatNumber)
   msg <- Configurator.lookup conf "bot.helpMessage" :: IO (Maybe Env.HelpMessage)
   tTok <- Configurator.lookup conf "bot.telegramToken" :: IO (Maybe Config.Token)
@@ -34,7 +31,7 @@ setEnvironment' conf = do
   vkTok <- Configurator.lookup conf "bot.VKToken" :: IO (Maybe Config.Token)
   vkGroup <- Configurator.lookup conf "bot.VKGroupID" :: IO (Maybe Config.VKGroup)
   dbCnt <- Configurator.lookup conf "bot.dbConnectString" :: IO (Maybe Env.DBConnectString)
-  botSettings <- setBotSettings botT vkGroup vkTok tTok
+  botSettings <- Config.setBotSettings botT vkGroup vkTok tTok
   initEnvironment msg rep prior dbCnt botSettings
 
 initEnvironment ::

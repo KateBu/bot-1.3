@@ -4,9 +4,7 @@ import qualified API.VK.Structs.Exports as VKStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (eitherDecode)
 import qualified Data.Text as T
-import qualified Environment.Config.Exports as Config
 import qualified Environment.Exports as Env
-import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
 import qualified Logic.Structs as PureStructs
 import Network.HTTP.Req
@@ -24,7 +22,7 @@ updateEnvironment ::
 updateEnvironment env msg apiResponse =
   case responseStatusCode apiResponse of
     200 -> updateEnvironment' env msg apiResponse
-    err -> BotEx.throwSendExcept $ Logger.makeLogMessage LoggerMsgs.sendMsgFailed ((T.pack . show) err)
+    err -> BotEx.throwSendExcept $ Env.makeLogMessage LoggerMsgs.sendMsgFailed ((T.pack . show) err)
 
 updateEnvironment' ::
   Env.Environment IO ->
@@ -35,11 +33,11 @@ updateEnvironment' env msg lbsResp = do
   logger <- runReaderT Env.eLogger env
   config <- runReaderT Env.eConfig env
   case config of
-    Config.VKBot _ -> do
+    Env.VKBot _ -> do
       let sendMsgResult = eitherDecode (responseBody lbsResp) :: Either String VKStructs.VKResult
       vKUpdateResult env msg sendMsgResult
-    Config.TBot _ -> do
-      Logger.botLog logger LoggerMsgs.sendTelegramMsgSuccess
+    Env.TBot _ -> do
+      Env.botLog logger LoggerMsgs.sendTelegramMsgSuccess
       Env.eSetOffset env $ succ (PureStructs.updateID msg)
 
 vKUpdateResult ::
@@ -49,12 +47,12 @@ vKUpdateResult ::
   IO (Env.Environment IO)
 vKUpdateResult _ _ (Left err) = BotEx.throwSendExcept logMsg
   where
-    logMsg = Logger.makeLogMessage LoggerMsgs.sendMsgFailed (T.pack err)
+    logMsg = Env.makeLogMessage LoggerMsgs.sendMsgFailed (T.pack err)
 vKUpdateResult _ _ (Right (VKStructs.SendMsgError (VKStructs.SendError err))) =
   BotEx.throwSendExcept logMsg
   where
-    logMsg = Logger.makeLogMessage LoggerMsgs.sendMsgFailed (VKStructs.err_msg err)
+    logMsg = Env.makeLogMessage LoggerMsgs.sendMsgFailed (VKStructs.err_msg err)
 vKUpdateResult env msg (Right (VKStructs.SendMsgSuccess _)) = do
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.sendVkMsgSuccess
+  Env.botLog logger LoggerMsgs.sendVkMsgSuccess
   Env.eSetOffset env $ PureStructs.updateID msg

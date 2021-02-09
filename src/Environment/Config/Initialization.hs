@@ -8,7 +8,6 @@ import qualified Data.Text as T
 import qualified Environment.Config.Data as Config
 import qualified Environment.Config.Struct as Config
 import qualified Environment.Logger.Exports as Logger
-import qualified Environment.Structs as Env
 import qualified Exceptions.Exports as BotEx
 import Network.HTTP.Simple
   ( getResponseBody,
@@ -19,7 +18,7 @@ import Text.Read (readEither)
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 setBotSettings ::
-  Maybe Env.BotType ->
+  Maybe Config.BotType ->
   Maybe Config.VKGroup ->
   Maybe Config.Token ->
   Maybe Config.Token ->

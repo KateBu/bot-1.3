@@ -1,4 +1,4 @@
-module API.Telegram.Functions.Attachments.Venue where
+module API.Telegram.Functions.Attachments.Venue (buildVenueMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs

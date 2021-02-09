@@ -9,7 +9,7 @@ type HelpMessage = T.Text
 
 type RepeatNumber = Int
 
-type BotType = T.Text
+
 
 type DBConnectString = BS.ByteString
 

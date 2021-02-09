@@ -1,4 +1,4 @@
-module API.Telegram.Functions.Attachments.Sticker where
+module API.Telegram.Functions.Attachments.Sticker (buildStickerMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs

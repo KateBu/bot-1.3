@@ -7,7 +7,6 @@ import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
-import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
 import qualified Logic.Structs as PureStructs
 import Text.Read (readMaybe)
@@ -27,12 +26,12 @@ decodeVKUpdates ::
   IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
 decodeVKUpdates env vkByteString = do
   logger <- runReaderT Env.eLogger env
-  Logger.botLog logger LoggerMsgs.vkByteStringDecodingInProgress
+  Env.botLog logger LoggerMsgs.vkByteStringDecodingInProgress
   let eiVKUpdates = eitherDecode vkByteString :: Either String VKStructs.VKUpdates
   either decodeUpdateError (decodeSuccess logger) eiVKUpdates
 
 decodeSuccess ::
-  Logger.Logger IO ->
+  Env.Logger IO ->
   VKStructs.VKUpdates ->
   IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
 decodeSuccess _ (VKStructs.VKUpdateError (VKStructs.UpdateErr errCode _)) = case errCode of
@@ -41,7 +40,7 @@ decodeSuccess _ (VKStructs.VKUpdateError (VKStructs.UpdateErr errCode _)) = case
   3 -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailedCode3
   _ -> BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailedCode4
 decodeSuccess logger (VKStructs.VKUpdates updates) = do
-  Logger.botLog logger logMsg
+  Env.botLog logger logMsg
   let mbUpdateId = readMaybe $ VKStructs.ts updates :: Maybe Int
   maybe
     (BotEx.throwOtherException LoggerMsgs.readUpdateIdFailed)
@@ -57,7 +56,7 @@ buildPureMessageList ::
 buildPureMessageList env (updateId, updates) = do
   logger <- runReaderT Env.eLogger env
   helpMsg <- runReaderT Env.eHelpMsg env
-  Logger.botLog logger LoggerMsgs.parseVKMsgSuccess
+  Env.botLog logger LoggerMsgs.parseVKMsgSuccess
   maybe (BotEx.throwUpdateExcept LoggerMsgs.vkUpdatesFailed) pure (mbPureMsgs helpMsg)
   where
     mbPureMsgs helpMsg = sequence $ buildPureMessage helpMsg updateId <$> updates
@@ -66,4 +65,4 @@ decodeUpdateError ::
   String ->
   IO (PureStructs.UpdateID, [VKStructs.VKUpdInfo])
 decodeUpdateError err =
-  BotEx.throwUpdateExcept (Logger.makeLogMessage LoggerMsgs.vkUpdatesDecodingFailed $ T.pack err)
+  BotEx.throwUpdateExcept (Env.makeLogMessage LoggerMsgs.vkUpdatesDecodingFailed $ T.pack err)

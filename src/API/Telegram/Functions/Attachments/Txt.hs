@@ -1,4 +1,4 @@
-module API.Telegram.Functions.Attachments.Txt where
+module API.Telegram.Functions.Attachments.Txt (buildTextMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
 import API.Telegram.Structs.Attachments.Keyboard (TButtons (TButtons))

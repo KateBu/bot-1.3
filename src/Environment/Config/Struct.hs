@@ -12,6 +12,8 @@ type VKKey = T.Text
 
 type VKServer = T.Text
 
+type BotType = T.Text
+
 data Config = TBot Telegram | VKBot VK
   deriving (Show, Eq)
 

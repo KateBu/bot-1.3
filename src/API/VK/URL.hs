@@ -1,23 +1,23 @@
 module API.VK.URL where
 
 import qualified Data.Text as T
-import qualified Environment.Config.Exports as Config
+import qualified Environment.Exports as Env
 import qualified Logic.Structs as PureStructs
 import System.Random (Random (random), newStdGen)
 import qualified Wrapper.Structs as WrapStructs
 
-buildGetUpdatesParams :: Config.Config -> [PureStructs.Params]
-buildGetUpdatesParams (Config.VKBot (Config.VK _ _ key _ ts)) =
+buildGetUpdatesParams :: Env.Config -> [PureStructs.Params]
+buildGetUpdatesParams (Env.VKBot (Env.VK _ _ key _ ts)) =
   [ PureStructs.ParamsText "act" "a_check",
     PureStructs.ParamsText "key" key,
     PureStructs.ParamsNum "ts" ts,
-    PureStructs.ParamsText "wait" Config.timeOut,
+    PureStructs.ParamsText "wait" Env.timeOut,
     PureStructs.ParamsNum "mode" 2
   ]
 buildGetUpdatesParams _ = []
 
-buildGetUpdatesHostPath :: Config.Config -> Maybe WrapStructs.HostPath
-buildGetUpdatesHostPath (Config.VKBot (Config.VK _ _ _ server _)) =
+buildGetUpdatesHostPath :: Env.Config -> Maybe WrapStructs.HostPath
+buildGetUpdatesHostPath (Env.VKBot (Env.VK _ _ _ server _)) =
   pure $
     let (host, rest) = T.span (/= '/') (T.drop 8 server)
         path = filter (/= "") (T.splitOn "/" rest)
@@ -27,12 +27,12 @@ buildGetUpdatesHostPath _ = Nothing
 buildSendHostPath :: Maybe WrapStructs.HostPath
 buildSendHostPath = pure $ WrapStructs.HostPath "api.vk.com" ["method", "messages.send"]
 
-buildSendBasicParams :: Config.Config -> IO [PureStructs.Params]
-buildSendBasicParams (Config.VKBot (Config.VK token _ _ _ _)) = do
+buildSendBasicParams :: Env.Config -> IO [PureStructs.Params]
+buildSendBasicParams (Env.VKBot (Env.VK token _ _ _ _)) = do
   randomId <- getRandomId
   pure
     [ PureStructs.ParamsNum "random_id" randomId,
-      PureStructs.ParamsText "v" Config.vkApiVersion,
+      PureStructs.ParamsText "v" Env.vkApiVersion,
       PureStructs.ParamsText "access_token" token
     ]
 buildSendBasicParams _ = pure []

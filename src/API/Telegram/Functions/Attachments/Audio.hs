@@ -1,4 +1,4 @@
-module API.Telegram.Functions.Attachments.Audio where
+module API.Telegram.Functions.Attachments.Audio (buildAudioMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
 import qualified API.Telegram.Structs.MessageInfo as TStructs
