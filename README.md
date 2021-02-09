@@ -9,7 +9,7 @@
 
 ### Src structure 
 
-<p> src part contains the following folders: </p>
+<p> src part contains Bot module and the following folders: </p>
 
 - API  
 - Environment 
@@ -18,6 +18,9 @@
 - Services  
 - TextMessages
 - Wrapper
+
+#### Bot module
+<p> Bot module exports runBot function (called in Main module). The function holds a chain of actions: the bot gets updates, handles them and then call the nextLoop function (it prints the log message and calls runBot again). </p>
 
 #### API 
 <p> API folder contains two folders: VK and Telegram. The aim of the functions, actions and structures of these folders is to decode bytestrings into specific structures (Telegram structures or VK ones) and then build PureMessages. </p>
@@ -37,14 +40,58 @@
 - Structs folder - contains specific VK data structures
 
 #### Environment
-<p>Environment is a data structure that holds all the necessary information such as current bot settings, logger, and some other data from .config file. The Environment folder contains the following: </p>
+<p>Environment is a data structure that holds all the necessary information such as current bot config, logger, and some other data from .config file. The Environment folder contains the following: </p>
 
 - Initialization module - the module exports the setEnvironment function (called in Main module), it also holds some other helping functions for getting information from .config file and initializing Environment.
 - Functions module - it contains getters for some data stored in Environment wrapped in ReaderT monad. 
 - Structs module - contains the Environment data structure and some aliases. 
 - Exports module - exports some functions and constructors.
-- Config folder - it holds all needed things to initialize Config. Initialization module exports setBotSettings function (it builds Config based on information from .config file), the module also contains some other helping functions. Function module holds setOffset functions for updating Config. Data module contains some data for building urls. Exports module exports functions, constructors and data. 
-- Logger folder - 
+- Config folder - it holds all needed things to initialize and use Config as a part of Environment. Initialization module exports setBotSettings function (it builds Config based on information from .config file), the module also contains some other helping functions. Function module holds setOffset functions for updating Config. Data module contains some data for building urls. Exports module exports functions, constructors and data. 
+- Logger folder - holds all the needed things to initialize and use logger as a part of Environment. Initialization module contains createLogger function. There are specific data structures for logger in Structs module. In Functions module you can find a createLogMessage function. And Exports module contains functions, data structs and constructors for export. 
+
+#### Exceptions 
+<p> Exceptions folder contains BotException data structs, MonadThrow typeclass definition and a set of functions that throw different types of exceptions and an exception handle function. The folder contains the following modules:</p>
+
+- Structs module - contains BotExpeption data type and instances. 
+- Functions module - contains MonadThrow typeclass definition and an instance for IO Monad.it also holds a set of functions for throwing and handling exception. 
+- Exports module - exports functions, constructor and instances.
+
+#### Logic
+<p> Logic folder contains all the needed things for handling pure messages. Depending on the message type, the message may be ignored (for Empty messages), sent back to user several times (for Common messages). If it is a UserCommand message, user gets a special answer, and if it is a Callback message some information should be changed in a database. The folder contains the following:</p>
+
+- Main module - contains processMsgs function, that supposed to handle pure messages. The module also contains some additional helper functions. Every function can be exported from here because all the functions are used in test part of this project.
+- Structs module - exports constructors and functions from Structs folder.
+- Functions folder - holds two modules: Callback module contains functions for processing Callback messages and Common module contains the functions for processing Common messages.
+- Structs folder - contains specific data structures for pure messages.
+
+#### Services 
+<p> Services folder provides all the necessary services for connectig to a server (for getting updates and sending messages) and connecting to a database (for looking for users, adding new user and updating user information).  Services folder contains the following folders: </p>
+
+- Main module - contains Services typeclass definition and an instance for IO monad. The module exports Services constructor with functions and instances. 
+- FunctionsIO module - contains a set of functions for IO instance of Services typeclass. 
+- API folder - the Handle module contains the Handle data type, which consists of two functions for communicating to a server: hGetUpdates (for connecting to the server to get updates) and hSendMessage (for sending messages to users). The folder also containes 'new' function (for crating IO Handle), 'close' function (for closing IO Handle) and withAPIHandle function (for working with Handle). 
+- DB folder - the Handle module inside contains the Handle data type, which consists of three functions for communicating to a database: findUser (for looking up a user in the DB), addUSer (for inserting a new user into DB) and updateUser (for updating the number of repetitions for a user).The Handle module also has 'new', 'close' and 'withDBHandle' functions. There are two modules in Database folder here: Functions module (functions for connecting to a DB) and Queries module (contains the queries to a DB).
+
+#### TextMessages 
+<p> TextMessages folder contains all the text messages used in the project. The folder contains the following modules: </p>
+
+- LoggerMessages - the module exports all the different text messages (wrapped in LogMessage) for logging (from LoggerMessages folder here). 
+- ParseFailMessage - the module contains a message for parseFail function
+- RepeatCommandMessages - the module contains some text messages user gets when sends /repeat command
+
+#### Wrapper 
+<p> Wrapper folder contains all the necessary instruments for building requests to server and decoding server responses. The folder contains the following:</p>
+
+- Main module - contains and exports getUpdates and sendMessage functions. It also contains one more helper function. 
+- Structs module - contains a data structure for building url, and a data structure for method (GetUpdate or Send). 
+- Functions folder - it contains Actions module (it exports updateEnvironment functions for setting new offset). Decoders module contains functions for decoding server response to bytestring and decoding bytestring to PureMessage. Requests module exports sendMessageRequest and getUpdatesRequest functions (for connecting to a server and getting server response), the module also holds some additional helper functions. URL module contains some functions for building urls.
+
+
+
+
+
+
+
 
 
 
