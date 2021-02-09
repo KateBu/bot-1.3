@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2d1fd9e6e883a134eb26014348f2aa3475e446330a25193e5267515d66418972
+-- hash: f9b6f0e1d006baf1678c7c24100962183e23eb8decfb4ac7f7c8e9ac10fa92d8
 
 name:           bot13
 version:        0.1.0.0
@@ -112,8 +112,8 @@ library
       Services.DB.Database.Functions
       Services.DB.Database.Queries
       Services.DB.Handle
-      Services.ServiceHandle.FunctionsIO
-      Services.ServiceHandle.ServicesDefinition
+      Services.FunctionsIO
+      Services.Main
       TextMessages.LoggerMessages
       TextMessages.LoggerMessages.API
       TextMessages.LoggerMessages.Bot

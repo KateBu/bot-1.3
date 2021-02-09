@@ -1,4 +1,4 @@
-module Services.ServiceHandle.FunctionsIO where
+module Services.FunctionsIO where
 
 import qualified Environment.Exports as Env
 import qualified Logic.Structs as PureStructs
