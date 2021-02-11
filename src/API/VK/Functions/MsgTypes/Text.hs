@@ -1,4 +1,4 @@
-module API.VK.Functions.MsgTypes.TextMsg where
+module API.VK.Functions.MsgTypes.Text where
 
 import qualified API.VK.Structs.Exports as VK
 import qualified Logic.Structs as PureStructs
