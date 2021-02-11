@@ -5,12 +5,12 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-newtype TelVideo = TelVideo
+newtype Video = Video
   { video_file_id :: T.Text
   }
   deriving (Show)
 
-instance FromJSON TelVideo where
+instance FromJSON Video where
   parseJSON (Object v) =
-    TelVideo <$> v .: "file_id"
+    Video <$> v .: "file_id"
   parseJSON _ = parseFail parseFailMessage

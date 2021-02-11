@@ -34,7 +34,7 @@ updateEnvironment' env msg lbsResp = do
   config <- runReaderT Env.eConfig env
   case config of
     Env.VKBot _ -> do
-      let sendMsgResult = eitherDecode (responseBody lbsResp) :: Either String VKStructs.VKResult
+      let sendMsgResult = eitherDecode (responseBody lbsResp) :: Either String VKStructs.Result
       vKUpdateResult env msg sendMsgResult
     Env.TBot _ -> do
       Env.botLog logger LoggerMsgs.sendTelegramMsgSuccess
@@ -43,7 +43,7 @@ updateEnvironment' env msg lbsResp = do
 vKUpdateResult ::
   Env.Environment IO ->
   PureStructs.PureMessage ->
-  Either String VKStructs.VKResult ->
+  Either String VKStructs.Result ->
   IO (Env.Environment IO)
 vKUpdateResult _ _ (Left err) = BotEx.throwSendExcept logMsg
   where

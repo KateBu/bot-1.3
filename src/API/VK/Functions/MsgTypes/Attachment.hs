@@ -1,10 +1,10 @@
 module API.VK.Functions.MsgTypes.Attachment where
 
-import qualified API.VK.Structs.Exports as VKStructs
+import qualified API.VK.Structs.Exports as VK
 import qualified Logic.Structs as PureStructs
 
-buildAttachmentMessage :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-buildAttachmentMessage vkMsg = VKStructs.attachments vkMsg >>= mbAttachmentMsg'
+buildAttachmentMessage :: VK.Message -> Maybe PureStructs.MessageType
+buildAttachmentMessage msg = VK.attachments msg >>= mbAttachmentMsg'
   where
     mbAttachmentMsg' [] = Nothing
     mbAttachmentMsg' _ = pure $ PureStructs.MsgTypeCommon "Attachment"

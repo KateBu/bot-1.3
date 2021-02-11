@@ -1,10 +1,10 @@
 module API.VK.Functions.MsgTypes.TextMsg where
 
-import qualified API.VK.Structs.Exports as VKStructs
+import qualified API.VK.Structs.Exports as VK
 import qualified Logic.Structs as PureStructs
 
-buildTextMessage :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-buildTextMessage vkMsg = case VKStructs.msg_text vkMsg of
+buildTextMessage :: VK.Message -> Maybe PureStructs.MessageType
+buildTextMessage msg = case VK.msg_text msg of
   Nothing -> Nothing
   Just "" -> Nothing
   _ -> pure $ PureStructs.MsgTypeCommon "Message"

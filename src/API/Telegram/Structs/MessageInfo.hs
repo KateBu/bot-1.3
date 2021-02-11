@@ -5,26 +5,26 @@ module API.Telegram.Structs.MessageInfo
 where
 
 import API.Telegram.Structs.Attachments.Animation as Structs
-  ( TelAmination (..),
+  ( Amination (..),
   )
-import API.Telegram.Structs.Attachments.Audio as Structs (TelAudio (..))
-import API.Telegram.Structs.Attachments.Contact as Structs (TelContact (..))
+import API.Telegram.Structs.Attachments.Audio as Structs (Audio (..))
+import API.Telegram.Structs.Attachments.Contact as Structs (Contact (..))
 import API.Telegram.Structs.Attachments.Document as Structs
-  ( TelDocument (..),
+  ( Document (..),
   )
 import API.Telegram.Structs.Attachments.Location as Structs
-  ( TelLocation (..),
+  ( Location (..),
   )
-import API.Telegram.Structs.Attachments.Photo as Structs (TelPhoto (..))
+import API.Telegram.Structs.Attachments.Photo as Structs (Photo (..))
 import API.Telegram.Structs.Attachments.Poll as Structs
-  ( PollOptions (..),
-    TelPoll (..),
+  ( Poll (..),
+    PollOptions (..),
   )
-import API.Telegram.Structs.Attachments.Sticker as Structs (TelSticker (..))
-import API.Telegram.Structs.Attachments.Venue as Structs (TelVenue (..))
-import API.Telegram.Structs.Attachments.Video as Structs (TelVideo (..))
-import API.Telegram.Structs.Attachments.Voice as Structs (TelVoice (..))
-import API.Telegram.Structs.Chat as Structs (TelChat (..))
+import API.Telegram.Structs.Attachments.Sticker as Structs (Sticker (..))
+import API.Telegram.Structs.Attachments.Venue as Structs (Venue (..))
+import API.Telegram.Structs.Attachments.Video as Structs (Video (..))
+import API.Telegram.Structs.Attachments.Voice as Structs (Voice (..))
+import API.Telegram.Structs.Chat as Structs (Chat (..))
 import Data.Aeson
   ( FromJSON (parseJSON),
     Value (Object),
@@ -37,21 +37,21 @@ import TextMessages.ParseFailMessage (parseFailMessage)
 
 data MessageInfo = MessageInfo
   { message_id :: Int,
-    chat :: TelChat,
+    chat :: Chat,
     txt :: Maybe T.Text,
-    animation :: Maybe TelAmination,
-    audio :: Maybe TelAudio,
-    document :: Maybe TelDocument,
-    photo :: Maybe [TelPhoto],
-    video :: Maybe TelVideo,
-    voice :: Maybe TelVoice,
-    contact :: Maybe TelContact,
-    poll :: Maybe TelPoll,
-    venue :: Maybe TelVenue,
-    location :: Maybe TelLocation,
+    animation :: Maybe Amination,
+    audio :: Maybe Audio,
+    document :: Maybe Document,
+    photo :: Maybe [Photo],
+    video :: Maybe Video,
+    voice :: Maybe Voice,
+    contact :: Maybe Contact,
+    poll :: Maybe Poll,
+    venue :: Maybe Venue,
+    location :: Maybe Location,
     mediagroup :: Maybe T.Text,
     caption :: Maybe T.Text,
-    sticker :: Maybe TelSticker
+    sticker :: Maybe Sticker
   }
   deriving (Show)
 

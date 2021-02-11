@@ -10,7 +10,7 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data TelPoll = TelPoll
+data Poll = Poll
   { question :: T.Text,
     poll_options :: [PollOptions],
     is_anonymous :: Maybe Bool,
@@ -24,9 +24,9 @@ data TelPoll = TelPoll
   }
   deriving (Show)
 
-instance FromJSON TelPoll where
+instance FromJSON Poll where
   parseJSON (Object v) =
-    TelPoll <$> v .: "question"
+    Poll <$> v .: "question"
       <*> v .: "options"
       <*> v .:? "is_anonymous"
       <*> v .:? "type"

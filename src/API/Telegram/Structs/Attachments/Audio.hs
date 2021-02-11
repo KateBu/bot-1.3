@@ -10,7 +10,7 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data TelAudio = TelAudio
+data Audio = Audio
   { audio_id :: T.Text,
     audio_duration :: Maybe Int,
     audio_performer :: Maybe T.Text,
@@ -18,9 +18,9 @@ data TelAudio = TelAudio
   }
   deriving (Show)
 
-instance FromJSON TelAudio where
+instance FromJSON Audio where
   parseJSON (Object v) =
-    TelAudio <$> v .: "file_id"
+    Audio <$> v .: "file_id"
       <*> v .:? "duration"
       <*> v .:? "performer"
       <*> v .:? "title"

@@ -1,7 +1,7 @@
 module API.Telegram.Main (decodePureMessageList) where
 
 import API.Telegram.Functions.Builders (buildPureMessage)
-import qualified API.Telegram.Structs.Updates as TStructs
+import qualified API.Telegram.Structs.Updates as Telegram
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Aeson (decode, eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
@@ -16,50 +16,50 @@ decodePureMessageList ::
   BSL.ByteString ->
   IO [PureStructs.PureMessage]
 decodePureMessageList env bytestring = do
-  telegramUpdates <- decodeTelegramUpdates env bytestring
-  buildPureMessageList env telegramUpdates
+  updates <- decodeUpdates env bytestring
+  buildPureMessageList env updates
 
-decodeTelegramUpdates ::
+decodeUpdates ::
   Env.Environment IO ->
   BSL.ByteString ->
-  IO TStructs.TelegramUpdates
-decodeTelegramUpdates env bytestring = do
+  IO Telegram.Updates
+decodeUpdates env bytestring = do
   logger <- runReaderT Env.eLogger env
   Env.botLog logger logMsg
-  let mbTelegramUpdates = decode bytestring :: Maybe TStructs.TelegramUpdates
-  maybe (throwUpdateError bytestring) (decodeSuccess logger) mbTelegramUpdates
+  let mbUpdates = decode bytestring :: Maybe Telegram.Updates
+  maybe (throwUpdateError bytestring) (decodeSuccess logger) mbUpdates
   where
     logMsg = LoggerMsgs.telegramBytestringDecodingInProgress
 
 decodeSuccess ::
   Env.Logger IO ->
-  TStructs.TelegramUpdates ->
-  IO TStructs.TelegramUpdates
-decodeSuccess logger telegramUpdates =
-  Env.botLog logger logMsg >> pure telegramUpdates
+  Telegram.Updates ->
+  IO Telegram.Updates
+decodeSuccess logger updates =
+  Env.botLog logger logMsg >> pure updates
   where
     logMsg = LoggerMsgs.telegramBytestringDecodingSuccess
 
 buildPureMessageList ::
   Env.Environment IO ->
-  TStructs.TelegramUpdates ->
+  Telegram.Updates ->
   IO [PureStructs.PureMessage]
-buildPureMessageList env telegramUpdates = do
+buildPureMessageList env updates = do
   helpMsg <- runReaderT Env.eHelpMsg env
   logger <- runReaderT Env.eLogger env
   Env.botLog logger logMsg
   maybe (BotEx.throwUpdateExcept LoggerMsgs.telegramUpdatesFailed) pure (mbPureMsgs helpMsg)
   where
     logMsg = LoggerMsgs.parseTelelegramMsgSuccess
-    mbPureMsgs helpMsg = sequence $ buildPureMessage helpMsg <$> TStructs.result telegramUpdates
+    mbPureMsgs helpMsg = sequence $ buildPureMessage helpMsg <$> Telegram.result updates
 
-throwUpdateError :: BSL.ByteString -> IO TStructs.TelegramUpdates
+throwUpdateError :: BSL.ByteString -> IO Telegram.Updates
 throwUpdateError bytestring = do
-  let eiTelegramError = eitherDecode bytestring :: Either String TStructs.TelegramUpdatesError
-  either BotEx.throwParseExcept telegramError eiTelegramError
+  let eiError = eitherDecode bytestring :: Either String Telegram.UpdatesError
+  either BotEx.throwParseExcept buildUpdateError eiError
 
-telegramError :: TStructs.TelegramUpdatesError -> IO TStructs.TelegramUpdates
-telegramError err =
+buildUpdateError :: Telegram.UpdatesError -> IO Telegram.Updates
+buildUpdateError err =
   BotEx.throwUpdateExcept
     ( Env.makeLogMessage
         LoggerMsgs.getUpdateFailed
@@ -67,6 +67,6 @@ telegramError err =
     )
   where
     errMessage =
-      "\n\terror code: " <> (T.pack . show . TStructs.error_code) err
+      "\n\terror code: " <> (T.pack . show . Telegram.error_code) err
         <> "\n\terror describtion: "
-        <> TStructs.description err
+        <> Telegram.description err

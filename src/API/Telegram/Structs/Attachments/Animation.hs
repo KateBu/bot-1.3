@@ -5,12 +5,12 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-newtype TelAmination = TelAmination
+newtype Amination = Amination
   { animation_file_id :: T.Text
   }
   deriving (Show)
 
-instance FromJSON TelAmination where
+instance FromJSON Amination where
   parseJSON (Object v) =
-    TelAmination <$> v .: "file_id"
+    Amination <$> v .: "file_id"
   parseJSON _ = parseFail parseFailMessage

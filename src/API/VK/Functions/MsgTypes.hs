@@ -6,15 +6,15 @@ import API.VK.Functions.MsgTypes.Fwd (buildFwdMessage)
 import API.VK.Functions.MsgTypes.Geo (buildGeoMessage)
 import API.VK.Functions.MsgTypes.TextMsg (buildTextMessage)
 import API.VK.Functions.MsgTypes.UserCommand (buildCommandMessage)
-import qualified API.VK.Structs.Exports as VKStructs
+import qualified API.VK.Structs.Exports as VK
 import Control.Applicative (Alternative ((<|>)))
 import qualified Logic.Structs as PureStructs
 
-buildMessageType :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-buildMessageType vkMsg =
-  buildCallbackMessage vkMsg
-    <|> buildCommandMessage vkMsg
-    <|> buildAttachmentMessage vkMsg
-    <|> buildGeoMessage vkMsg
-    <|> buildFwdMessage vkMsg
-    <|> buildTextMessage vkMsg
+buildMessageType :: VK.Message -> Maybe PureStructs.MessageType
+buildMessageType msg =
+  buildCallbackMessage msg
+    <|> buildCommandMessage msg
+    <|> buildAttachmentMessage msg
+    <|> buildGeoMessage msg
+    <|> buildFwdMessage msg
+    <|> buildTextMessage msg

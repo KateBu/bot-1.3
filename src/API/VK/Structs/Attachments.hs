@@ -23,42 +23,42 @@ instance FromJSON Attachment where
     case (attachType :: T.Text) of
       "link" -> do
         link <- obj .: "link"
-        Attachment attachType <$> (VKLink <$> link .: "url")
+        Attachment attachType <$> (Link <$> link .: "url")
       "sticker" -> do
         sticker <- obj .: "sticker"
-        Attachment attachType <$> (VKSticker <$> sticker .: "sticker_id")
+        Attachment attachType <$> (Sticker <$> sticker .: "sticker_id")
       "audio" -> do
         audio <- obj .: "audio"
         Attachment attachType
-          <$> ( VKAudio <$> audio .: "id"
+          <$> ( Audio <$> audio .: "id"
                   <*> audio .: "owner_id"
               )
       "video" -> do
         video <- obj .: "video"
         Attachment attachType
-          <$> ( VKVideo <$> video .: "id"
+          <$> ( Video <$> video .: "id"
                   <*> video .: "owner_id"
                   <*> video .: "access_key"
               )
       "wall" -> do
         wall <- obj .: "wall"
         Attachment attachType
-          <$> ( VKWall <$> wall .: "id"
+          <$> ( Wall <$> wall .: "id"
                   <*> wall .: "to_id"
               )
       "market" -> do
         market <- obj .: "market"
         Attachment attachType
-          <$> ( VKMarket <$> market .: "id"
+          <$> ( Market <$> market .: "id"
                   <*> market .: "owner_id"
               )
       "poll" -> do
         poll <- obj .: "poll"
         Attachment attachType
-          <$> ( VKPoll <$> poll .: "id"
+          <$> ( Poll <$> poll .: "id"
                   <*> poll .: "owner_id"
               )
-      _ -> pure $ Attachment attachType VKUnknown
+      _ -> pure $ Attachment attachType Unknown
 
 type ItemID = Int
 
@@ -69,14 +69,14 @@ type AccessKey = T.Text
 type Url = T.Text
 
 data AObject
-  = VKLink Url
-  | VKSticker ItemID
-  | VKAudio ItemID OwnerID
-  | VKVideo ItemID OwnerID AccessKey
-  | VKWall ItemID OwnerID
-  | VKMarket ItemID OwnerID
-  | VKPoll ItemID OwnerID
-  | VKUnknown
+  = Link Url
+  | Sticker ItemID
+  | Audio ItemID OwnerID
+  | Video ItemID OwnerID AccessKey
+  | Wall ItemID OwnerID
+  | Market ItemID OwnerID
+  | Poll ItemID OwnerID
+  | Unknown
   deriving (Show)
 
 newtype Geo = Geo

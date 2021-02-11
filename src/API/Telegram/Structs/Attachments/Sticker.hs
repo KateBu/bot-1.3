@@ -5,12 +5,12 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-newtype TelSticker = TelSticker
+newtype Sticker = Sticker
   { sticker_file_id :: T.Text
   }
   deriving (Show)
 
-instance FromJSON TelSticker where
+instance FromJSON Sticker where
   parseJSON (Object v) =
-    TelSticker <$> v .: "file_id"
+    Sticker <$> v .: "file_id"
   parseJSON _ = parseFail parseFailMessage

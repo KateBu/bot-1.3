@@ -1,8 +1,8 @@
 module API.Telegram.Functions.Attachments.Txt (buildTextMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
-import API.Telegram.Structs.Attachments.Keyboard (TButtons (TButtons))
-import qualified API.Telegram.Structs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.Attachments.Keyboard as Telegram
+import qualified API.Telegram.Structs.MessageInfo as Telegram
 import Data.Aeson (KeyValue ((.=)), Value, object)
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
@@ -12,17 +12,17 @@ buildTextMessage ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
+  Telegram.MessageInfo ->
   Maybe PureStructs.PureMessage
 buildTextMessage helpMsg updateId chatId msgInfo = do
-  textInfo <- TStructs.txt msgInfo
+  textInfo <- Telegram.txt msgInfo
   buildTxtMsg helpMsg updateId chatId msgInfo textInfo
 
 buildTxtMsg ::
   Env.HelpMessage ->
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
+  Telegram.MessageInfo ->
   T.Text ->
   Maybe PureStructs.PureMessage
 buildTxtMsg helpMsg updateId chatId msgInfo "/help" =
@@ -51,7 +51,7 @@ buildTxtMsg _ updateId chatId msgInfo "/repeat" =
           <> [ PureStructs.ParamsJSON "reply_markup" keyboard,
                PureStructs.ParamsBool "one_time_keyboard" True
              ]
-    keyboard = makeKeyboard $ map (map TButtons) PureStructs.buttons
+    keyboard = makeKeyboard $ map (map Telegram.Buttons) PureStructs.buttons
 buildTxtMsg _ updateId chatId msgInfo text =
   pure $
     PureStructs.PureMessage
@@ -65,5 +65,5 @@ buildTxtMsg _ updateId chatId msgInfo text =
         basicParams chatId msgInfo
           <> [PureStructs.ParamsText "text" text]
 
-makeKeyboard :: [[TButtons]] -> Value
+makeKeyboard :: [[Telegram.Buttons]] -> Value
 makeKeyboard buttons = object ["inline_keyboard" .= buttons]

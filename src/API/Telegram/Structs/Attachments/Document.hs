@@ -5,12 +5,12 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-newtype TelDocument = TelDocument
+newtype Document = Document
   { document_file_id :: T.Text
   }
   deriving (Show)
 
-instance FromJSON TelDocument where
+instance FromJSON Document where
   parseJSON (Object v) =
-    TelDocument <$> v .: "file_id"
+    Document <$> v .: "file_id"
   parseJSON _ = parseFail parseFailMessage

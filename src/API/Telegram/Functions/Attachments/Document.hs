@@ -1,23 +1,23 @@
 module API.Telegram.Functions.Attachments.Document (buildDocumentMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
-import qualified API.Telegram.Structs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Logic.Structs as PureStructs
 
 buildDocumentMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
+  Telegram.MessageInfo ->
   Maybe PureStructs.PureMessage
 buildDocumentMessage updateId chatiId msgInfo = do
-  docInfo <- TStructs.document msgInfo
+  docInfo <- Telegram.document msgInfo
   buildDocumentMessage' updateId chatiId msgInfo docInfo
 
 buildDocumentMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
-  TStructs.TelDocument ->
+  Telegram.MessageInfo ->
+  Telegram.Document ->
   Maybe PureStructs.PureMessage
 buildDocumentMessage' updateId chatiId msgInfo docInfo =
   pure $
@@ -30,4 +30,4 @@ buildDocumentMessage' updateId chatiId msgInfo docInfo =
     documentParams =
       Just $
         basicParams chatiId msgInfo
-          <> [PureStructs.ParamsText "document" (TStructs.document_file_id docInfo)]
+          <> [PureStructs.ParamsText "document" (Telegram.document_file_id docInfo)]

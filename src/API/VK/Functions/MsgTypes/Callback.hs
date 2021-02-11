@@ -1,14 +1,14 @@
 module API.VK.Functions.MsgTypes.Callback (buildCallbackMessage) where
 
-import qualified API.VK.Structs.Exports as VKStructs
+import qualified API.VK.Structs.Exports as VK
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Logic.Structs as PureStructs
 
-buildCallbackMessage :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-buildCallbackMessage vkMsg =
-  PureStructs.MsgTypeCallbackQuery <$> mbNewRepeat (fromMaybe "" $ VKStructs.callback_payload vkMsg)
+buildCallbackMessage :: VK.Message -> Maybe PureStructs.MessageType
+buildCallbackMessage msg =
+  PureStructs.MsgTypeCallbackQuery <$> mbNewRepeat (fromMaybe "" $ VK.callback_payload msg)
 
 mbNewRepeat :: T.Text -> Maybe PureStructs.CallbackText
 mbNewRepeat callback =

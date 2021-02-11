@@ -12,19 +12,19 @@ import API.VK.Structs.UpdateInfo as Structs
     EventType (..),
     Geo (..),
     ItemID,
+    Message (..),
+    MessageObject (..),
     OwnerID,
+    UpdateInfo (..),
     Url,
-    VKMessage (..),
-    VKObject (..),
-    VKUpdInfo (..),
   )
 import Data.Aeson (FromJSON (parseJSON), withObject, (.:), (.:?))
 
-data VKUpdates = VKUpdates Updates | VKUpdateError UpdateErr
+data Updates = UpdateSuccess UpdateSuccess | UpdateError UpdateErr
 
-data Updates = Updates
+data UpdateSuccess = Updates
   { ts :: String,
-    updates :: [VKUpdInfo]
+    updates :: [UpdateInfo]
   }
   deriving (Show)
 
@@ -34,13 +34,13 @@ data UpdateErr = UpdateErr
   }
   deriving (Show)
 
-instance FromJSON VKUpdates where
-  parseJSON = withObject "VKUpdates" $ \obj -> do
+instance FromJSON Updates where
+  parseJSON = withObject "Updates" $ \obj -> do
     resp <- obj .:? "failed"
     case (resp :: Maybe Int) of
       Just val ->
-        VKUpdateError
+        UpdateError
           <$> (UpdateErr val <$> obj .:? "ts")
       Nothing ->
-        VKUpdates
+        UpdateSuccess
           <$> (Updates <$> obj .: "ts" <*> obj .: "updates")

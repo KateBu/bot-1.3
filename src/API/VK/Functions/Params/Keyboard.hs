@@ -1,6 +1,6 @@
 module API.VK.Functions.Params.Keyboard (keyboardParams) where
 
-import qualified API.VK.Structs.Exports as VKStructs
+import qualified API.VK.Structs.Exports as VK
 import Data.Aeson (KeyValue ((.=)), Value, encode, object)
 import qualified Data.ByteString.Lazy as BSL
 import Data.ByteString.Lazy.Char8 as C8 (unpack)
@@ -17,10 +17,10 @@ keyboard =
       "buttons" .= (fmap . fmap) buildButtonAction PureStructs.buttons
     ]
 
-buildButtonAction :: PureStructs.PureButtons -> VKStructs.ButtonAction
+buildButtonAction :: PureStructs.PureButtons -> VK.ButtonAction
 buildButtonAction btn@(PureStructs.PureButtons btnLabel _) =
-  VKStructs.ButtonAction $
-    VKStructs.VKButtons
+  VK.ButtonAction $
+    VK.Buttons
       "callback"
       ((T.pack . C8.unpack) $ encodeButtons btn)
       btnLabel

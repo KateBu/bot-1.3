@@ -1,23 +1,23 @@
 module API.Telegram.Functions.Attachments.Voice (buildVoiceMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
-import qualified API.Telegram.Structs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Logic.Structs as PureStructs
 
 buildVoiceMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
+  Telegram.MessageInfo ->
   Maybe PureStructs.PureMessage
 buildVoiceMessage updateId chatId msgInfo = do
-  voiceInfo <- TStructs.voice msgInfo
+  voiceInfo <- Telegram.voice msgInfo
   buildVoiceMessage' updateId chatId msgInfo voiceInfo
 
 buildVoiceMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
-  TStructs.TelVoice ->
+  Telegram.MessageInfo ->
+  Telegram.Voice ->
   Maybe PureStructs.PureMessage
 buildVoiceMessage' updateId chatId msgInfo voiceInfo =
   pure $
@@ -30,4 +30,4 @@ buildVoiceMessage' updateId chatId msgInfo voiceInfo =
     voiceParams =
       Just $
         basicParams chatId msgInfo
-          <> [PureStructs.ParamsText "voice" (TStructs.voice_file_id voiceInfo)]
+          <> [PureStructs.ParamsText "voice" (Telegram.voice_file_id voiceInfo)]

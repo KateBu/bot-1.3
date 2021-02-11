@@ -5,19 +5,19 @@ where
 
 import API.VK.Structs.Buttons as Structs
   ( ButtonAction (..),
-    VKButtons (..),
-    VKKeyBoard (..),
+    Buttons (..),
+    Keyboard (..),
   )
 import API.VK.Structs.LongPollResponse as Structs
   ( LongPollResponse (..),
+    Response (..),
     ResponseError (..),
-    VKResponse (..),
   )
 import API.VK.Structs.SendResult as Structs
-  ( SendError (..),
+  ( Result (..),
+    ResultError (..),
+    SendError (..),
     SendSuccess (..),
-    VKResult (..),
-    VKResultError (..),
   )
 import API.VK.Structs.Updates as Structs
   ( AObject (..),
@@ -27,12 +27,12 @@ import API.VK.Structs.Updates as Structs
     EventType (..),
     Geo (..),
     ItemID,
+    Message (..),
+    MessageObject (..),
     OwnerID,
     UpdateErr (..),
+    UpdateInfo (..),
+    UpdateSuccess (..),
     Updates (..),
     Url,
-    VKMessage (..),
-    VKObject (..),
-    VKUpdInfo (..),
-    VKUpdates (..),
   )

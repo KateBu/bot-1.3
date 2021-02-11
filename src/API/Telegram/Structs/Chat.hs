@@ -5,14 +5,14 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data TelChat = TelChat
+data Chat = Chat
   { chat_id :: Int,
     chat_type :: T.Text
   }
   deriving (Show)
 
-instance FromJSON TelChat where
+instance FromJSON Chat where
   parseJSON (Object v) =
-    TelChat <$> v .: "id"
+    Chat <$> v .: "id"
       <*> v .: "type"
   parseJSON _ = parseFail parseFailMessage

@@ -1,23 +1,23 @@
 module API.Telegram.Functions.Attachments.Photo (buildPhotoMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
-import qualified API.Telegram.Structs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Logic.Structs as PureStructs
 
 buildPhotoMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
+  Telegram.MessageInfo ->
   Maybe PureStructs.PureMessage
 buildPhotoMessage updateId chatId msgInfo = do
-  photoInfo <- TStructs.photo msgInfo
+  photoInfo <- Telegram.photo msgInfo
   buildPhotoMessage' updateId chatId msgInfo photoInfo
 
 buildPhotoMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
-  [TStructs.TelPhoto] ->
+  Telegram.MessageInfo ->
+  [Telegram.Photo] ->
   Maybe PureStructs.PureMessage
 buildPhotoMessage' updateId chatId msgInfo photoInfo =
   pure $
@@ -32,6 +32,6 @@ buildPhotoMessage' updateId chatId msgInfo photoInfo =
         basicParams chatId msgInfo
           <> buildPhotoParams photoInfo
 
-buildPhotoParams :: [TStructs.TelPhoto] -> [PureStructs.Params]
+buildPhotoParams :: [Telegram.Photo] -> [PureStructs.Params]
 buildPhotoParams [] = []
-buildPhotoParams (x : _) = [PureStructs.ParamsText "photo" (TStructs.photo_file_id x)]
+buildPhotoParams (x : _) = [PureStructs.ParamsText "photo" (Telegram.photo_file_id x)]

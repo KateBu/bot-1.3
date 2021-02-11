@@ -1,18 +1,18 @@
 module API.VK.Functions.Params.Fwd (buildFwdParams) where
 
-import qualified API.VK.Structs.Exports as VKStructs
+import qualified API.VK.Structs.Exports as VK
 import qualified Data.Text as T
 import qualified Logic.Structs as PureStructs
 
-buildFwdParams :: VKStructs.VKMessage -> [PureStructs.Params]
+buildFwdParams :: VK.Message -> [PureStructs.Params]
 buildFwdParams msgs = [PureStructs.ParamsText "forward_messages" msgIds]
   where
-    msgIds = getFwdMsgIds (VKStructs.fwd_msgs msgs)
+    msgIds = getFwdMsgIds (VK.fwd_msgs msgs)
 
-getFwdMsgIds :: Maybe [VKStructs.VKMessage] -> T.Text
+getFwdMsgIds :: Maybe [VK.Message] -> T.Text
 getFwdMsgIds Nothing = ""
 getFwdMsgIds (Just []) = ""
-getFwdMsgIds (Just [msg]) = T.pack . show $ VKStructs.id msg
+getFwdMsgIds (Just [msg]) = T.pack . show $ VK.id msg
 getFwdMsgIds (Just (msg : msgs)) =
-  (T.pack . show $ VKStructs.id msg) <> ","
+  (T.pack . show $ VK.id msg) <> ","
     <> getFwdMsgIds (Just msgs)

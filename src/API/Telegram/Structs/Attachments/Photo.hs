@@ -5,12 +5,12 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-newtype TelPhoto = TelPhoto
+newtype Photo = Photo
   { photo_file_id :: T.Text
   }
   deriving (Show)
 
-instance FromJSON TelPhoto where
+instance FromJSON Photo where
   parseJSON (Object v) =
-    TelPhoto <$> v .: "file_id"
+    Photo <$> v .: "file_id"
   parseJSON _ = parseFail parseFailMessage

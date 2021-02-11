@@ -4,10 +4,10 @@ import Data.Aeson (FromJSON)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
 
-data TelegramUpdatesError = TelegramUpdatesError
+data UpdatesError = UpdatesError
   { error_code :: Int,
     description :: T.Text
   }
   deriving (Generic, Show)
 
-instance FromJSON TelegramUpdatesError
+instance FromJSON UpdatesError

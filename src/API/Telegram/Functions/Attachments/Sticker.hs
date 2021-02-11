@@ -1,23 +1,23 @@
 module API.Telegram.Functions.Attachments.Sticker (buildStickerMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
-import qualified API.Telegram.Structs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Logic.Structs as PureStructs
 
 buildStickerMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
+  Telegram.MessageInfo ->
   Maybe PureStructs.PureMessage
 buildStickerMessage updateId chatId msgInfo = do
-  stickerInfo <- TStructs.sticker msgInfo
+  stickerInfo <- Telegram.sticker msgInfo
   buildStickerMessage' updateId chatId msgInfo stickerInfo
 
 buildStickerMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
-  TStructs.TelSticker ->
+  Telegram.MessageInfo ->
+  Telegram.Sticker ->
   Maybe PureStructs.PureMessage
 buildStickerMessage' updateId chatId msgInfo stickerInfo =
   pure $
@@ -30,5 +30,5 @@ buildStickerMessage' updateId chatId msgInfo stickerInfo =
     stickerParams =
       Just $
         basicParams chatId msgInfo
-          <> [ PureStructs.ParamsText "sticker" (TStructs.sticker_file_id stickerInfo)
+          <> [ PureStructs.ParamsText "sticker" (Telegram.sticker_file_id stickerInfo)
              ]

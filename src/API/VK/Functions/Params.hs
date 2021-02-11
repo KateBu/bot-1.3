@@ -11,44 +11,44 @@ import API.VK.Functions.Params.Message
     buildMaybeDoubleParam,
     buildMessageParam,
   )
-import qualified API.VK.Structs.Exports as VKStructs
+import qualified API.VK.Structs.Exports as VK
 import qualified Environment.Exports as Env
 import qualified Logic.Structs as PureStructs
 
 buildParams ::
   Env.HelpMessage ->
   PureStructs.MessageType ->
-  VKStructs.VKMessage ->
+  VK.Message ->
   Maybe [PureStructs.Params]
-buildParams helpMsg (PureStructs.MsgTypeUserCommand PureStructs.Help) vkMsg =
+buildParams helpMsg (PureStructs.MsgTypeUserCommand PureStructs.Help) msg =
   pure $
-    PureStructs.ParamsText "message" helpMsg : basicParams vkMsg
-buildParams _ (PureStructs.MsgTypeUserCommand PureStructs.Repeat) vkMsg =
+    PureStructs.ParamsText "message" helpMsg : basicParams msg
+buildParams _ (PureStructs.MsgTypeUserCommand PureStructs.Repeat) msg =
   pure $
-    basicParams vkMsg
+    basicParams msg
       <> [PureStructs.ParamsText "message" PureStructs.repeatText]
       <> keyboardParams
-buildParams _ (PureStructs.MsgTypeCommon "Message") vkMsg = do
-  txt <- VKStructs.msg_text vkMsg
-  pure $ PureStructs.ParamsText "message" txt : basicParams vkMsg
-buildParams _ (PureStructs.MsgTypeCommon "Geo") vkMsg =
+buildParams _ (PureStructs.MsgTypeCommon "Message") msg = do
+  txt <- VK.msg_text msg
+  pure $ PureStructs.ParamsText "message" txt : basicParams msg
+buildParams _ (PureStructs.MsgTypeCommon "Geo") msg =
   pure $
-    buildMessageParam (VKStructs.msg_text vkMsg)
-      <> buildMaybeDoubleParam "lat" getLatitude vkMsg
-      <> buildMaybeDoubleParam "long" getLongitude vkMsg
-      <> basicParams vkMsg
-buildParams _ (PureStructs.MsgTypeCommon "Fwd") vkMsg = do
+    buildMessageParam (VK.msg_text msg)
+      <> buildMaybeDoubleParam "lat" getLatitude msg
+      <> buildMaybeDoubleParam "long" getLongitude msg
+      <> basicParams msg
+buildParams _ (PureStructs.MsgTypeCommon "Fwd") msg = do
   pure $
-    buildMessageParam (VKStructs.msg_text vkMsg)
-      <> buildFwdParams vkMsg
-      <> basicParams vkMsg
-buildParams _ (PureStructs.MsgTypeCommon "Attachment") vkMsg = do
-  let attachParams = buildAttachmentListParams vkMsg (VKStructs.attachments vkMsg)
-  buildAttachmentParams vkMsg attachParams
+    buildMessageParam (VK.msg_text msg)
+      <> buildFwdParams msg
+      <> basicParams msg
+buildParams _ (PureStructs.MsgTypeCommon "Attachment") msg = do
+  let attachParams = buildAttachmentListParams msg (VK.attachments msg)
+  buildAttachmentParams msg attachParams
 buildParams _ _ _ = Nothing
 
-getLatitude :: VKStructs.VKMessage -> Maybe Double
-getLatitude = fmap (VKStructs.latitude . VKStructs.geo_coordinates) . VKStructs.geo
+getLatitude :: VK.Message -> Maybe Double
+getLatitude = fmap (VK.latitude . VK.geo_coordinates) . VK.geo
 
-getLongitude :: VKStructs.VKMessage -> Maybe Double
-getLongitude = fmap (VKStructs.longitude . VKStructs.geo_coordinates) . VKStructs.geo
+getLongitude :: VK.Message -> Maybe Double
+getLongitude = fmap (VK.longitude . VK.geo_coordinates) . VK.geo

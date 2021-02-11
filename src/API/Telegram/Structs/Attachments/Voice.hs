@@ -5,12 +5,12 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-newtype TelVoice = TelVoice
+newtype Voice = Voice
   { voice_file_id :: T.Text
   }
   deriving (Show)
 
-instance FromJSON TelVoice where
+instance FromJSON Voice where
   parseJSON (Object v) =
-    TelVoice <$> v .: "file_id"
+    Voice <$> v .: "file_id"
   parseJSON _ = parseFail parseFailMessage

@@ -1,24 +1,24 @@
 module API.Telegram.Functions.Attachments.Venue (buildVenueMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
-import qualified API.Telegram.Structs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Data.Text as T
 import qualified Logic.Structs as PureStructs
 
 buildVenueMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
+  Telegram.MessageInfo ->
   Maybe PureStructs.PureMessage
 buildVenueMessage updateId chatId msgInfo = do
-  venueInfo <- TStructs.venue msgInfo
+  venueInfo <- Telegram.venue msgInfo
   buildVenueMessage' updateId chatId msgInfo venueInfo
 
 buildVenueMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
-  TStructs.TelVenue ->
+  Telegram.MessageInfo ->
+  Telegram.Venue ->
   Maybe PureStructs.PureMessage
 buildVenueMessage' updateId chatId msgInfo venueInfo =
   pure $
@@ -28,12 +28,12 @@ buildVenueMessage' updateId chatId msgInfo venueInfo =
       (Just chatId)
       (buildVenueParams chatId msgInfo venueInfo)
 
-buildVenueParams :: PureStructs.ChatID -> TStructs.MessageInfo -> TStructs.TelVenue -> Maybe [PureStructs.Params]
+buildVenueParams :: PureStructs.ChatID -> Telegram.MessageInfo -> Telegram.Venue -> Maybe [PureStructs.Params]
 buildVenueParams chatId msgInfo venueInfo =
   Just $
     basicParams chatId msgInfo
-      <> [ PureStructs.ParamsText "latitude" ((T.pack . show) $ TStructs.venue_latitude venueInfo),
-           PureStructs.ParamsText "longitude" ((T.pack . show) $ TStructs.venue_longitude venueInfo),
-           PureStructs.ParamsText "title" (TStructs.venue_title venueInfo),
-           PureStructs.ParamsText "address" (TStructs.venue_address venueInfo)
+      <> [ PureStructs.ParamsText "latitude" ((T.pack . show) $ Telegram.venue_latitude venueInfo),
+           PureStructs.ParamsText "longitude" ((T.pack . show) $ Telegram.venue_longitude venueInfo),
+           PureStructs.ParamsText "title" (Telegram.venue_title venueInfo),
+           PureStructs.ParamsText "address" (Telegram.venue_address venueInfo)
          ]

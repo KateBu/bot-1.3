@@ -11,7 +11,7 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data VKResult
+data Result
   = SendMsgSuccess SendSuccess
   | SendMsgError SendError
   deriving (Show)
@@ -22,26 +22,26 @@ newtype SendSuccess = SendSuccess
   deriving (Show)
 
 newtype SendError = SendError
-  { res_error :: VKResultError
+  { res_error :: ResultError
   }
   deriving (Show)
 
-instance FromJSON VKResult where
-  parseJSON = withObject "VKResult" $ \obj -> do
+instance FromJSON Result where
+  parseJSON = withObject "Result" $ \obj -> do
     isError <- obj .:? "error"
     case isError of
       Just val -> pure $ SendMsgError (SendError val)
       Nothing -> SendMsgSuccess <$> (SendSuccess <$> obj .: "response")
 
-data VKResultError = VKResultError
+data ResultError = ResultError
   { err_code :: Int,
     err_msg :: T.Text
   }
   deriving (Show)
 
-instance FromJSON VKResultError where
+instance FromJSON ResultError where
   parseJSON (Object obj) =
-    VKResultError
+    ResultError
       <$> obj .: "error_code"
       <*> obj .: "error_msg"
   parseJSON _ = parseFail parseFailMessage

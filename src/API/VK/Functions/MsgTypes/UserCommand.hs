@@ -1,11 +1,11 @@
 module API.VK.Functions.MsgTypes.UserCommand (buildCommandMessage) where
 
-import qualified API.VK.Structs.Exports as VKStructs
+import qualified API.VK.Structs.Exports as VK
 import qualified Data.Text as T
 import qualified Logic.Structs as PureStructs
 
-buildCommandMessage :: VKStructs.VKMessage -> Maybe PureStructs.MessageType
-buildCommandMessage vkMsg = VKStructs.msg_text vkMsg >>= buildCommandMessage'
+buildCommandMessage :: VK.Message -> Maybe PureStructs.MessageType
+buildCommandMessage msg = VK.msg_text msg >>= buildCommandMessage'
 
 buildCommandMessage' :: T.Text -> Maybe PureStructs.MessageType
 buildCommandMessage' "/help" = pure $ PureStructs.MsgTypeUserCommand PureStructs.Help

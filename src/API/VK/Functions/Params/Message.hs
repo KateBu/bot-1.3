@@ -1,11 +1,11 @@
 module API.VK.Functions.Params.Message where
 
-import qualified API.VK.Structs.Exports as VKStructs
+import qualified API.VK.Structs.Exports as VK
 import qualified Data.Text as T
 import qualified Logic.Structs as PureStructs
 
-basicParams :: VKStructs.VKMessage -> [PureStructs.Params]
-basicParams vkMsg = [PureStructs.ParamsNum "user_id" (VKStructs.from_id vkMsg)]
+basicParams :: VK.Message -> [PureStructs.Params]
+basicParams msg = [PureStructs.ParamsNum "user_id" (VK.from_id msg)]
 
 type Key = T.Text
 
@@ -16,18 +16,18 @@ buildMessageParam (Just msg) = [PureStructs.ParamsText "message" msg]
 
 buildMaybeTextParam ::
   Key ->
-  (VKStructs.VKMessage -> Maybe T.Text) ->
-  VKStructs.VKMessage ->
+  (VK.Message -> Maybe T.Text) ->
+  VK.Message ->
   [PureStructs.Params]
-buildMaybeTextParam key field vkMsg = case field vkMsg of
+buildMaybeTextParam key field msg = case field msg of
   Nothing -> []
   Just txt -> [PureStructs.ParamsText key txt]
 
 buildMaybeDoubleParam ::
   Key ->
-  (VKStructs.VKMessage -> Maybe Double) ->
-  VKStructs.VKMessage ->
+  (VK.Message -> Maybe Double) ->
+  VK.Message ->
   [PureStructs.Params]
-buildMaybeDoubleParam key field vkMsg = case field vkMsg of
+buildMaybeDoubleParam key field msg = case field msg of
   Nothing -> []
   Just val -> [PureStructs.ParamsDouble key val]

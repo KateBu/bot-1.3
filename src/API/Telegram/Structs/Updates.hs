@@ -10,23 +10,23 @@ import API.Telegram.Structs.Callback as Structs
     CallbackMsg (..),
   )
 import API.Telegram.Structs.MessageInfo as Structs
-  ( MessageInfo (..),
+  ( Amination (..),
+    Audio (..),
+    Chat (..),
+    Contact (..),
+    Document (..),
+    Location (..),
+    MessageInfo (..),
+    Photo (..),
+    Poll (..),
     PollOptions (..),
-    TelAmination (..),
-    TelAudio (..),
-    TelChat (..),
-    TelContact (..),
-    TelDocument (..),
-    TelLocation (..),
-    TelPhoto (..),
-    TelPoll (..),
-    TelSticker (..),
-    TelVenue (..),
-    TelVideo (..),
-    TelVoice (..),
+    Sticker (..),
+    Venue (..),
+    Video (..),
+    Voice (..),
   )
 import API.Telegram.Structs.UpdateErr as Structs
-  ( TelegramUpdatesError (..),
+  ( UpdatesError (..),
   )
 import Data.Aeson
   ( FromJSON (parseJSON),
@@ -38,24 +38,24 @@ import Data.Aeson.Types (parseFail)
 import GHC.Generics (Generic)
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data TelegramUpdates = TelegramUpdates
+data Updates = Updates
   { ok :: Bool,
-    result :: [TelUpdateResult]
+    result :: [UpdateResult]
   }
   deriving (Generic, Show)
 
-instance FromJSON TelegramUpdates
+instance FromJSON Updates
 
-data TelUpdateResult = TelUpdateResult
+data UpdateResult = UpdateResult
   { update_id :: Int,
     message_info :: Maybe MessageInfo,
     callback_query :: Maybe Callback
   }
   deriving (Show)
 
-instance FromJSON TelUpdateResult where
+instance FromJSON UpdateResult where
   parseJSON (Object v) =
-    TelUpdateResult <$> v .: "update_id"
+    UpdateResult <$> v .: "update_id"
       <*> v .:? "message"
       <*> v .:? "callback_query"
   parseJSON _ = parseFail parseFailMessage

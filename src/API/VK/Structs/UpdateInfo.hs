@@ -11,9 +11,9 @@ import API.VK.Structs.Message as Structs
     Coordinates (..),
     Geo (..),
     ItemID,
+    Message (..),
     OwnerID,
     Url,
-    VKMessage (..),
   )
 import Data.Aeson
   ( FromJSON (parseJSON),
@@ -28,26 +28,26 @@ import TextMessages.ParseFailMessage (parseFailMessage)
 data EventType = MsgNew | OtherEvent
   deriving (Show)
 
-data VKUpdInfo = VKUpdInfo
+data UpdateInfo = UpdateInfo
   { update_type :: EventType,
-    update_object :: Maybe VKObject
+    update_object :: Maybe MessageObject
   }
   deriving (Show)
 
-instance FromJSON VKUpdInfo where
-  parseJSON = withObject "VKUpdInfo" $ \obj -> do
+instance FromJSON UpdateInfo where
+  parseJSON = withObject "UpdateInfo" $ \obj -> do
     updateType <- obj .: "type"
     case (updateType :: String) of
       "message_new" ->
-        VKUpdInfo MsgNew
+        UpdateInfo MsgNew
           <$> obj .:? "object"
-      _ -> pure $ VKUpdInfo OtherEvent Nothing
+      _ -> pure $ UpdateInfo OtherEvent Nothing
 
-newtype VKObject = VKObject
-  { vkMessage :: VKMessage
+newtype MessageObject = MessageObject
+  { message :: Message
   }
   deriving (Show)
 
-instance FromJSON VKObject where
-  parseJSON (Object obj) = VKObject <$> obj .: "message"
+instance FromJSON MessageObject where
+  parseJSON (Object obj) = MessageObject <$> obj .: "message"
   parseJSON _ = parseFail parseFailMessage

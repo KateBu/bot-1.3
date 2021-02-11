@@ -5,7 +5,7 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data TelVenue = TelVenue
+data Venue = Venue
   { venue_latitude :: Double,
     venue_longitude :: Double,
     venue_title :: T.Text,
@@ -13,9 +13,9 @@ data TelVenue = TelVenue
   }
   deriving (Show)
 
-instance FromJSON TelVenue where
+instance FromJSON Venue where
   parseJSON (Object v) =
-    TelVenue <$> v .: "latitude"
+    Venue <$> v .: "latitude"
       <*> v .: "longitude"
       <*> v .: "title"
       <*> v .: "address"

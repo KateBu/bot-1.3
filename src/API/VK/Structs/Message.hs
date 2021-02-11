@@ -24,20 +24,20 @@ import Data.Aeson.Types (parseFail)
 import qualified Data.Text as T
 import TextMessages.ParseFailMessage (parseFailMessage)
 
-data VKMessage = VKMessage
+data Message = Message
   { id :: Int,
     from_id :: Int,
     msg_text :: Maybe T.Text,
     attachments :: Maybe [Attachment],
     geo :: Maybe Geo,
     callback_payload :: Maybe T.Text,
-    fwd_msgs :: Maybe [VKMessage]
+    fwd_msgs :: Maybe [Message]
   }
   deriving (Show)
 
-instance FromJSON VKMessage where
+instance FromJSON Message where
   parseJSON (Object obj) =
-    VKMessage <$> obj .: "id"
+    Message <$> obj .: "id"
       <*> obj .: "from_id"
       <*> obj .:? "text"
       <*> obj .:? "attachments"

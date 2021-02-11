@@ -50,14 +50,14 @@ getLongPollInfo ::
   BSL.ByteString ->
   IO (Config.VKKey, Config.VKServer, Config.Offset)
 getLongPollInfo longPollResponse = do
-  let eiVKResponse = eitherDecode longPollResponse :: Either String VKStructs.VKResponse
+  let eiVKResponse = eitherDecode longPollResponse :: Either String VKStructs.Response
   either BotEx.throwParseExcept buildSettings eiVKResponse
 
-buildSettings :: VKStructs.VKResponse -> IO (Config.VKKey, Config.VKServer, Config.Offset)
-buildSettings (VKStructs.VKResponse (VKStructs.LongPollResponse key server ts)) = do
+buildSettings :: VKStructs.Response -> IO (Config.VKKey, Config.VKServer, Config.Offset)
+buildSettings (VKStructs.Response (VKStructs.LongPollResponse key server ts)) = do
   let eiTs = readEither ts :: Either String Int
   either BotEx.throwParseExcept (longPollResponseSuccess key server) eiTs
-buildSettings (VKStructs.VKError (VKStructs.ResponseError errCode errMsg)) =
+buildSettings (VKStructs.Error (VKStructs.ResponseError errCode errMsg)) =
   BotEx.throwInitConfigExceptWithMessage $
     Logger.makeLogMessage
       LoggerMsgs.vkSettingsFatalError

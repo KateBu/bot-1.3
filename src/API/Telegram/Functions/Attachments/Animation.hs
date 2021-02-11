@@ -1,23 +1,23 @@
 module API.Telegram.Functions.Attachments.Animation (buildAnimationMessage) where
 
 import API.Telegram.Functions.Params (basicParams)
-import qualified API.Telegram.Structs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Logic.Structs as PureStructs
 
 buildAnimationMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
+  Telegram.MessageInfo ->
   Maybe PureStructs.PureMessage
 buildAnimationMessage updateId chatId msgInfo = do
-  animationInfo <- TStructs.animation msgInfo
+  animationInfo <- Telegram.animation msgInfo
   buildAnimationMessage' updateId chatId msgInfo animationInfo
 
 buildAnimationMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
-  TStructs.TelAmination ->
+  Telegram.MessageInfo ->
+  Telegram.Amination ->
   Maybe PureStructs.PureMessage
 buildAnimationMessage' updateId chatId msgInfo animationInfo =
   pure $
@@ -30,4 +30,4 @@ buildAnimationMessage' updateId chatId msgInfo animationInfo =
     animParams =
       Just $
         basicParams chatId msgInfo
-          <> [PureStructs.ParamsText "animation" (TStructs.animation_file_id animationInfo)]
+          <> [PureStructs.ParamsText "animation" (Telegram.animation_file_id animationInfo)]

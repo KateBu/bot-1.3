@@ -6,23 +6,23 @@ import API.Telegram.Functions.Params
     buildNumParams,
     buildTextParams,
   )
-import qualified API.Telegram.Structs.MessageInfo as TStructs
+import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Logic.Structs as PureStructs
 
 buildPollMessage ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
+  Telegram.MessageInfo ->
   Maybe PureStructs.PureMessage
 buildPollMessage updateId chatId msgInfo = do
-  pollInfo <- TStructs.poll msgInfo
+  pollInfo <- Telegram.poll msgInfo
   buildPollMessage' updateId chatId msgInfo pollInfo
 
 buildPollMessage' ::
   PureStructs.UpdateID ->
   PureStructs.ChatID ->
-  TStructs.MessageInfo ->
-  TStructs.TelPoll ->
+  Telegram.MessageInfo ->
+  Telegram.Poll ->
   Maybe PureStructs.PureMessage
 buildPollMessage' updateId chatId msgInfo pollInfo =
   pure $
@@ -32,17 +32,17 @@ buildPollMessage' updateId chatId msgInfo pollInfo =
       (Just chatId)
       (buildPollParams chatId msgInfo pollInfo)
 
-buildPollParams :: PureStructs.ChatID -> TStructs.MessageInfo -> TStructs.TelPoll -> Maybe [PureStructs.Params]
+buildPollParams :: PureStructs.ChatID -> Telegram.MessageInfo -> Telegram.Poll -> Maybe [PureStructs.Params]
 buildPollParams chatId msgInfo pollInfo =
   Just $
     basicParams chatId msgInfo
-      <> [ PureStructs.ParamsText "question" (TStructs.question pollInfo),
-           PureStructs.ParamsTextList "options" (map TStructs.poll_option (TStructs.poll_options pollInfo))
+      <> [ PureStructs.ParamsText "question" (Telegram.question pollInfo),
+           PureStructs.ParamsTextList "options" (map Telegram.poll_option (Telegram.poll_options pollInfo))
          ]
-      <> buildBoolParams "is_anonimous" (TStructs.is_anonymous pollInfo)
-      <> buildBoolParams "allows_multiple_answers" (TStructs.allows_multiple_answers pollInfo)
-      <> buildNumParams "correct_option_id" (TStructs.correct_option_id pollInfo)
-      <> buildTextParams "explanation" (TStructs.explanation pollInfo)
-      <> buildNumParams "open_period" (TStructs.open_period pollInfo)
-      <> buildNumParams "close_date" (TStructs.close_date pollInfo)
-      <> buildBoolParams "is_closed" (TStructs.is_closed pollInfo)
+      <> buildBoolParams "is_anonimous" (Telegram.is_anonymous pollInfo)
+      <> buildBoolParams "allows_multiple_answers" (Telegram.allows_multiple_answers pollInfo)
+      <> buildNumParams "correct_option_id" (Telegram.correct_option_id pollInfo)
+      <> buildTextParams "explanation" (Telegram.explanation pollInfo)
+      <> buildNumParams "open_period" (Telegram.open_period pollInfo)
+      <> buildNumParams "close_date" (Telegram.close_date pollInfo)
+      <> buildBoolParams "is_closed" (Telegram.is_closed pollInfo)

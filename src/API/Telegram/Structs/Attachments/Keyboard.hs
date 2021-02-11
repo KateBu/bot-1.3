@@ -3,7 +3,7 @@ module API.Telegram.Structs.Attachments.Keyboard where
 import Data.Aeson (KeyValue ((.=)), ToJSON (toJSON), object)
 import qualified Logic.Structs as PureStructs
 
-newtype TButtons = TButtons PureStructs.PureButtons
+newtype Buttons = Buttons PureStructs.PureButtons
 
-instance ToJSON TButtons where
-  toJSON (TButtons (PureStructs.PureButtons label txt)) = object ["text" .= label, "callback_data" .= txt]
+instance ToJSON Buttons where
+  toJSON (Buttons (PureStructs.PureButtons label txt)) = object ["text" .= label, "callback_data" .= txt]

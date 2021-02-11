@@ -3,10 +3,10 @@ module API.VK.Structs.LongPollResponse where
 import Data.Aeson (FromJSON (parseJSON), withObject, (.:), (.:?))
 import qualified Data.Text as T
 
-data VKResponse
-  = VKResponse LongPollResponse
-  | VKError ResponseError
-  | VKParseError
+data Response
+  = Response LongPollResponse
+  | Error ResponseError
+  | ParseError
   deriving (Show)
 
 data LongPollResponse = LongPollResponse
@@ -22,12 +22,12 @@ data ResponseError = ResponseError
   }
   deriving (Show)
 
-instance FromJSON VKResponse where
-  parseJSON = withObject "VKResponse" $ \obj -> do
+instance FromJSON Response where
+  parseJSON = withObject "Response" $ \obj -> do
     resp <- obj .:? "response"
     case resp of
       Just val ->
-        VKResponse
+        Response
           <$> ( LongPollResponse <$> val .: "key"
                   <*> val .: "server"
                   <*> val .: "ts"
@@ -36,9 +36,9 @@ instance FromJSON VKResponse where
         err <- obj .:? "error"
         case err of
           Just val ->
-            VKError
+            Error
               <$> ( ResponseError <$> val .: "error_code"
                       <*> val .: "error_msg"
                   )
           Nothing ->
-            pure VKParseError
+            pure ParseError
