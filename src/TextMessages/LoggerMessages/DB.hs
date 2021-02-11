@@ -1,6 +1,6 @@
 module TextMessages.LoggerMessages.DB where
 
-import qualified Environment.Logger.Structs as Logger
+import qualified Logger.Structs as Logger
 
 addUserQueryFailed :: Logger.LogMessage
 addUserQueryFailed = Logger.LogMessage Logger.Error "Impossible to insert User into Database"

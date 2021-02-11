@@ -1,12 +1,12 @@
 module Environment.Initialization (setEnvironment) where
 
+import qualified Config.Exports as Config
 import Control.Exception (IOException, try)
 import qualified Data.Configurator as Configurator
 import qualified Data.Configurator.Types as Configurator
-import qualified Environment.Config.Exports as Config
-import qualified Environment.Logger.Exports as Logger
 import qualified Environment.Structs as Env
 import qualified Exceptions.Exports as BotEx
+import qualified Logger.Exports as Logger
 import Text.Read (readMaybe)
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 

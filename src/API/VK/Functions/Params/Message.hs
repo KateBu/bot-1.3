@@ -1,8 +1,8 @@
 module API.VK.Functions.Params.Message where
 
+import qualified API.PureStructs.Exports as PureStructs
 import qualified API.VK.Structs.Exports as VK
 import qualified Data.Text as T
-import qualified Logic.Structs as PureStructs
 
 basicParams :: VK.Message -> [PureStructs.Params]
 basicParams msg = [PureStructs.ParamsNum "user_id" (VK.from_id msg)]

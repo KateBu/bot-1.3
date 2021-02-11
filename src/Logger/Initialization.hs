@@ -1,7 +1,7 @@
-module Environment.Logger.Initialization where
+module Logger.Initialization where
 
 import qualified Data.Text.IO as TIO
-import Environment.Logger.Structs
+import Logger.Structs
   ( LogMessage (..),
     Logger (..),
     Priority,

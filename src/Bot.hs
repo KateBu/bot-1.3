@@ -4,6 +4,7 @@ import qualified Control.Exception as Ex
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Exceptions.Exports as BotEx
+import qualified Logger.Exports as Logger
 import qualified Logic.Main as Logic
 import qualified Services.Main as Services
 import qualified TextMessages.LoggerMessages as LoggerMsgs
@@ -18,7 +19,7 @@ runBot env =
 nextLoop :: Env.Environment IO -> IO ()
 nextLoop env = do
   logger <- runReaderT Env.eLogger env
-  Env.botLog logger LoggerMsgs.nextLoop
+  Logger.botLog logger LoggerMsgs.nextLoop
   runBot env
 
 withBotExceptionWrapped :: IO () -> IO ()

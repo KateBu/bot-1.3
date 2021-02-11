@@ -1,5 +1,6 @@
 module API.Telegram.Main (decodePureMessageList) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import API.Telegram.Functions.Builders (buildPureMessage)
 import qualified API.Telegram.Structs.Updates as Telegram
 import Control.Monad.Reader (ReaderT (runReaderT))
@@ -8,7 +9,7 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
 import qualified Exceptions.Exports as BotEx
-import qualified Logic.Structs as PureStructs
+import qualified Logger.Exports as Logger
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 
 decodePureMessageList ::
@@ -25,18 +26,18 @@ decodeUpdates ::
   IO Telegram.Updates
 decodeUpdates env bytestring = do
   logger <- runReaderT Env.eLogger env
-  Env.botLog logger logMsg
+  Logger.botLog logger logMsg
   let mbUpdates = decode bytestring :: Maybe Telegram.Updates
   maybe (throwUpdateError bytestring) (decodeSuccess logger) mbUpdates
   where
     logMsg = LoggerMsgs.telegramBytestringDecodingInProgress
 
 decodeSuccess ::
-  Env.Logger IO ->
+  Logger.Logger IO ->
   Telegram.Updates ->
   IO Telegram.Updates
 decodeSuccess logger updates =
-  Env.botLog logger logMsg >> pure updates
+  Logger.botLog logger logMsg >> pure updates
   where
     logMsg = LoggerMsgs.telegramBytestringDecodingSuccess
 
@@ -47,7 +48,7 @@ buildPureMessageList ::
 buildPureMessageList env updates = do
   helpMsg <- runReaderT Env.eHelpMsg env
   logger <- runReaderT Env.eLogger env
-  Env.botLog logger logMsg
+  Logger.botLog logger logMsg
   maybe (BotEx.throwUpdateExcept LoggerMsgs.telegramUpdatesFailed) pure (mbPureMsgs helpMsg)
   where
     logMsg = LoggerMsgs.parseTelelegramMsgSuccess
@@ -61,7 +62,7 @@ throwUpdateError bytestring = do
 buildUpdateError :: Telegram.UpdatesError -> IO Telegram.Updates
 buildUpdateError err =
   BotEx.throwUpdateExcept
-    ( Env.makeLogMessage
+    ( Logger.makeLogMessage
         LoggerMsgs.getUpdateFailed
         errMessage
     )

@@ -1,8 +1,8 @@
-module Logic.Structs.Buttons where
+module API.PureStructs.Buttons where
 
+import API.PureStructs.PureMessage (CallbackText)
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
-import Logic.Structs.PureMessage (CallbackText)
 
 data PureButtons = PureButtons T.Text T.Text
   deriving (Show)

@@ -1,7 +1,7 @@
 module API.VK.Functions.MsgTypes.Text where
 
+import qualified API.PureStructs.Exports as PureStructs
 import qualified API.VK.Structs.Exports as VK
-import qualified Logic.Structs as PureStructs
 
 buildTextMessage :: VK.Message -> Maybe PureStructs.MessageType
 buildTextMessage msg = case VK.msg_text msg of

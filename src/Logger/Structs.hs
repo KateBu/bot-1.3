@@ -1,4 +1,4 @@
-module Environment.Logger.Structs where
+module Logger.Structs where
 
 import qualified Data.Text as T
 

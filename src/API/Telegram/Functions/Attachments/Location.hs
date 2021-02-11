@@ -1,9 +1,9 @@
 module API.Telegram.Functions.Attachments.Location (buildLocationMessage) where
 
-import API.Telegram.Functions.Params (basicParams)
+import qualified API.PureStructs.Exports as PureStructs
+import API.Telegram.Functions.Params (buildBasicParams)
 import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Data.Text as T
-import qualified Logic.Structs as PureStructs
 
 buildLocationMessage ::
   PureStructs.UpdateID ->
@@ -30,7 +30,7 @@ buildLocationMessage' updateId chatId msgInfo locationInfo =
   where
     locationParams =
       Just $
-        basicParams chatId msgInfo
+        buildBasicParams chatId msgInfo
           <> [ PureStructs.ParamsText "latitude" ((T.pack . show) $ Telegram.latitude locationInfo),
                PureStructs.ParamsText "longitude" ((T.pack . show) $ Telegram.longitude locationInfo)
              ]

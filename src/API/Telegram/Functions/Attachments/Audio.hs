@@ -1,8 +1,8 @@
 module API.Telegram.Functions.Attachments.Audio (buildAudioMessage) where
 
-import API.Telegram.Functions.Params (basicParams)
+import qualified API.PureStructs.Exports as PureStructs
+import API.Telegram.Functions.Params (buildBasicParams)
 import qualified API.Telegram.Structs.MessageInfo as Telegram
-import qualified Logic.Structs as PureStructs
 
 buildAudioMessage ::
   PureStructs.UpdateID ->
@@ -29,5 +29,5 @@ buildAudioMessage' updatId chatId msgInfo audioInfo =
   where
     audioParams =
       Just $
-        basicParams chatId msgInfo
+        buildBasicParams chatId msgInfo
           <> [PureStructs.ParamsText "audio" (Telegram.audio_id audioInfo)]

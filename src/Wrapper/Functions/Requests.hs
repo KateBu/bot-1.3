@@ -1,10 +1,11 @@
 module Wrapper.Functions.Requests (sendMessageRequest, getUpdatesRequest) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import Control.Exception (handle)
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Exceptions.Exports as BotEx
-import qualified Logic.Structs as PureStructs
+import qualified Logger.Exports as Logger
 import Network.HTTP.Req
   ( LbsResponse,
     Option,
@@ -18,7 +19,6 @@ import Network.HTTP.Req
   )
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Wrapper.Functions.URL as WrapFunctions
-import qualified Wrapper.Structs as WrapStructs
 
 sendMessageRequest ::
   Env.Environment IO ->
@@ -29,8 +29,8 @@ sendMessageRequest ::
 sendMessageRequest env basicParams params msg = do
   logger <- runReaderT Env.eLogger env
   config <- runReaderT Env.eConfig env
-  Env.botLog logger LoggerMsgs.getApiResponseInProgress
-  let hostPath = WrapFunctions.buildHostPath config WrapStructs.Send (Just msg)
+  Logger.botLog logger LoggerMsgs.getApiResponseInProgress
+  let hostPath = WrapFunctions.buildHostPath config WrapFunctions.Send (Just msg)
   if any WrapFunctions.isMultipart params
     then getResponseMultipart hostPath params basicParams
     else getResponseUrl hostPath params basicParams
@@ -39,15 +39,15 @@ getUpdatesRequest :: Env.Environment IO -> IO LbsResponse
 getUpdatesRequest env = do
   config <- runReaderT Env.eConfig env
   logger <- runReaderT Env.eLogger env
-  Env.botLog logger LoggerMsgs.getUpdatesInProcess
+  Logger.botLog logger LoggerMsgs.getUpdatesInProcess
   let params = WrapFunctions.updateParam config
-  let url = WrapFunctions.buildHostPath config WrapStructs.GetUpdate Nothing
+  let url = WrapFunctions.buildHostPath config WrapFunctions.GetUpdate Nothing
   if any WrapFunctions.isMultipart params
     then do
-      Env.botLog logger logMsgMultipart
+      Logger.botLog logger logMsgMultipart
       getResponseMultipart url params mempty
     else do
-      Env.botLog logger logMsgUrl
+      Logger.botLog logger logMsgUrl
       getResponseUrl url params mempty
   where
     logMsgMultipart = LoggerMsgs.getResponseMultipartInProgress

@@ -1,6 +1,6 @@
-module Logic.Structs (module PureStructs) where
+module API.PureStructs.Exports (module PureStructs) where
 
-import Logic.Structs.Buttons as PureStructs
+import API.PureStructs.Buttons as PureStructs
   ( PureButtons (..),
     buttons,
     getNewRepeatNumber,
@@ -10,7 +10,7 @@ import Logic.Structs.Buttons as PureStructs
     setRepeat4,
     setRepeat5,
   )
-import Logic.Structs.PureMessage as PureStructs
+import API.PureStructs.PureMessage as PureStructs
   ( CallbackText,
     ChatID,
     MbCaption,
@@ -20,4 +20,3 @@ import Logic.Structs.PureMessage as PureStructs
     UpdateID,
     UserCommand (..),
   )
-import TextMessages.RepeatCommandMessages as PureStructs (newRepeatText, repeatText)

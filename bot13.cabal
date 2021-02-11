@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a2abf35c8306733caba399822aacaefb6058e942290e1cfc41dac056c9372221
+-- hash: 4dbc243ba5806a01baa4acc9d77049c2b4c2023f5fcaf5006bdfb59d62f7414c
 
 name:           bot13
 version:        0.1.0.0
@@ -27,6 +27,9 @@ source-repository head
 
 library
   exposed-modules:
+      API.PureStructs.Buttons
+      API.PureStructs.Exports
+      API.PureStructs.PureMessage
       API.Telegram.Functions.Attachments
       API.Telegram.Functions.Attachments.Animation
       API.Telegram.Functions.Attachments.Audio
@@ -61,7 +64,6 @@ library
       API.Telegram.Structs.MessageInfo
       API.Telegram.Structs.UpdateErr
       API.Telegram.Structs.Updates
-      API.Telegram.URL
       API.VK.Functions.Builders
       API.VK.Functions.MsgTypes
       API.VK.Functions.MsgTypes.Attachment
@@ -72,7 +74,7 @@ library
       API.VK.Functions.MsgTypes.UserCommand
       API.VK.Functions.Params
       API.VK.Functions.Params.Attachment
-      API.VK.Functions.Params.Fwd
+      API.VK.Functions.Params.Forward
       API.VK.Functions.Params.Keyboard
       API.VK.Functions.Params.Message
       API.VK.Main
@@ -84,30 +86,26 @@ library
       API.VK.Structs.SendResult
       API.VK.Structs.UpdateInfo
       API.VK.Structs.Updates
-      API.VK.URL
       Bot
-      Environment.Config.Data
-      Environment.Config.Exports
-      Environment.Config.Functions
-      Environment.Config.Initialization
-      Environment.Config.Struct
+      Config.Data
+      Config.Exports
+      Config.Functions
+      Config.Initialization
+      Config.Struct
       Environment.Exports
       Environment.Functions
       Environment.Initialization
-      Environment.Logger.Exports
-      Environment.Logger.Functions
-      Environment.Logger.Initialization
-      Environment.Logger.Structs
       Environment.Structs
       Exceptions.Exports
       Exceptions.Functions
       Exceptions.Structs
+      Logger.Exports
+      Logger.Functions
+      Logger.Initialization
+      Logger.Structs
       Logic.Functions.Callback
       Logic.Functions.Common
       Logic.Main
-      Logic.Structs
-      Logic.Structs.Buttons
-      Logic.Structs.PureMessage
       Services.API.Handle
       Services.DB.Database.Functions
       Services.DB.Database.Queries
@@ -130,7 +128,9 @@ library
       Wrapper.Functions.Requests
       Wrapper.Functions.URL
       Wrapper.Main
-      Wrapper.Structs
+      Wrapper.URL.Structs
+      Wrapper.URL.Telegram
+      Wrapper.URL.VK
   other-modules:
       Paths_bot13
   hs-source-dirs:

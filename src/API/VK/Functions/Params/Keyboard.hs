@@ -1,11 +1,11 @@
 module API.VK.Functions.Params.Keyboard (keyboardParams) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import qualified API.VK.Structs.Exports as VK
 import Data.Aeson (KeyValue ((.=)), Value, encode, object)
 import qualified Data.ByteString.Lazy as BSL
 import Data.ByteString.Lazy.Char8 as C8 (unpack)
 import qualified Data.Text as T
-import qualified Logic.Structs as PureStructs
 
 keyboardParams :: [PureStructs.Params]
 keyboardParams = [PureStructs.ParamsJSON "keyboard" keyboard]

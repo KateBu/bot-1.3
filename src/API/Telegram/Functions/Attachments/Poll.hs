@@ -1,13 +1,13 @@
 module API.Telegram.Functions.Attachments.Poll (buildPollMessage) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import API.Telegram.Functions.Params
-  ( basicParams,
+  ( buildBasicParams,
     buildBoolParams,
     buildNumParams,
     buildTextParams,
   )
 import qualified API.Telegram.Structs.MessageInfo as Telegram
-import qualified Logic.Structs as PureStructs
 
 buildPollMessage ::
   PureStructs.UpdateID ->
@@ -35,7 +35,7 @@ buildPollMessage' updateId chatId msgInfo pollInfo =
 buildPollParams :: PureStructs.ChatID -> Telegram.MessageInfo -> Telegram.Poll -> Maybe [PureStructs.Params]
 buildPollParams chatId msgInfo pollInfo =
   Just $
-    basicParams chatId msgInfo
+    buildBasicParams chatId msgInfo
       <> [ PureStructs.ParamsText "question" (Telegram.question pollInfo),
            PureStructs.ParamsTextList "options" (map Telegram.poll_option (Telegram.poll_options pollInfo))
          ]

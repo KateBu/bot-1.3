@@ -1,8 +1,8 @@
 module API.Telegram.Functions.Attachments.Document (buildDocumentMessage) where
 
-import API.Telegram.Functions.Params (basicParams)
+import qualified API.PureStructs.Exports as PureStructs
+import API.Telegram.Functions.Params (buildBasicParams)
 import qualified API.Telegram.Structs.MessageInfo as Telegram
-import qualified Logic.Structs as PureStructs
 
 buildDocumentMessage ::
   PureStructs.UpdateID ->
@@ -29,5 +29,5 @@ buildDocumentMessage' updateId chatiId msgInfo docInfo =
   where
     documentParams =
       Just $
-        basicParams chatiId msgInfo
+        buildBasicParams chatiId msgInfo
           <> [PureStructs.ParamsText "document" (Telegram.document_file_id docInfo)]

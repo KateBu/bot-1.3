@@ -1,10 +1,11 @@
 module API.VK.Functions.Builders (buildPureMessage) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import API.VK.Functions.MsgTypes (buildMessageType)
 import API.VK.Functions.Params (basicParams, buildParams)
 import qualified API.VK.Structs.Exports as VK
 import qualified Environment.Exports as Env
-import qualified Logic.Structs as PureStructs
+import qualified TextMessages.RepeatCommandMessages as RepeatCommandMessages
 
 buildPureMessage ::
   Env.HelpMessage ->
@@ -44,7 +45,9 @@ buildMsgWithParams' _ updateId msg msgType@(PureStructs.MsgTypeCallbackQuery cal
   where
     msgParams =
       Just
-        ( PureStructs.ParamsText "message" (PureStructs.newRepeatText $ PureStructs.getNewRepeatNumber callback) :
+        ( PureStructs.ParamsText
+            "message"
+            (RepeatCommandMessages.newRepeatText $ PureStructs.getNewRepeatNumber callback) :
           basicParams msg
         )
 buildMsgWithParams' helpMsg updateId msg msgType@(PureStructs.MsgTypeUserCommand _) =

@@ -4,10 +4,10 @@ module API.VK.Functions.Params.Attachment
   )
 where
 
+import qualified API.PureStructs.Exports as PureStructs
 import API.VK.Functions.Params.Message (basicParams, buildMessageParam)
 import qualified API.VK.Structs.Exports as VK
 import qualified Data.Text as T
-import qualified Logic.Structs as PureStructs
 
 buildAttachmentParams ::
   VK.Message ->

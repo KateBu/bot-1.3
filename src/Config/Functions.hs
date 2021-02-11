@@ -1,6 +1,6 @@
-module Environment.Config.Functions where
+module Config.Functions where
 
-import Environment.Config.Struct
+import Config.Struct
   ( Config (..),
     Offset,
     Telegram (Telegram),

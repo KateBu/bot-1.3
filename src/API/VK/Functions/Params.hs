@@ -1,10 +1,11 @@
 module API.VK.Functions.Params (buildParams, basicParams) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import API.VK.Functions.Params.Attachment
   ( buildAttachmentListParams,
     buildAttachmentParams,
   )
-import API.VK.Functions.Params.Fwd (buildFwdParams)
+import API.VK.Functions.Params.Forward (buildFwdParams)
 import API.VK.Functions.Params.Keyboard (keyboardParams)
 import API.VK.Functions.Params.Message
   ( basicParams,
@@ -13,7 +14,7 @@ import API.VK.Functions.Params.Message
   )
 import qualified API.VK.Structs.Exports as VK
 import qualified Environment.Exports as Env
-import qualified Logic.Structs as PureStructs
+import qualified TextMessages.RepeatCommandMessages as RepeatCommandMessages
 
 buildParams ::
   Env.HelpMessage ->
@@ -26,7 +27,7 @@ buildParams helpMsg (PureStructs.MsgTypeUserCommand PureStructs.Help) msg =
 buildParams _ (PureStructs.MsgTypeUserCommand PureStructs.Repeat) msg =
   pure $
     basicParams msg
-      <> [PureStructs.ParamsText "message" PureStructs.repeatText]
+      <> [PureStructs.ParamsText "message" RepeatCommandMessages.repeatText]
       <> keyboardParams
 buildParams _ (PureStructs.MsgTypeCommon "Message") msg = do
   txt <- VK.msg_text msg

@@ -1,14 +1,14 @@
-module Environment.Config.Initialization (setBotSettings) where
+module Config.Initialization (setBotSettings) where
 
 import qualified API.VK.Structs.Exports as VKStructs
+import qualified Config.Data as Config
+import qualified Config.Struct as Config
 import Control.Exception (IOException, try)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
-import qualified Environment.Config.Data as Config
-import qualified Environment.Config.Struct as Config
-import qualified Environment.Logger.Exports as Logger
 import qualified Exceptions.Exports as BotEx
+import qualified Logger.Exports as Logger
 import Network.HTTP.Simple
   ( getResponseBody,
     httpLBS,

@@ -11,8 +11,8 @@ import Database.PostgreSQL.Simple
     ResultError,
     SqlError,
   )
-import qualified Environment.Logger.Exports as Logger
 import Exceptions.Structs (BotException (..))
+import qualified Logger.Exports as Logger
 import Network.HTTP.Req (HttpException)
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 

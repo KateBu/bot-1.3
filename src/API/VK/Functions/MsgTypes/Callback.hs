@@ -1,10 +1,10 @@
 module API.VK.Functions.MsgTypes.Callback (buildCallbackMessage) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import qualified API.VK.Structs.Exports as VK
 import Control.Applicative (Alternative ((<|>)))
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
-import qualified Logic.Structs as PureStructs
 
 buildCallbackMessage :: VK.Message -> Maybe PureStructs.MessageType
 buildCallbackMessage msg =

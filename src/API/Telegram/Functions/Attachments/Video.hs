@@ -1,8 +1,8 @@
 module API.Telegram.Functions.Attachments.Video (buildVideoMessage) where
 
-import API.Telegram.Functions.Params (basicParams)
+import qualified API.PureStructs.Exports as PureStructs
+import API.Telegram.Functions.Params (buildBasicParams)
 import qualified API.Telegram.Structs.MessageInfo as Telegram
-import qualified Logic.Structs as PureStructs
 
 buildVideoMessage ::
   PureStructs.UpdateID ->
@@ -29,5 +29,5 @@ buildVideoMessage' updateId chatId msgInfo videoInfo =
   where
     videoParams =
       Just $
-        basicParams chatId msgInfo
+        buildBasicParams chatId msgInfo
           <> [PureStructs.ParamsText "video" (Telegram.video_file_id videoInfo)]

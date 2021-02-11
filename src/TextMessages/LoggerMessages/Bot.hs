@@ -1,6 +1,6 @@
 module TextMessages.LoggerMessages.Bot where
 
-import qualified Environment.Logger.Structs as Logger
+import qualified Logger.Structs as Logger
 
 vkSettingsFatalError :: Logger.LogMessage
 vkSettingsFatalError =

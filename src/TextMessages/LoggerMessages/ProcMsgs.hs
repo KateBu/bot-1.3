@@ -1,6 +1,6 @@
 module TextMessages.LoggerMessages.ProcMsgs where
 
-import qualified Environment.Logger.Structs as Logger
+import qualified Logger.Structs as Logger
 
 emptyMsgProcessingInProgress :: Logger.LogMessage
 emptyMsgProcessingInProgress = Logger.LogMessage Logger.Debug "Empty Message processing in progress..."

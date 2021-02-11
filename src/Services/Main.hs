@@ -1,7 +1,7 @@
 module Services.Main (Services (..)) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import qualified Environment.Exports as Env
-import qualified Logic.Structs as PureStructs
 import Services.FunctionsIO
   ( addUserIO,
     findUserIO,

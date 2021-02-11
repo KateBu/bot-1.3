@@ -1,9 +1,9 @@
 module Logic.Functions.Common where
 
+import qualified API.PureStructs.Exports as PureStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
 import Data.Maybe (fromMaybe)
 import qualified Environment.Exports as Env
-import qualified Logic.Structs as PureStructs
 import qualified Services.Main as Handle
 
 processCommonMsgs ::

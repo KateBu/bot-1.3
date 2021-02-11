@@ -1,12 +1,12 @@
 module API.Telegram.Functions.Attachments.Txt (buildTextMessage) where
 
-import API.Telegram.Functions.Params (basicParams)
+import qualified API.PureStructs.Exports as PureStructs
+import API.Telegram.Functions.Params (buildBasicParams)
 import qualified API.Telegram.Structs.Attachments.Keyboard as Telegram
 import qualified API.Telegram.Structs.MessageInfo as Telegram
 import Data.Aeson (KeyValue ((.=)), Value, object)
 import qualified Data.Text as T
 import qualified Environment.Exports as Env
-import qualified Logic.Structs as PureStructs
 
 buildTextMessage ::
   Env.HelpMessage ->
@@ -35,7 +35,7 @@ buildTxtMsg helpMsg updateId chatId msgInfo "/help" =
   where
     helpParams =
       Just $
-        basicParams chatId msgInfo
+        buildBasicParams chatId msgInfo
           <> [PureStructs.ParamsText "text" helpMsg]
 buildTxtMsg _ updateId chatId msgInfo "/repeat" =
   pure $
@@ -47,7 +47,7 @@ buildTxtMsg _ updateId chatId msgInfo "/repeat" =
   where
     repeatParams =
       Just $
-        basicParams chatId msgInfo
+        buildBasicParams chatId msgInfo
           <> [ PureStructs.ParamsJSON "reply_markup" keyboard,
                PureStructs.ParamsBool "one_time_keyboard" True
              ]
@@ -62,7 +62,7 @@ buildTxtMsg _ updateId chatId msgInfo text =
   where
     messageParams =
       Just $
-        basicParams chatId msgInfo
+        buildBasicParams chatId msgInfo
           <> [PureStructs.ParamsText "text" text]
 
 makeKeyboard :: [[Telegram.Buttons]] -> Value

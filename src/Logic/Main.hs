@@ -1,14 +1,16 @@
-module Logic.Main where
+module Logic.Main (processMsgs) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import Control.Monad (foldM)
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
 import qualified Exceptions.Exports as BotEx
+import qualified Logger.Exports as Logger
 import Logic.Functions.Callback (processCallbackMsgs)
 import Logic.Functions.Common (processCommonMsgs)
-import qualified Logic.Structs as PureStructs
 import qualified Services.Main as Handle
 import qualified TextMessages.LoggerMessages as LoggerMsgs
+import qualified TextMessages.RepeatCommandMessages as RepeatCommandMessages
 
 processMsgs ::
   (BotEx.MonadThrow m, Handle.Services m) =>
@@ -27,16 +29,16 @@ processMsg env msg = do
   let mbChatId = PureStructs.mbChatID msg
   case PureStructs.messageType msg of
     PureStructs.MsgTypeEmpty -> do
-      Env.botLog logger logEmptyMsg
+      Logger.botLog logger logEmptyMsg
       Env.eSetOffset env ((succ . PureStructs.updateID) msg)
     PureStructs.MsgTypeUserCommand PureStructs.Help -> do
-      Env.botLog logger logHelpCommandMsg
+      Logger.botLog logger logHelpCommandMsg
       Handle.sendMessage env msg
     PureStructs.MsgTypeUserCommand PureStructs.Repeat -> do
-      Env.botLog logger logRepeatCommandMsg
+      Logger.botLog logger logRepeatCommandMsg
       Handle.sendMessage env (buildRepeatMsg msg)
     PureStructs.MsgTypeCallbackQuery callbackData -> do
-      Env.botLog logger logCallbackMsg
+      Logger.botLog logger logCallbackMsg
       maybe throwError (processCallbackMsgs env msg callbackData) mbChatId
     PureStructs.MsgTypeCommon _ -> do
       maybe throwError (processCommonMsgs env msg) mbChatId
@@ -60,5 +62,5 @@ buildRepeatMsg msg =
     repeatParams =
       mconcat
         [ PureStructs.mbParams msg,
-          Just [PureStructs.ParamsText "text" PureStructs.repeatText]
+          Just [PureStructs.ParamsText "text" RepeatCommandMessages.repeatText]
         ]

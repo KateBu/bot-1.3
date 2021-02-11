@@ -1,5 +1,6 @@
 module API.VK.Functions.MsgTypes where
 
+import qualified API.PureStructs.Exports as PureStructs
 import API.VK.Functions.MsgTypes.Attachment (buildAttachmentMessage)
 import API.VK.Functions.MsgTypes.Callback (buildCallbackMessage)
 import API.VK.Functions.MsgTypes.Forward (buildFwdMessage)
@@ -8,7 +9,6 @@ import API.VK.Functions.MsgTypes.Text (buildTextMessage)
 import API.VK.Functions.MsgTypes.UserCommand (buildCommandMessage)
 import qualified API.VK.Structs.Exports as VK
 import Control.Applicative (Alternative ((<|>)))
-import qualified Logic.Structs as PureStructs
 
 buildMessageType :: VK.Message -> Maybe PureStructs.MessageType
 buildMessageType msg =

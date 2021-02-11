@@ -1,8 +1,8 @@
 module API.Telegram.Functions.Attachments.Photo (buildPhotoMessage) where
 
-import API.Telegram.Functions.Params (basicParams)
+import qualified API.PureStructs.Exports as PureStructs
+import API.Telegram.Functions.Params (buildBasicParams)
 import qualified API.Telegram.Structs.MessageInfo as Telegram
-import qualified Logic.Structs as PureStructs
 
 buildPhotoMessage ::
   PureStructs.UpdateID ->
@@ -29,7 +29,7 @@ buildPhotoMessage' updateId chatId msgInfo photoInfo =
   where
     photoParams =
       Just $
-        basicParams chatId msgInfo
+        buildBasicParams chatId msgInfo
           <> buildPhotoParams photoInfo
 
 buildPhotoParams :: [Telegram.Photo] -> [PureStructs.Params]

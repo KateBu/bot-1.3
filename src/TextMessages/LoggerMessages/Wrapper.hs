@@ -1,6 +1,6 @@
 module TextMessages.LoggerMessages.Wrapper where
 
-import qualified Environment.Logger.Structs as Logger
+import qualified Logger.Structs as Logger
 
 sendMsgFailed :: Logger.LogMessage
 sendMsgFailed =

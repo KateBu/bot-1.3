@@ -1,6 +1,6 @@
 module TextMessages.LoggerMessages.API where
 
-import qualified Environment.Logger.Structs as Logger
+import qualified Logger.Structs as Logger
 
 apiHandleCloseMsg :: Logger.LogMessage
 apiHandleCloseMsg =

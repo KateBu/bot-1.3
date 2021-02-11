@@ -1,4 +1,4 @@
-module Logic.Structs.PureMessage where
+module API.PureStructs.PureMessage where
 
 import Data.Aeson (Value)
 import qualified Data.Text as T

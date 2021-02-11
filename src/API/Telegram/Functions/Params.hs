@@ -1,20 +1,20 @@
 module API.Telegram.Functions.Params
-  ( basicParams,
+  ( buildBasicParams,
     buildTextParams,
     buildBoolParams,
     buildNumParams,
   )
 where
 
+import qualified API.PureStructs.Exports as PureStructs
 import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Data.Text as T
-import qualified Logic.Structs as PureStructs
 
-basicParams :: PureStructs.ChatID -> Telegram.MessageInfo -> [PureStructs.Params]
-basicParams chatId msgInfo = PureStructs.ParamsNum "chat_id" chatId : mbCaption msgInfo
+buildBasicParams :: PureStructs.ChatID -> Telegram.MessageInfo -> [PureStructs.Params]
+buildBasicParams chatId msgInfo = PureStructs.ParamsNum "chat_id" chatId : buildCaptionParams msgInfo
 
-mbCaption :: Telegram.MessageInfo -> [PureStructs.Params]
-mbCaption msgInfo =
+buildCaptionParams :: Telegram.MessageInfo -> [PureStructs.Params]
+buildCaptionParams msgInfo =
   let mbCaption' = Telegram.caption msgInfo
    in maybe [] (pure . PureStructs.ParamsText "caption") mbCaption'
 

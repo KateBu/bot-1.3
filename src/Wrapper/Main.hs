@@ -1,8 +1,9 @@
 module Wrapper.Main (getUpdates, sendMessage) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
 import qualified Environment.Exports as Env
-import qualified Logic.Structs as PureStructs
+import qualified Logger.Exports as Logger
 import qualified TextMessages.LoggerMessages as LoggerMsgs
 import qualified Wrapper.Functions.Actions as WrapFunctions
 import qualified Wrapper.Functions.Decoders as WrapFunctions
@@ -21,7 +22,7 @@ sendMessage ::
   IO (Env.Environment IO)
 sendMessage env msg = do
   logger <- runReaderT Env.eLogger env
-  Env.botLog logger LoggerMsgs.sendMsgInProgress
+  Logger.botLog logger LoggerMsgs.sendMsgInProgress
   let mbParams = PureStructs.mbParams msg
   maybe (pure env) (sendMessage' env msg) mbParams
 

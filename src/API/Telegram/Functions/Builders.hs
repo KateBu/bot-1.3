@@ -1,5 +1,6 @@
 module API.Telegram.Functions.Builders (buildPureMessage) where
 
+import qualified API.PureStructs.Exports as PureStructs
 import API.Telegram.Functions.Attachments
   ( buildAnimationMessage,
     buildAudioMessage,
@@ -17,7 +18,7 @@ import API.Telegram.Functions.Attachments
 import qualified API.Telegram.Structs.Updates as Telegram
 import Control.Applicative (Alternative ((<|>)))
 import qualified Environment.Exports as Env
-import qualified Logic.Structs as PureStructs
+import qualified TextMessages.RepeatCommandMessages as RepeatCommandMessages
 
 buildPureMessage ::
   Env.HelpMessage ->
@@ -59,7 +60,9 @@ buildCallbackMessage updateResult updateId =
       where
         callbackParams chatId =
           Just
-            [ PureStructs.ParamsText "text" $ PureStructs.newRepeatText (PureStructs.getNewRepeatNumber callbackData),
+            [ PureStructs.ParamsText "text" $
+                RepeatCommandMessages.newRepeatText
+                  (PureStructs.getNewRepeatNumber callbackData),
               PureStructs.ParamsNum "chat_id" chatId
             ]
     _ -> Nothing
