@@ -1,4 +1,10 @@
-module API.Telegram.Functions.Params where
+module API.Telegram.Functions.Params
+  ( basicParams,
+    buildTextParams,
+    buildBoolParams,
+    buildNumParams,
+  )
+where
 
 import qualified API.Telegram.Structs.MessageInfo as Telegram
 import qualified Data.Text as T
