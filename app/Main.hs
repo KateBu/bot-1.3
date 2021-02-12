@@ -5,4 +5,4 @@ import qualified Environment.Exports as Env
 
 main :: IO ()
 main = 
-  Env.setEnvironment "local.config" >>= Bot.runBot
+  Env.setEnvironment "config.config" >>= Bot.runBot
