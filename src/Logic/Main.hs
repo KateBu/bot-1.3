@@ -26,7 +26,6 @@ processMsg ::
   m (Env.Environment m)
 processMsg env msg = do
   logger <- runReaderT Env.eLogger env
-  let mbChatId = PureStructs.mbChatID msg
   case PureStructs.messageType msg of
     PureStructs.MsgTypeEmpty -> do
       Logger.botLog logger logEmptyMsg
@@ -39,17 +38,16 @@ processMsg env msg = do
       Handle.sendMessage env (buildRepeatMsg msg)
     PureStructs.MsgTypeCallbackQuery callbackData -> do
       Logger.botLog logger logCallbackMsg
-      maybe throwError (processCallbackMsgs env msg callbackData) mbChatId
+      processCallbackMsgs env msg callbackData
     PureStructs.MsgTypeCommon _ -> do
-      maybe throwError (processCommonMsgs env msg) mbChatId
+      Logger.botLog logger logCommonMsg
+      processCommonMsgs env msg
   where
     logEmptyMsg = LoggerMsgs.emptyMsgProcessingInProgress
     logHelpCommandMsg = LoggerMsgs.helpCommandProcessingInProgress
     logRepeatCommandMsg = LoggerMsgs.repeatCommandProcessingInProgress
     logCallbackMsg = LoggerMsgs.callbackMsgProcessingInProgress
-
-throwError :: BotEx.MonadThrow m => m (Env.Environment m)
-throwError = BotEx.throwOtherException LoggerMsgs.chatIdNotFound
+    logCommonMsg = LoggerMsgs.commonMsgProcessingInProgress
 
 buildRepeatMsg :: PureStructs.PureMessage -> PureStructs.PureMessage
 buildRepeatMsg msg =
