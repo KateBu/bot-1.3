@@ -2,7 +2,7 @@ module TestData.TestMessages where
 
 import Data.Aeson (KeyValue ((.=)), object)
 import qualified Data.Text as T
-import qualified Logic.Structs as PureStructs
+import qualified API.PureStructs.Exports as PureStructs
 
 newHelp :: T.Text
 newHelp = "new help message"
@@ -135,7 +135,7 @@ commandMsg8 :: PureStructs.PureMessage
 commandMsg8 =
   PureStructs.PureMessage
     (PureStructs.MsgTypeUserCommand PureStructs.Repeat)
-    2
+    5
     Nothing
     (Just [])
 

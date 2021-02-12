@@ -1,6 +1,6 @@
 module Tests.ConfigSetOffset where
 
-import qualified Environment.Config.Exports as Config
+import qualified Config.Exports as Config
 import Test.HUnit (Test (TestCase), assertEqual)
 import qualified TestData
 
