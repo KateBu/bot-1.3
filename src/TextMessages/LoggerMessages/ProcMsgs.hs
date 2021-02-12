@@ -19,3 +19,6 @@ repeatCommandProcessingInProgress = Logger.LogMessage Logger.Debug "Repeat Comma
 
 callbackMsgProcessingInProgress :: Logger.LogMessage
 callbackMsgProcessingInProgress = Logger.LogMessage Logger.Debug "Callback processing in progress..."
+
+commonMsgProcessingInProgress :: Logger.LogMessage
+commonMsgProcessingInProgress = Logger.LogMessage Logger.Debug "Common message processing in progress..."

@@ -29,6 +29,7 @@ import TextMessages.LoggerMessages.Exceptions as Messages
   )
 import TextMessages.LoggerMessages.ProcMsgs as Messages
   ( callbackMsgProcessingInProgress,
+    commonMsgProcessingInProgress,
     emptyMsgProcessingInProgress,
     getApiResponseInProgress,
     helpCommandProcessingInProgress,
