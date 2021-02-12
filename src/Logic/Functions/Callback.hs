@@ -1,4 +1,4 @@
-module Logic.Functions.Callback where
+module Logic.Functions.Callback (processCallbackMsgs) where
 
 import qualified API.PureStructs.Exports as PureStructs
 import Data.Maybe (isNothing)

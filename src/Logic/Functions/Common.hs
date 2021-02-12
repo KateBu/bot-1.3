@@ -1,4 +1,4 @@
-module Logic.Functions.Common where
+module Logic.Functions.Common (processCommonMsgs) where
 
 import qualified API.PureStructs.Exports as PureStructs
 import Control.Monad.Reader (ReaderT (runReaderT))
