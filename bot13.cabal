@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4dbc243ba5806a01baa4acc9d77049c2b4c2023f5fcaf5006bdfb59d62f7414c
+-- hash: f00b871087e6d9a2cb295520d84aa113b13ed7adc53d8e286183bef21b4f48ef
 
 name:           bot13
 version:        0.1.0.0
@@ -195,13 +195,9 @@ test-suite bot13-test
       TestData.TestServices
       Tests
       Tests.ConfigSetOffset
-      Tests.MakeCallbackResponse
-      Tests.MakeRepeatMsg
       Tests.ProcessMsgs
-      Tests.ProcessMsgs_
       Tests.ProcessMsgsCallback
       Tests.ProcessMsgsCommon
-      Tests.RepeatMsgs
       Paths_bot13
   hs-source-dirs:
       test
