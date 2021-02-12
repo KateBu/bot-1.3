@@ -1,4 +1,10 @@
-module Wrapper.URL.VK where
+module Wrapper.URL.VK
+  ( buildGetUpdatesParams,
+    buildGetUpdatesHostPath,
+    buildSendHostPath,
+    buildSendBasicParams,
+  )
+where
 
 import qualified API.PureStructs.Exports as PureStructs
 import qualified Config.Exports as Config
