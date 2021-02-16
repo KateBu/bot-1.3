@@ -17,24 +17,33 @@ buttons =
   ]
 
 setRepeat1 :: CallbackText
-setRepeat1 = "/setRepetition1"
+setRepeat1 = "setRepetition1"
 
 setRepeat2 :: CallbackText
-setRepeat2 = "/setRepetition2"
+setRepeat2 = "setRepetition2"
 
 setRepeat3 :: CallbackText
-setRepeat3 = "/setRepetition3"
+setRepeat3 = "setRepetition3"
 
 setRepeat4 :: CallbackText
-setRepeat4 = "/setRepetition4"
+setRepeat4 = "setRepetition4"
 
 setRepeat5 :: CallbackText
-setRepeat5 = "/setRepetition5"
+setRepeat5 = "setRepetition5"
 
 getNewRepeatNumber :: CallbackText -> Env.RepeatNumber
 getNewRepeatNumber txt
-  | txt == setRepeat1 = 1
   | txt == setRepeat2 = 2
   | txt == setRepeat3 = 3
   | txt == setRepeat4 = 4
-  | otherwise = 5
+  | txt == setRepeat5 = 5
+  | otherwise = 1
+
+callbacks :: [CallbackText]
+callbacks =
+  [ setRepeat1,
+    setRepeat2,
+    setRepeat3,
+    setRepeat4,
+    setRepeat5
+  ]
