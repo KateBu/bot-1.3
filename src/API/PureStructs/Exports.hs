@@ -3,6 +3,7 @@ module API.PureStructs.Exports (module PureStructs) where
 import API.PureStructs.Buttons as PureStructs
   ( PureButtons (..),
     buttons,
+    callbacks,
     getNewRepeatNumber,
     setRepeat1,
     setRepeat2,
