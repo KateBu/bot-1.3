@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f00b871087e6d9a2cb295520d84aa113b13ed7adc53d8e286183bef21b4f48ef
+-- hash: 1a5dbee64c1f5fe1740be1517dc1d6039ec39ef49399edde16a760aaada344a1
 
 name:           bot13
 version:        0.1.0.0
@@ -65,13 +65,13 @@ library
       API.Telegram.Structs.UpdateErr
       API.Telegram.Structs.Updates
       API.VK.Functions.Builders
-      API.VK.Functions.MsgTypes
-      API.VK.Functions.MsgTypes.Attachment
-      API.VK.Functions.MsgTypes.Callback
-      API.VK.Functions.MsgTypes.Forward
-      API.VK.Functions.MsgTypes.Geo
-      API.VK.Functions.MsgTypes.Text
-      API.VK.Functions.MsgTypes.UserCommand
+      API.VK.Functions.MessageTypes
+      API.VK.Functions.MessageTypes.Attachment
+      API.VK.Functions.MessageTypes.Callback
+      API.VK.Functions.MessageTypes.Forward
+      API.VK.Functions.MessageTypes.Geo
+      API.VK.Functions.MessageTypes.Text
+      API.VK.Functions.MessageTypes.UserCommand
       API.VK.Functions.Params
       API.VK.Functions.Params.Attachment
       API.VK.Functions.Params.Forward

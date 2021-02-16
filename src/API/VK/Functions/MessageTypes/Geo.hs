@@ -1,4 +1,4 @@
-module API.VK.Functions.MsgTypes.Geo where
+module API.VK.Functions.MessageTypes.Geo where
 
 import qualified API.PureStructs.Exports as PureStructs
 import qualified API.VK.Structs.Exports as VK

@@ -1,4 +1,4 @@
-module API.VK.Functions.MsgTypes.UserCommand (buildCommandMessage) where
+module API.VK.Functions.MessageTypes.UserCommand (buildCommandMessage) where
 
 import qualified API.PureStructs.Exports as PureStructs
 import qualified API.VK.Structs.Exports as VK

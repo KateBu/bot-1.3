@@ -1,4 +1,4 @@
-module API.VK.Functions.MsgTypes.Attachment where
+module API.VK.Functions.MessageTypes.Attachment where
 
 import qualified API.PureStructs.Exports as PureStructs
 import qualified API.VK.Structs.Exports as VK

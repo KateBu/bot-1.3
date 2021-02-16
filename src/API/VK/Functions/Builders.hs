@@ -1,7 +1,7 @@
 module API.VK.Functions.Builders (buildPureMessage) where
 
 import qualified API.PureStructs.Exports as PureStructs
-import API.VK.Functions.MsgTypes (buildMessageType)
+import API.VK.Functions.MessageTypes (buildMessageType)
 import API.VK.Functions.Params (basicParams, buildParams)
 import qualified API.VK.Structs.Exports as VK
 import qualified Environment.Exports as Env
