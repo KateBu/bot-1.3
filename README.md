@@ -44,7 +44,7 @@
 
 - Main - the module contains the decodePureMessageList function (called in Wrapper.Decoders module), that decodes bytestring into VKUpdates and then builds PureMessage. And there are some other helping functions.
 - URL - there is a set of funtions for building urls in this module.
-- The Functions folder - contains Builders module (that exports buildPureMessage function), Params module contains some functions for building PureMEssage parameters (the module imports functions for building parameters from Params folder), MsgTypes module contains buildMessageType functions (it imports some functions from MsgTypes folder for builing the correct message type).
+- The Functions folder - contains Builders module (that exports buildPureMessage function), Params module contains some functions for building PureMEssage parameters (the module imports functions for building parameters from Params folder), MessageTypes module contains buildMessageType functions (it imports some functions from MessageTypes folder for builing the correct message type).
 - The Structs folder - contains specific VK data structures
 
 #### Config 
